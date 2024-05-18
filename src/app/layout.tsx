@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "../styles/globals.css";
-import { Container, Header } from "@/components/Header";
+import { Container } from "@/components/Container";
 import React from "react";
 import { ThirdwebProvider } from "thirdweb/react";
 
