@@ -6,3 +6,7 @@
 html {
     @apply bg-gray-200/80;
 }
+
+.react-flow__panel {
+    display: none !important;
+}
