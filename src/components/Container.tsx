@@ -23,8 +23,12 @@ export function Header() {
 	const account = useActiveAccount();
 	return (
 		<header className="w-full px-6 h-16 flex items-center text-gray-800 justify-between">
-			<div className="w-[110px] font-semibold text-white">
-				<FullLogo />
+			<div className="flex items-center space-x-3">
+				<div className="w-[125px] font-semibold text-white">
+					<FullLogo />
+				</div>
+				<span className="text-xs text-gray-400">|</span>
+				<div className="text-sm">HackFS</div>
 			</div>
 			{account && (
 				<DropDown
