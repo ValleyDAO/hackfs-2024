@@ -4,6 +4,7 @@ type TechNodeProps = { label: string };
 
 export function TechNode({
 	data,
+	id,
 	isConnectable,
 	targetPosition = Position.Top,
 	sourcePosition = Position.Bottom,
@@ -15,7 +16,7 @@ export function TechNode({
 				position={targetPosition}
 				isConnectable={isConnectable}
 			/>
-			<div className="px-10 py-4 text-xs bg-white border border-gray-200 rounded">
+			<div className="px-10 py-4 !text-xs bg-white border border-gray-200 rounded">
 				{data?.label}
 			</div>
 			<Handle

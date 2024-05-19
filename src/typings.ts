@@ -6,3 +6,5 @@ export type TechTreeNode = Node & {
 };
 
 export type TechTreeEdge = Edge;
+
+export type TechTreeData = { nodes: TechTreeNode[]; edges: TechTreeEdge[] };
