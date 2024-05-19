@@ -1,16 +1,8 @@
-export interface TechTreeNode {
-	targetPosition?: string;
-	sourcePosition?: string;
-	id: string;
-	type?: string;
-	data: { label: string };
-	position: { x: number; y: number };
-}
+import { Edge, Node, Position } from "reactflow";
 
-export interface TechTreeEdge {
-	id: string;
-	source: string;
-	target: string;
-	type: string;
-	animated: boolean;
-}
+export type TechTreeNode = Node & {
+	targetPosition?: Position;
+	sourcePosition?: Position;
+};
+
+export type TechTreeEdge = Edge;

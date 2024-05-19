@@ -10,3 +10,11 @@ html {
 .react-flow__panel {
     display: none !important;
 }
+
+.bg-grid {
+    background-size: 15px 15px;
+    background-image:
+            radial-gradient(#dedede 1px, transparent 1px),
+            radial-gradient(#dedede 1px, transparent 1px);
+    background-position: 7px 7px;
+}

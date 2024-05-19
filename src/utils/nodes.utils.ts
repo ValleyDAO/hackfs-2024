@@ -6,21 +6,26 @@ const edgeType = "smoothstep";
 export const initialNodes: TechTreeNode[] = [
 	{
 		id: "4",
-		data: { label: "node 4" },
+		data: { label: "Synthetic Biology" },
 		position,
 	},
 	{
 		id: "5",
-		data: { label: "node 5" },
+		data: { label: "Plant-based Meat" },
 		position,
 	},
 	{
 		id: "6",
 		type: "output",
-		data: { label: "output" },
+		data: { label: "Cell-Cultured Meat" },
 		position,
 	},
-	{ id: "7", type: "output", data: { label: "output" }, position },
+	{
+		id: "7",
+		type: "output",
+		data: { label: "Fermentation-Derived Proteins" },
+		position,
+	},
 ];
 
 export const initialEdges: TechTreeEdge[] = [

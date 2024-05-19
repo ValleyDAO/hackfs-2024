@@ -1,11 +1,11 @@
 import dagre from "dagre";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
-	addEdge,
 	ConnectionLineType,
-	useNodesState,
-	useEdgesState,
-	useReactFlow,
+	applyNodeChanges,
+	applyEdgeChanges,
+	OnNodesChange,
+	OnEdgesChange,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -18,14 +18,28 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 200;
 const nodeHeight = 50;
 
-export function TechTree() {
-	const [nodes, setNodes, onNodesChange] = useNodesState([]);
-	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+interface TechTreeProps {
+	setActiveNode(activeNode?: TechTreeNode): void;
+}
+
+export function TechTree({ setActiveNode }: TechTreeProps) {
+	const [nodes, setNodes] = useState<TechTreeNode[]>(initialNodes);
+	const [edges, setEdges] = useState<TechTreeEdge[]>(initialEdges);
+
 	useEffect(() => {
-		getLayoutedElements(initialNodes, initialEdges);
+		getLayoutElements(initialNodes, initialEdges);
 	}, []);
 
-	function getLayoutedElements(nodes: TechTreeNode[], edges: TechTreeEdge[]) {
+	const onNodesChange: OnNodesChange = useCallback(
+		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		[setNodes],
+	);
+	const onEdgesChange: OnEdgesChange = useCallback(
+		(changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+		[setEdges],
+	);
+
+	function getLayoutElements(nodes: TechTreeNode[], edges: TechTreeEdge[]) {
 		dagreGraph.setGraph({ rankdir: "LR" });
 
 		nodes.forEach((node) => {
@@ -40,7 +54,9 @@ export function TechTree() {
 
 		nodes.forEach((node) => {
 			const nodeWithPosition = dagreGraph.node(node.id);
+			// @ts-ignore
 			node.targetPosition = "left";
+			// @ts-ignore
 			node.sourcePosition = "right";
 
 			// We are shifting the dagre node position (anchor=center center) to the top left
@@ -71,6 +87,8 @@ export function TechTree() {
 			zoomOnScroll={false}
 			draggable={false}
 			autoPanOnNodeDrag={false}
+			onSelectionEnd={() => setActiveNode(undefined)}
+			onNodeClick={(evt, node) => setActiveNode(node)}
 		/>
 	);
 }
