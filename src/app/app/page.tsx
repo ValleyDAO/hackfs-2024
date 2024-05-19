@@ -10,6 +10,7 @@ import { useActiveWalletConnectionStatus } from "thirdweb/react";
 export default function Home() {
 	const router = useRouter();
 	const status = useActiveWalletConnectionStatus();
+
 	const [activeNode, setActiveNode] = React.useState<TechTreeNode>();
 
 	useEffect(() => {

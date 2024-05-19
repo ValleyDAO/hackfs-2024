@@ -1,5 +1,5 @@
 import dagre from "dagre";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlow, {
 	ConnectionLineType,
 	applyNodeChanges,
@@ -9,6 +9,7 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
+import { TechNode } from "@/components/TechNode";
 import { TechTreeEdge, TechTreeNode } from "@/typings";
 import { initialEdges, initialNodes } from "@/utils/nodes.utils";
 
@@ -23,21 +24,16 @@ interface TechTreeProps {
 }
 
 export function TechTree({ setActiveNode }: TechTreeProps) {
-	const [nodes, setNodes] = useState<TechTreeNode[]>(initialNodes);
-	const [edges, setEdges] = useState<TechTreeEdge[]>(initialEdges);
+	const [data, setData] = useState<{
+		nodes: TechTreeNode[];
+		edges: TechTreeEdge[];
+	}>({ nodes: initialNodes, edges: initialEdges });
+
+	const nodeTypes = useMemo(() => ({ "tech-tree": TechNode }), []);
 
 	useEffect(() => {
 		getLayoutElements(initialNodes, initialEdges);
 	}, []);
-
-	const onNodesChange: OnNodesChange = useCallback(
-		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-		[setNodes],
-	);
-	const onEdgesChange: OnEdgesChange = useCallback(
-		(changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-		[setEdges],
-	);
 
 	function getLayoutElements(nodes: TechTreeNode[], edges: TechTreeEdge[]) {
 		dagreGraph.setGraph({ rankdir: "LR" });
@@ -69,19 +65,21 @@ export function TechTree({ setActiveNode }: TechTreeProps) {
 			return node;
 		});
 
-		setNodes(nodes as any);
-		setEdges(edges);
+		setData({
+			nodes,
+			edges,
+		});
 	}
 
 	return (
 		<ReactFlow
-			nodes={nodes}
-			edges={edges}
-			onNodesChange={onNodesChange}
-			onEdgesChange={onEdgesChange}
+			nodes={data?.nodes}
+			edges={data?.edges}
 			connectionLineType={ConnectionLineType.SmoothStep}
 			fitView
-			maxZoom={1}
+			defaultEdgeOptions={{ animated: true }}
+			maxZoom={1.1}
+			nodeTypes={nodeTypes}
 			nodesDraggable={false}
 			zoomOnPinch={false}
 			zoomOnScroll={false}
