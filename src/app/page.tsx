@@ -7,8 +7,8 @@ import { ConnectButton } from "thirdweb/react";
 export default function Home() {
 	const router = useRouter();
 	return (
-		<div className="my-20 flex flex-col items-center space-y-10">
-			<div>
+		<div className="w-full h-full text-center flex flex-col items-center justify-center space-y-10">
+			<div className="mb-6">
 				<h1 className="text-4xl  text-center">
 					Welcome to <span className="font-bold">HackFS</span>
 				</h1>
@@ -17,14 +17,14 @@ export default function Home() {
 						className="text-blue-700"
 						href="https://docs.filecoin.io/smart-contracts/developing-contracts/get-test-tokens"
 					>
-						How to get testnet tokens
+						Testnet Tokens
 					</a>
 				</div>
-				<ConnectButton
-					client={web3Client}
-					onConnect={() => router.push("/app")}
-				/>
 			</div>
+			<ConnectButton
+				client={web3Client}
+				onConnect={() => router.push("/app")}
+			/>
 		</div>
 	);
 }

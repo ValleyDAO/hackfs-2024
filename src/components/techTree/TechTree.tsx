@@ -1,24 +1,18 @@
-import dagre from "dagre";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ReactFlow, {
-	ConnectionLineType,
-	applyNodeChanges,
-	applyEdgeChanges,
-	OnNodesChange,
-	OnEdgesChange,
-} from "reactflow";
+import React, { useEffect, useMemo } from "react";
+import ReactFlow, { ConnectionLineType } from "reactflow";
 
 import "reactflow/dist/style.css";
 import { TechNode } from "@/components/TechNode";
-import { TechTreeData, TechTreeEdge, TechTreeNode } from "@/typings";
+import { MenuBar } from "@/components/techTree/MenuBar";
+import { techTreeContract } from "@/lib/constants";
+import { TechTreeData, TechTreeNode } from "@/typings";
 import {
-	defaultPosition,
-	edgeType,
 	getLayoutElements,
-	getNodeId,
 	initialEdges,
 	initialNodes,
 } from "@/utils/nodes.utils";
+import { prepareContractCall } from "thirdweb";
+import { useEstimateGas, useSendTransaction } from "thirdweb/react";
 
 interface TechTreeProps {
 	setActiveNode(activeNode?: TechTreeNode): void;
@@ -28,14 +22,22 @@ interface TechTreeProps {
 
 export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 	const nodeTypes = useMemo(() => ({ "tech-tree": TechNode }), []);
+	const { mutate, isPending, status, error, mutateAsync } =
+		useSendTransaction();
+	const { mutateAsync: estimateGasCost, data: gasEstimate } = useEstimateGas();
+	console.log({
+		isPending,
+		status,
+		error,
+	});
 
 	useEffect(() => {
 		const data = getLayoutElements(initialNodes, initialEdges);
 		setData(data);
 	}, []);
 
-	const onAdd = useCallback(() => {
-		const newNode = {
+	async function onAdd() {
+		/*const newNode = {
 			id: getNodeId(),
 			type: "tech-tree",
 			data: { label: "Added node" },
@@ -51,21 +53,23 @@ export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 			[...data.nodes, newNode],
 			[...data.edges, newEdge],
 		);
-		setData(parsedData);
-	}, [data]);
+		setData(parsedData);*/
+
+		try {
+			const transaction = prepareContractCall({
+				contract: techTreeContract,
+				method: "addNode",
+				params: ["Added node"],
+			});
+			// @ts-ignore
+			const tx = mutate(transaction);
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
 	return (
-		<div className="flex-1 h-full bg-grid flex">
-			<div className="h-full flex items-center  ">
-				<div className="p-1 bg-gray-200 border-gray-100 border rounded-full">
-					<div
-						onClick={onAdd}
-						className="py-2 px-3.5 cursor-pointer hover:bg-blue-100 hover:text-blue-700 rounded-full bg-white text-gray-500"
-					>
-						+
-					</div>
-				</div>
-			</div>
+		<div className="flex-1 relative h-full bg-grid flex">
 			<ReactFlow
 				nodes={data?.nodes}
 				edges={data?.edges}
@@ -82,6 +86,7 @@ export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 				onSelectionEnd={() => setActiveNode(undefined)}
 				onNodeClick={(evt, node) => setActiveNode(node)}
 			/>
+			<MenuBar onAdd={onAdd} />
 		</div>
 	);
 }

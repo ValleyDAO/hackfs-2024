@@ -47,12 +47,12 @@ function DropDown({ children, menu, visible = true }: MenuDropdownProps) {
 				{menu.map((menuItem, menuItemIdx) => (
 					<div
 						key={`menu-section-${menuItemIdx}`}
-						className="block py-1.5 px-5 clear-both !w-48 relative !m-1 text-sm text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
+						className="py-1.5 pl-5 clear-both !w-48 !m-1 text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
 					>
 						{menu.map((menuItem) => (
 							<Link
 								href={menuItem.href}
-								className="h-full text-sm hover:text-blue-700 text-gray-800 group"
+								className="h-full text-sm block w-full hover:text-blue-700 text-gray-800 group"
 							>
 								{menuItem?.label}
 							</Link>

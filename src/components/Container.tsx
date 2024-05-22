@@ -4,7 +4,11 @@ import DropDown from "@/components/DropDown";
 import { EthAvatar } from "@/components/EthAvatar";
 import { FullLogo } from "@/components/FullLogo";
 import { CaretDownOutlined } from "@/components/icons/CaretDownOutlined";
-import { thirdWebWallets, web3Client } from "@/lib/constants";
+import {
+	accountAbstraction,
+	thirdWebWallets,
+	web3Client,
+} from "@/lib/constants";
 import { getShortenedFormat } from "@/utils/string.utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -62,7 +66,11 @@ export function Container({ children }: { children: React.ReactNode }) {
 				wallets={thirdWebWallets}
 				onConnect={() => router.push("/app")}
 			/>
-			<div className="h-[calc(100%-4rem)] w-full">{children}</div>
+			<div className="h-[calc(100%-4rem)] w-full p-4 pt-0">
+				<div className="p-2 h-full flex items-stretch rounded-lg bg-gray-100">
+					{children}
+				</div>
+			</div>
 		</div>
 	);
 }

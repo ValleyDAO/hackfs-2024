@@ -1,13 +1,20 @@
-import { Handle, NodeProps, Position } from "reactflow";
+import clsx from "clsx";
+import {
+	Handle,
+	NodeProps,
+	Position,
+	ReactFlowState,
+	useStore,
+} from "reactflow";
 
 type TechNodeProps = { label: string };
 
 export function TechNode({
 	data,
-	id,
 	isConnectable,
 	targetPosition = Position.Top,
 	sourcePosition = Position.Bottom,
+	selected,
 }: NodeProps<TechNodeProps>) {
 	return (
 		<>
@@ -16,7 +23,12 @@ export function TechNode({
 				position={targetPosition}
 				isConnectable={isConnectable}
 			/>
-			<div className="px-10 py-4 !text-xs bg-white border border-gray-200 rounded">
+			<div
+				className={clsx("px-10 py-4 !text-xs bg-white border rounded", {
+					"border-gray-600": selected,
+					"border-gray-200": !selected,
+				})}
+			>
 				{data?.label}
 			</div>
 			<Handle

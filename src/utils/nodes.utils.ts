@@ -21,40 +21,203 @@ export const initialNodes: TechTreeNode[] = [
 	{
 		id: getNodeId(),
 		type: "tech-tree",
-		data: { label: "Plant-based Meat" },
+		data: { label: "Foundational Knowledge" },
 		position: defaultPosition,
 	},
 	{
 		id: getNodeId(),
 		type: "tech-tree",
-		data: { label: "Cell-Cultured Meat" },
+		data: { label: "Genetic Engineering" },
 		position: defaultPosition,
 	},
 	{
 		id: getNodeId(),
 		type: "tech-tree",
-		data: { label: "Fermentation-Derived Proteins" },
+		data: { label: "Molecular Biology" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Core Techniques" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "DNA Assembly" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Protein Engineering" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Enabling Technologies" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Bioinformatics" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Microfluidics" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Directed Evolution" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Rational Design" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Protein Folding" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Protein Screening" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Chaperone Proteins" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Folding Pathways" },
+		position: defaultPosition,
+	},
+	{
+		id: getNodeId(),
+		type: "tech-tree",
+		data: { label: "Misfolding and Aggregation" },
 		position: defaultPosition,
 	},
 ];
 
 export const initialEdges: TechTreeEdge[] = [
+	// Layer 1
 	{
-		id: "e45",
+		id: "e1",
 		source: initialNodes[0].id,
 		target: initialNodes[1].id,
 		type: edgeType,
 	},
 	{
-		id: "e56",
+		id: "e2",
+		source: initialNodes[0].id,
+		target: initialNodes[4].id,
+		type: edgeType,
+	},
+	{
+		id: "e3",
+		source: initialNodes[0].id,
+		target: initialNodes[7].id,
+		type: edgeType,
+	},
+
+	// Layer 2
+	{
+		id: "e4",
 		source: initialNodes[1].id,
 		target: initialNodes[2].id,
 		type: edgeType,
 	},
 	{
-		id: "e57",
+		id: "e5",
 		source: initialNodes[1].id,
 		target: initialNodes[3].id,
+		type: edgeType,
+	},
+	{
+		id: "e6",
+		source: initialNodes[4].id,
+		target: initialNodes[5].id,
+		type: edgeType,
+	},
+	{
+		id: "e7",
+		source: initialNodes[4].id,
+		target: initialNodes[6].id,
+		type: edgeType,
+	},
+	{
+		id: "e8",
+		source: initialNodes[7].id,
+		target: initialNodes[8].id,
+		type: edgeType,
+	},
+	{
+		id: "e9",
+		source: initialNodes[7].id,
+		target: initialNodes[9].id,
+		type: edgeType,
+	},
+
+	// New Layer for Protein Engineering
+	{
+		id: "e10",
+		source: initialNodes[6].id,
+		target: initialNodes[10].id,
+		type: edgeType,
+	},
+	{
+		id: "e11",
+		source: initialNodes[6].id,
+		target: initialNodes[11].id,
+		type: edgeType,
+	},
+
+	// Additional Layer for Directed Evolution
+	{
+		id: "e12",
+		source: initialNodes[10].id,
+		target: initialNodes[12].id,
+		type: edgeType,
+	},
+	{
+		id: "e13",
+		source: initialNodes[10].id,
+		target: initialNodes[13].id,
+		type: edgeType,
+	},
+	{
+		id: "e14",
+		source: initialNodes[12].id,
+		target: initialNodes[14].id,
+		type: edgeType,
+	},
+	{
+		id: "e15",
+		source: initialNodes[12].id,
+		target: initialNodes[15].id,
+		type: edgeType,
+	},
+	{
+		id: "e16",
+		source: initialNodes[12].id,
+		target: initialNodes[16].id,
 		type: edgeType,
 	},
 ];
