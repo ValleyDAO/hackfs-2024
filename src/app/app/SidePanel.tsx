@@ -1,4 +1,3 @@
-import { DetailsPage } from "@/app/app/DetailsPage";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { TechTreeNode } from "@/typings";

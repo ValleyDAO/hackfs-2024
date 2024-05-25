@@ -1,6 +1,7 @@
 "use client";
 
 import { ResearchTreasury } from "@/app/app/ResearchTreasury";
+import { ResearchContent } from "@/app/app/[id]/ResearchContent";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
@@ -54,37 +55,7 @@ export default function Page({ params }: Props) {
 						<h1 className="font-bold text-3xl">{node?.label}</h1>
 					</div>
 					<ResearchTreasury fundingState={node?.fundingState} />
-					<div className="py-10 border-b border-gray-100 grid grid-cols-3 gap-6">
-						<div className="py-20 bg-white rounded" />
-						<div className="py-20 bg-white rounded" />
-						<div className="py-20 bg-white rounded" />
-					</div>
-					<div className="py-10 border-b border-gray-100 leading-8 text-sm">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit
-						amet erat sit amet lacus commodo ultricies. Phasellus vitae risus
-						convallis dolor facilisis cursus quis vitae nisi. In vitae lectus eu
-						felis euismod lacinia quis eu purus. Mauris quis mauris metus. Fusce
-						ultricies feugiat fringilla. Maecenas lobortis dolor sit amet tellus
-						commodo lobortis. Quisque viverra ex ligula, quis dictum ipsum
-						venenatis eget. Cras ex purus, tempus imperdiet gravida et,
-						consequat sed eros. Morbi faucibus felis at tortor pharetra blandit.
-						Sed mattis malesuada orci eu tincidunt. Aliquam erat volutpat.
-						Pellentesque magna sapien, finibus sed enim sit amet, sollicitudin
-						tempor mi. In accumsan, ex vitae ultricies molestie, quam neque
-						suscipit dolor, ut venenatis ipsum eros at tellus. Nam eget mollis
-						quam. Aliquam vitae maximus purus, nec condimentum magna. Vestibulum
-						ante ipsum primis in faucibus orci luctus et ultrices posuere
-						cubilia curae; Nulla bibendum, dolor quis vehicula elementum, urna
-						libero ultricies orci, interdum elementum metus neque in est.
-						Pellentesque habitant morbi tristique senectus et netus et malesuada
-						fames ac turpis egestas. Praesent libero elit, fringilla at lorem
-						sed, molestie ultrices turpis. Nulla facilisi. Vestibulum odio eros,
-						porttitor blandit bibendum eu, rhoncus id nisl. Etiam ullamcorper
-						efficitur tortor, at bibendum enim vulputate non. Mauris at rutrum
-						ante. Morbi feugiat ante ut tortor scelerisque sodales. Sed sit amet
-						condimentum nunc. Cras vel nulla fermentum, sollicitudin arcu sed,
-						dapibus metus.
-					</div>
+					<ResearchContent />
 				</div>
 				<div className="w-3/12">
 					{menu.map((menuItem, menuItemIdx) => (
