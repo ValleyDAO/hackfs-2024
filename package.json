@@ -3,19 +3,26 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"dev": "next dev -p 3001",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@remirror/core": "^2.0.19",
+		"@remirror/extension-markdown": "^2.0.14",
+		"@remirror/pm": "^2.0.8",
+		"@remirror/react": "^2.0.35",
 		"dagre": "^0.8.5",
 		"framer-motion": "^11.2.4",
 		"next": "14.2.3",
+		"next-view-transitions": "^0.1.1",
 		"pino-pretty": "^11.0.0",
 		"react": "^18",
 		"react-dom": "^18",
+		"react-query": "^3.39.3",
 		"reactflow": "^11.11.3",
+		"remirror": "^2.0.39",
 		"thirdweb": "^5.22.1",
 		"wagmi": "^2.9.2"
 	},

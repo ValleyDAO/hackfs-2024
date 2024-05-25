@@ -29,7 +29,7 @@ export function TechNode({
 					"border-gray-200": !selected,
 				})}
 			>
-				{data?.label}
+				<span className="techtree-title">{data?.label}</span>
 			</div>
 			<Handle
 				type="source"

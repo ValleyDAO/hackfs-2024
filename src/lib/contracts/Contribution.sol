@@ -6,48 +6,85 @@ contract Contribution {
         string title;
         string[] descriptions;
         uint256 points;
-        uint256 lastDripBlock;
+        uint256 fundingPool;
+        uint256 creationTime;
+        bool isFinished;
     }
 
-    mapping(address => Node[]) public userNodes;
-    mapping(address => uint256) public userPoints;
+    Node[] public nodes;
+    mapping(address => mapping(uint256 => uint256)) public userNodePoints;
+    mapping(address => mapping(uint256 => uint256)) public userLastDripBlock;
 
-    event NodeAdded(address indexed user, string title, uint256 points);
+    event NodeAdded(uint256 indexed nodeId, string title, uint256 points);
     event DescriptionAdded(address indexed user, uint256 nodeIndex, string description, uint256 points);
+    event FundsAdded(uint256 indexed nodeIndex, uint256 amount);
+    event NodeFinished(uint256 indexed nodeId);
 
-    function addNode(string memory _title) public {
-        Node memory newNode = Node({
-            title: _title,
-            descriptions: new string[],
-            points: 10, // Fixed points for adding a node
-            lastDripBlock: block.number
-        });
+    function addNode(string memory _title, string[] memory _descriptions) public {
+        Node storage newNode = nodes.push();
+        newNode.title = _title;
+        newNode.descriptions = _descriptions;
+        newNode.points = 10; // Fixed points for adding a node
+        newNode.fundingPool = 0;
+        newNode.creationTime = block.timestamp;
+        newNode.isFinished = false;
 
-        userNodes[msg.sender].push(newNode);
-        userPoints[msg.sender] += newNode.points;
+        uint256 nodeId = nodes.length - 1;
+        userLastDripBlock[msg.sender][nodeId] = block.number;
 
-        emit NodeAdded(msg.sender, _title, newNode.points);
+        emit NodeAdded(nodeId, _title, newNode.points);
     }
 
-    // This is a simplified version to demonstrate how contents in a node can also receive funding
     function addDescription(uint256 nodeIndex, string memory _description) public {
-        require(nodeIndex < userNodes[msg.sender].length, "Node does not exist");
+        require(nodeIndex < nodes.length, "Node does not exist");
 
-        Node storage node = userNodes[msg.sender][nodeIndex];
+        Node storage node = nodes[nodeIndex];
         node.descriptions.push(_description);
 
         uint256 descriptionPoints = 5; // Fixed points for adding a description
         node.points += descriptionPoints;
-        userPoints[msg.sender] += descriptionPoints;
+        userNodePoints[msg.sender][nodeIndex] += descriptionPoints;
+        userLastDripBlock[msg.sender][nodeIndex] = block.number;
 
         emit DescriptionAdded(msg.sender, nodeIndex, _description, descriptionPoints);
     }
 
-    function getUserNodes(address _user) external view returns (Node[] memory) {
-        return userNodes[_user];
+    function addFunds(uint256 nodeIndex) public payable {
+        require(nodeIndex < nodes.length, "Node does not exist");
+        require(msg.value > 0, "Must send some ether to fund the node");
+
+        Node storage node = nodes[nodeIndex];
+        node.fundingPool += msg.value;
+
+        emit FundsAdded(nodeIndex, msg.value);
     }
 
-    function getUserPoints(address _user) external view returns (uint256) {
-        return userPoints[_user];
+    function finishNode(uint256 nodeIndex) public {
+        require(nodeIndex < nodes.length, "Node does not exist");
+
+        Node storage node = nodes[nodeIndex];
+        node.isFinished = true;
+
+        emit NodeFinished(nodeIndex);
+    }
+
+    function getNodes() external view returns (Node[] memory) {
+        return nodes;
+    }
+
+    function getNode(uint256 nodeIndex) external view returns (Node memory) {
+        return nodes[nodeIndex];
+    }
+
+    function getUserNodePoints(address _user, uint256 nodeIndex) external view returns (uint256) {
+        return userNodePoints[_user][nodeIndex];
+    }
+
+    function getLastDripBlock(address _user, uint256 nodeIndex) external view returns (uint256) {
+        return userLastDripBlock[_user][nodeIndex];
+    }
+
+    function updateLastDripBlock(address _user, uint256 nodeIndex) external {
+        userLastDripBlock[_user][nodeIndex] = block.number;
     }
 }

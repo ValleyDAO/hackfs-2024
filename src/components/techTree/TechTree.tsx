@@ -4,7 +4,7 @@ import ReactFlow, { ConnectionLineType } from "reactflow";
 import "reactflow/dist/style.css";
 import { TechNode } from "@/components/TechNode";
 import { MenuBar } from "@/components/techTree/MenuBar";
-import { techTreeContract } from "@/lib/constants";
+import { contributionContract } from "@/lib/constants";
 import { TechTreeData, TechTreeNode } from "@/typings";
 import {
 	getLayoutElements,
@@ -12,7 +12,7 @@ import {
 	initialNodes,
 } from "@/utils/nodes.utils";
 import { prepareContractCall } from "thirdweb";
-import { useEstimateGas, useSendTransaction } from "thirdweb/react";
+import { useSendTransaction } from "thirdweb/react";
 
 interface TechTreeProps {
 	setActiveNode(activeNode?: TechTreeNode): void;
@@ -22,9 +22,7 @@ interface TechTreeProps {
 
 export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 	const nodeTypes = useMemo(() => ({ "tech-tree": TechNode }), []);
-	const { mutate, isPending, status, error, mutateAsync } =
-		useSendTransaction();
-	const { mutateAsync: estimateGasCost, data: gasEstimate } = useEstimateGas();
+	const { mutate, isPending, status, error } = useSendTransaction();
 	console.log({
 		isPending,
 		status,
@@ -57,9 +55,9 @@ export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 
 		try {
 			const transaction = prepareContractCall({
-				contract: techTreeContract,
+				contract: contributionContract,
 				method: "addNode",
-				params: ["Added node"],
+				params: ["Added node", ["dsfsdf"]],
 			});
 			// @ts-ignore
 			const tx = mutate(transaction);

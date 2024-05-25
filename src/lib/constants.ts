@@ -11,8 +11,14 @@ if (!clientId) {
 	throw new Error("No client ID provided");
 }
 
-export const techTreeAddress = "0xc43e4688c9d9cd9099536e60837361985408538e";
-export const chain = defineChain(314159);
+export const contributionContractAddress =
+	"0xfcc2be343357ccc9b80c621b00438c6dd365bb39";
+export const fundingContractAddress =
+	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
+export const chain = defineChain({
+	id: 314159,
+});
+
 export const web3Client = createThirdwebClient({
 	clientId,
 });
@@ -26,265 +32,414 @@ export const thirdWebWallets = [
 	}),
 ];
 
-export const techTreeContract = getContract({
-	address: techTreeAddress,
+export const contributionContract = getContract({
+	address: contributionContractAddress,
 	chain,
 	client: web3Client,
 	abi: [
 		{
-			type: "event",
-			name: "EdgeAdded",
+			anonymous: false,
 			inputs: [
 				{
-					type: "uint256",
-					name: "id",
-					indexed: true,
-					internalType: "uint256",
-				},
-				{
-					type: "uint256",
-					name: "startNodeID",
-					indexed: false,
-					internalType: "uint256",
-				},
-				{
-					type: "uint256",
-					name: "endNodeID",
-					indexed: false,
-					internalType: "uint256",
-				},
-				{
-					type: "address",
-					name: "creator",
 					indexed: true,
 					internalType: "address",
+					name: "user",
+					type: "address",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "description",
+					type: "string",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "points",
+					type: "uint256",
 				},
 			],
-			outputs: [],
-			anonymous: false,
+			name: "DescriptionAdded",
+			type: "event",
 		},
 		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "amount",
+					type: "uint256",
+				},
+			],
+			name: "FundsAdded",
 			type: "event",
+		},
+		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "nodeId",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "title",
+					type: "string",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "points",
+					type: "uint256",
+				},
+			],
 			name: "NodeAdded",
-			inputs: [
-				{
-					type: "uint256",
-					name: "id",
-					indexed: true,
-					internalType: "uint256",
-				},
-				{
-					type: "string",
-					name: "title",
-					indexed: false,
-					internalType: "string",
-				},
-				{
-					type: "address",
-					name: "creator",
-					indexed: true,
-					internalType: "address",
-				},
-			],
-			outputs: [],
+			type: "event",
+		},
+		{
 			anonymous: false,
-		},
-		{
-			type: "function",
-			name: "addEdge",
 			inputs: [
 				{
-					type: "uint256",
-					name: "_startNodeID",
+					indexed: true,
 					internalType: "uint256",
-				},
-				{
+					name: "nodeId",
 					type: "uint256",
-					name: "_endNodeID",
-					internalType: "uint256",
 				},
 			],
-			outputs: [],
-			stateMutability: "nonpayable",
+			name: "NodeFinished",
+			type: "event",
 		},
 		{
-			type: "function",
-			name: "addNode",
 			inputs: [
 				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					internalType: "string",
+					name: "_description",
 					type: "string",
+				},
+			],
+			name: "addDescription",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+			],
+			name: "addFunds",
+			outputs: [],
+			stateMutability: "payable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "string",
 					name: "_title",
-					internalType: "string",
+					type: "string",
+				},
+				{
+					internalType: "string[]",
+					name: "_descriptions",
+					type: "string[]",
 				},
 			],
+			name: "addNode",
 			outputs: [],
 			stateMutability: "nonpayable",
+			type: "function",
 		},
 		{
-			type: "function",
-			name: "edges",
 			inputs: [
 				{
-					type: "uint256",
-					name: "",
 					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
 				},
 			],
-			outputs: [
+			name: "finishNode",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
 				{
-					type: "uint256",
-					name: "id",
-					internalType: "uint256",
-				},
-				{
-					type: "uint256",
-					name: "startNodeID",
-					internalType: "uint256",
-				},
-				{
-					type: "uint256",
-					name: "endNodeID",
-					internalType: "uint256",
-				},
-				{
-					type: "address",
-					name: "creator",
 					internalType: "address",
+					name: "_user",
+					type: "address",
 				},
 				{
-					type: "uint256",
-					name: "creationTimestamp",
 					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
 				},
 			],
-			stateMutability: "view",
-		},
-		{
-			type: "function",
-			name: "getEdge",
-			inputs: [
-				{
-					type: "uint256",
-					name: "_id",
-					internalType: "uint256",
-				},
-			],
+			name: "getLastDripBlock",
 			outputs: [
 				{
-					type: "tuple",
+					internalType: "uint256",
 					name: "",
-					components: [
-						{
-							type: "uint256",
-							name: "id",
-							internalType: "uint256",
-						},
-						{
-							type: "uint256",
-							name: "startNodeID",
-							internalType: "uint256",
-						},
-						{
-							type: "uint256",
-							name: "endNodeID",
-							internalType: "uint256",
-						},
-						{
-							type: "address",
-							name: "creator",
-							internalType: "address",
-						},
-						{
-							type: "uint256",
-							name: "creationTimestamp",
-							internalType: "uint256",
-						},
-					],
-					internalType: "struct TechTree.Edge",
+					type: "uint256",
 				},
 			],
 			stateMutability: "view",
+			type: "function",
 		},
 		{
-			type: "function",
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+			],
 			name: "getNode",
-			inputs: [
-				{
-					type: "uint256",
-					name: "_id",
-					internalType: "uint256",
-				},
-			],
 			outputs: [
 				{
-					type: "tuple",
-					name: "",
 					components: [
 						{
-							type: "uint256",
-							name: "id",
-							internalType: "uint256",
-						},
-						{
-							type: "string",
-							name: "title",
 							internalType: "string",
+							name: "title",
+							type: "string",
 						},
 						{
-							type: "address",
-							name: "creator",
-							internalType: "address",
+							internalType: "string[]",
+							name: "descriptions",
+							type: "string[]",
 						},
 						{
-							type: "uint256",
-							name: "creationTimestamp",
 							internalType: "uint256",
+							name: "points",
+							type: "uint256",
+						},
+						{
+							internalType: "uint256",
+							name: "fundingPool",
+							type: "uint256",
+						},
+						{
+							internalType: "uint256",
+							name: "creationTime",
+							type: "uint256",
+						},
+						{
+							internalType: "bool",
+							name: "isFinished",
+							type: "bool",
 						},
 					],
-					internalType: "struct TechTree.Node",
+					internalType: "struct Contribution.Node",
+					name: "",
+					type: "tuple",
 				},
 			],
 			stateMutability: "view",
+			type: "function",
 		},
 		{
-			type: "function",
-			name: "nodes",
-			inputs: [
-				{
-					type: "uint256",
-					name: "",
-					internalType: "uint256",
-				},
-			],
+			inputs: [],
+			name: "getNodes",
 			outputs: [
 				{
-					type: "uint256",
-					name: "id",
-					internalType: "uint256",
-				},
-				{
-					type: "string",
-					name: "title",
-					internalType: "string",
-				},
-				{
-					type: "address",
-					name: "creator",
-					internalType: "address",
-				},
-				{
-					type: "uint256",
-					name: "creationTimestamp",
-					internalType: "uint256",
+					components: [
+						{
+							internalType: "string",
+							name: "title",
+							type: "string",
+						},
+						{
+							internalType: "string[]",
+							name: "descriptions",
+							type: "string[]",
+						},
+						{
+							internalType: "uint256",
+							name: "points",
+							type: "uint256",
+						},
+						{
+							internalType: "uint256",
+							name: "fundingPool",
+							type: "uint256",
+						},
+						{
+							internalType: "uint256",
+							name: "creationTime",
+							type: "uint256",
+						},
+						{
+							internalType: "bool",
+							name: "isFinished",
+							type: "bool",
+						},
+					],
+					internalType: "struct Contribution.Node[]",
+					name: "",
+					type: "tuple[]",
 				},
 			],
 			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "_user",
+					type: "address",
+				},
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+			],
+			name: "getUserNodePoints",
+			outputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			name: "nodes",
+			outputs: [
+				{
+					internalType: "string",
+					name: "title",
+					type: "string",
+				},
+				{
+					internalType: "uint256",
+					name: "points",
+					type: "uint256",
+				},
+				{
+					internalType: "uint256",
+					name: "fundingPool",
+					type: "uint256",
+				},
+				{
+					internalType: "uint256",
+					name: "creationTime",
+					type: "uint256",
+				},
+				{
+					internalType: "bool",
+					name: "isFinished",
+					type: "bool",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "_user",
+					type: "address",
+				},
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+			],
+			name: "updateLastDripBlock",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "",
+					type: "address",
+				},
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			name: "userLastDripBlock",
+			outputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "",
+					type: "address",
+				},
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			name: "userNodePoints",
+			outputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
 		},
 	],
 });
 
 export const accountAbstraction: SmartWalletOptions = {
 	chain,
-	sponsorGas: true,
-	factoryAddress: "0x742BEF7713B22Af6c6f7627EF33Ab3A896a93443",
+	sponsorGas: false,
 };

@@ -1,12 +1,11 @@
 "use client";
 
-import { DetailsPage } from "@/app/app/DetailsPage";
 import { SidePanel } from "@/app/app/SidePanel";
 import { TechTree } from "@/components/techTree/TechTree";
-import { TechTreeData, TechTreeNode } from "@/typings";
-import { initialEdges, initialNodes } from "@/utils/nodes.utils";
+import { useFetchNodes } from "@/hooks/useFetchNodes";
+import { TechTreeNode } from "@/typings";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useActiveWalletConnectionStatus } from "thirdweb/react";
 
 export default function Home() {
@@ -17,10 +16,7 @@ export default function Home() {
 		"sidepanel" | "details"
 	>();
 
-	const [data, setData] = useState<TechTreeData>({
-		nodes: initialNodes,
-		edges: initialEdges,
-	});
+	const { techTree, setTechTree } = useFetchNodes();
 	const [activeNode, setActiveNode] = React.useState<TechTreeNode>();
 
 	useEffect(() => {
@@ -31,7 +27,8 @@ export default function Home() {
 
 	function handleShowActiveNode(activeNode: TechTreeNode) {
 		setActiveNode(activeNode);
-		setShowActiveNodeContent("sidepanel");
+		router.push(`/app/${activeNode.id}`);
+		// setShowActiveNodeContent("details");
 	}
 
 	function handleCloseDetails() {
@@ -39,11 +36,15 @@ export default function Home() {
 		setActiveNode(undefined);
 	}
 
+	if (!techTree) {
+		return <></>;
+	}
+
 	return (
 		<>
 			<TechTree
-				setData={setData}
-				data={data}
+				setData={setTechTree}
+				data={techTree}
 				setActiveNode={handleShowActiveNode}
 			/>
 			{activeNode && showActiveNodeContent === "sidepanel" && (
@@ -52,9 +53,6 @@ export default function Home() {
 					openDetails={() => setShowActiveNodeContent("details")}
 					close={handleCloseDetails}
 				/>
-			)}
-			{showActiveNodeContent === "details" && activeNode && (
-				<DetailsPage activeNode={activeNode} close={handleCloseDetails} />
 			)}
 		</>
 	);

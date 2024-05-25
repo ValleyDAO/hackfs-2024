@@ -18,3 +18,14 @@ html {
             radial-gradient(#dfdfdf 1px, transparent 1px);
     background-position: 7px 7px;
 }
+
+.horizontal {
+    @apply flex items-center;
+}
+.vertical {
+    @apply flex flex-col items-center;
+}
+
+.layout {
+    @apply w-[95%] xl:w-[90%] mx-auto max-w-[1140px];
+}

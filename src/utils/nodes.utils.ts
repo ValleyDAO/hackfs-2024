@@ -3,8 +3,7 @@ import dagre from "dagre";
 
 export const defaultPosition = { x: 0, y: 0 };
 export const edgeType = "smoothstep";
-// generate random number between 1 and 1000000
-export const getNodeId = () => Math.random().toString(36).substring(7);
+
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
@@ -13,105 +12,139 @@ const nodeHeight = 50;
 
 export const initialNodes: TechTreeNode[] = [
 	{
-		id: getNodeId(),
+		id: "33xkw",
 		type: "tech-tree",
-		data: { label: "Synthetic Biology" },
+		data: {
+			label: "Synthetic Biology",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "ofxk0l",
 		type: "tech-tree",
-		data: { label: "Foundational Knowledge" },
+		data: {
+			label: "Foundational Knowledge",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "l1lwtv",
 		type: "tech-tree",
-		data: { label: "Genetic Engineering" },
+		data: {
+			label: "Genetic Engineering",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "ah9ojp",
 		type: "tech-tree",
-		data: { label: "Molecular Biology" },
+		data: {
+			label: "Molecular Biology",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "22u5p7",
 		type: "tech-tree",
-		data: { label: "Core Techniques" },
+		data: {
+			label: "Core Techniques",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "9dcbeg",
 		type: "tech-tree",
-		data: { label: "DNA Assembly" },
+		data: {
+			label: "DNA Assembly",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "gvomav",
 		type: "tech-tree",
-		data: { label: "Protein Engineering" },
+		data: {
+			label: "Protein Engineering",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "iz0ese",
 		type: "tech-tree",
-		data: { label: "Enabling Technologies" },
+		data: {
+			label: "Enabling Technologies",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "g70yat",
 		type: "tech-tree",
-		data: { label: "Bioinformatics" },
+		data: {
+			label: "Bioinformatics",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "gthqe",
 		type: "tech-tree",
-		data: { label: "Microfluidics" },
+		data: {
+			label: "Microfluidics",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "mp1z3o",
 		type: "tech-tree",
-		data: { label: "Directed Evolution" },
+		data: {
+			label: "Directed Evolution",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "lun1re",
 		type: "tech-tree",
-		data: { label: "Rational Design" },
+		data: {
+			label: "Rational Design",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "n2uv9i",
 		type: "tech-tree",
-		data: { label: "Protein Folding" },
+		data: {
+			label: "Protein Folding",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "fwb3dl9",
 		type: "tech-tree",
-		data: { label: "Protein Screening" },
+		data: {
+			label: "Protein Screening",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "9i7mjw",
 		type: "tech-tree",
-		data: { label: "Chaperone Proteins" },
+		data: {
+			label: "Chaperone Proteins",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "ku8zk8",
 		type: "tech-tree",
-		data: { label: "Folding Pathways" },
+		data: {
+			label: "Folding Pathways",
+		},
 		position: defaultPosition,
 	},
 	{
-		id: getNodeId(),
+		id: "szlku",
 		type: "tech-tree",
-		data: { label: "Misfolding and Aggregation" },
+		data: {
+			label: "Misfolding and Aggregation",
+		},
 		position: defaultPosition,
 	},
 ];

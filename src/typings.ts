@@ -1,6 +1,18 @@
 import { Edge, Node, Position } from "reactflow";
 
-export type TechTreeNode = Node & {
+export interface FundingState {
+	fundingRaised: number;
+	fundingRequest: number;
+	funders: number;
+}
+
+export interface NodeData {
+	id?: string;
+	label: string;
+	fundingState?: FundingState;
+}
+
+export type TechTreeNode = Node<NodeData> & {
 	targetPosition?: Position;
 	sourcePosition?: Position;
 };
