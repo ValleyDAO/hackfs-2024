@@ -55,15 +55,20 @@ export default function Page({ params }: Props) {
 		<div className="w-full rounded bg-white overflow-y-scroll">
 			<TopBar />
 			<div className="layout pt-14 flex items-start w-full space-x-14">
-				<div className="w-9/12">
+				<div className="w-full ">
 					<div className="techtree-title mb-4">
 						<h1 className="font-bold text-3xl">{node?.label}</h1>
 					</div>
-					<ResearchTreasury fundingState={node?.fundingState} />
+					{node?.fundingState && (
+						<ResearchTreasury
+							title={node?.label}
+							fundingState={node?.fundingState}
+						/>
+					)}
 					<Contributors />
 					<ResearchContent />
 				</div>
-				<div className="w-3/12">
+				{/*<div className="w-3/12">
 					{menu.map((menuItem, menuItemIdx) => (
 						<div
 							key={`menu-${menuItemIdx}`}
@@ -72,7 +77,7 @@ export default function Page({ params }: Props) {
 							{menuItem?.title}
 						</div>
 					))}
-				</div>
+				</div>*/}
 			</div>
 		</div>
 	);

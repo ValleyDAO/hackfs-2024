@@ -13,6 +13,7 @@ import { getShortenedFormat } from "@/utils/string.utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
+import { Toaster } from "react-hot-toast";
 import { AutoConnect, useActiveAccount } from "thirdweb/react";
 
 const menu = [
@@ -67,6 +68,7 @@ export function Container({ children }: { children: React.ReactNode }) {
 				wallets={thirdWebWallets}
 				onConnect={() => !pathname.startsWith("/app") && router.push("/app")}
 			/>
+			<Toaster containerClassName="text-sm" position="top-center" />
 			<div className="h-[calc(100%-4rem)] w-full p-4 pt-0">
 				<div className="p-2 h-full flex items-stretch rounded-lg bg-gray-100">
 					{children}
