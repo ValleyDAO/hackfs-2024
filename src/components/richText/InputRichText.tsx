@@ -114,13 +114,13 @@ export function InputRichText({
 				onFocus={() => !isFocused && setIsFocused(true)}
 				onBlur={() => isFocused && setIsFocused(false)}
 				className={clsx(
-					"m-0 w-full resize-none text-sm rounded border shadow-none outline-none transition-all duration-300 border-gray-200 bg-white p-3",
+					"m-0 w-full resize-none text-sm rounded border shadow-none outline-none transition-all duration-300 border-gray-200 bg-white pt-3 pb-6 px-6",
 					isFocused && "!border-blue-300 !shadow-blue-300",
 					"input--rich-text",
 				)}
 				style={{ height: textAreaHeight }}
 			>
-				<div className="mb-2 border-b pb-2 border-gray-100 horizontal space-x-2">
+				<div className="mb-3 border-b pb-3 border-gray-100 horizontal space-x-2">
 					<div
 						onClick={() => {
 							manager.store.commands.toggleBold();

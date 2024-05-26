@@ -9,6 +9,7 @@ const spaceGrotesk = Space_Grotesk({
 	subsets: ["latin"],
 	display: "swap",
 });
+
 export const metadata: Metadata = {
 	title: "ValleyDAO | HackFS 2024",
 	description: "-",

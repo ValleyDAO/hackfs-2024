@@ -2,8 +2,9 @@
 
 import { BoldExtension } from "@remirror/extension-bold";
 import { BulletListExtension } from "@remirror/extension-list";
+import { TextHighlightExtension } from "@remirror/extension-text-highlight";
 import { Remirror, useRemirror } from "@remirror/react";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface InputRichTextProps {
 	value?: string;
@@ -11,7 +12,11 @@ interface InputRichTextProps {
 
 export function RichText({ value }: InputRichTextProps) {
 	const { manager, state } = useRemirror({
-		extensions: () => [new BoldExtension({}), new BulletListExtension({})],
+		extensions: () => [
+			new BoldExtension({}),
+			new BulletListExtension({}),
+			new TextHighlightExtension({}),
+		],
 		content: value && JSON.parse(value),
 	});
 

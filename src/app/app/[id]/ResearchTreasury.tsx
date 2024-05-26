@@ -20,7 +20,7 @@ export function ResearchTreasury({ fundingState }: ResearchTreasuryProps) {
 				<div>
 					<div className="text-base font-bold mb-1">Treasury</div>
 					<div className="horizontal space-x-4 text-left">
-						<div className="text-base text-gray-600">
+						<div className="text-sm text-gray-600">
 							<span className="font-black text-primary">
 								${formatNumber(fundingState.fundingRaised)}
 							</span>{" "}

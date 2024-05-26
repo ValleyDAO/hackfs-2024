@@ -20,3 +20,7 @@ export type TechTreeNode = Node<NodeData> & {
 export type TechTreeEdge = Edge;
 
 export type TechTreeData = { nodes: TechTreeNode[]; edges: TechTreeEdge[] };
+
+export interface Contributor {
+	address: string;
+}

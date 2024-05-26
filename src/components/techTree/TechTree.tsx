@@ -20,8 +20,9 @@ interface TechTreeProps {
 	setData(data: TechTreeData): void;
 }
 
+const nodeTypes = { "tech-tree": TechNode };
+
 export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
-	const nodeTypes = useMemo(() => ({ "tech-tree": TechNode }), []);
 	const { mutate, isPending, status, error } = useSendTransaction();
 	console.log({
 		isPending,

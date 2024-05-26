@@ -11,7 +11,7 @@ import {
 } from "@/lib/constants";
 import { getShortenedFormat } from "@/utils/string.utils";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { AutoConnect, useActiveAccount } from "thirdweb/react";
 
@@ -58,13 +58,14 @@ export function Header() {
 
 export function Container({ children }: { children: React.ReactNode }) {
 	const router = useRouter();
+	const pathname = usePathname();
 	return (
 		<div className="w-full h-screen">
 			<Header />
 			<AutoConnect
 				client={web3Client}
 				wallets={thirdWebWallets}
-				onConnect={() => router.push("/app")}
+				onConnect={() => !pathname.startsWith("/app") && router.push("/app")}
 			/>
 			<div className="h-[calc(100%-4rem)] w-full p-4 pt-0">
 				<div className="p-2 h-full flex items-stretch rounded-lg bg-gray-100">

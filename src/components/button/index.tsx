@@ -12,6 +12,7 @@ export type ButtonProps = {
 	loading?: boolean;
 	disabled?: boolean;
 	className?: string;
+	fullSize?: boolean;
 };
 
 export function Button({
@@ -23,6 +24,7 @@ export function Button({
 	variant,
 	loading = false,
 	disabled = false,
+	fullSize,
 	...props
 }: ButtonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
 	return (
@@ -47,6 +49,7 @@ export function Button({
 					"py-2.5 px-4 space-x-2 text-sm": size === "medium",
 					"py-3 px-4 space-x-2 text-base": size === "large",
 					"disabled:cursor-not-allowed disabled:opacity-50": disabled,
+					"w-full": fullSize,
 				},
 				className,
 			)}
