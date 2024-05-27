@@ -30,6 +30,10 @@ html {
     @apply w-[95%] xl:w-[90%] mx-auto max-w-[1140px];
 }
 
-.input--rich-text {
-    @apply text-sm leading-relaxed;
+.tiptap {
+    @apply text-sm leading-relaxed outline-none;
+
+    p {
+        @apply inline;
+    }
 }

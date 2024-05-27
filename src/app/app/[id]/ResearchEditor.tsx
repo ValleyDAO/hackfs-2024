@@ -2,6 +2,8 @@ import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { DifferenceTracker } from "@/components/richText/DifferenceTracker";
 import { InputRichText } from "@/components/richText/InputRichText";
+import { InputRichTextV2 } from "@/components/richText/InputRichTextV2";
+import { RichText } from "@/components/richText/RichText";
 import { useEscapeKeydown } from "@radix-ui/react-use-escape-keydown";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
@@ -30,7 +32,8 @@ function UploadChanges({ research, editedResearch }: UploadChangesProps) {
 				<div className="text-xs font-medium text-gray-500 uppercase mb-2">
 					Differences
 				</div>
-				<DifferenceTracker value={research} newText={editedResearch} />
+				<RichText value={research} />
+				<div className="mt-4">{JSON.stringify(editedResearch)}</div>
 			</div>
 			<div className="mt-4">
 				<Button
@@ -93,7 +96,7 @@ export function ResearchEditor({ close, research }: ResearchEditorProps) {
 							/>
 						) : (
 							<>
-								<InputRichText
+								<InputRichTextV2
 									minRows={10}
 									label="Research"
 									value={editedResearch}

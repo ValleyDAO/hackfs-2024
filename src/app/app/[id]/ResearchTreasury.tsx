@@ -68,10 +68,7 @@ interface ResearchTreasuryProps {
 	title?: string;
 }
 
-export function ResearchTreasury({
-	fundingState,
-	title,
-}: ResearchTreasuryProps) {
+export function ResearchTreasury({ fundingState }: ResearchTreasuryProps) {
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);
 
@@ -80,7 +77,7 @@ export function ResearchTreasury({
 
 	return (
 		<>
-			<div className="space-y-4 border-y border-gray-100 py-6">
+			<div className="space-y-4 border-b border-gray-100 py-6">
 				<div className="horizontal justify-between">
 					<div>
 						<div className="text-base font-bold mb-1">Treasury</div>

@@ -1,31 +1,17 @@
-"use client";
-
-import { BoldExtension } from "@remirror/extension-bold";
-import { BulletListExtension } from "@remirror/extension-list";
-import { TextHighlightExtension } from "@remirror/extension-text-highlight";
-import { Remirror, useRemirror } from "@remirror/react";
-import React, { useEffect } from "react";
+import { EditorProvider } from "@tiptap/react";
+import { StarterKit } from "@tiptap/starter-kit";
+import React from "react";
 
 interface InputRichTextProps {
 	value?: string;
 }
 
 export function RichText({ value }: InputRichTextProps) {
-	const { manager, state } = useRemirror({
-		extensions: () => [
-			new BoldExtension({}),
-			new BulletListExtension({}),
-			new TextHighlightExtension({}),
-		],
-		content: value && JSON.parse(value),
-	});
-
 	return (
-		<Remirror
-			classNames={["input--rich-text"]}
-			manager={manager}
+		<EditorProvider
+			extensions={[StarterKit]}
+			content={value && JSON.parse(value)}
 			editable={false}
-			initialContent={state}
 		/>
 	);
 }
