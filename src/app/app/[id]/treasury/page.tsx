@@ -1,31 +1,14 @@
 "use client";
 
-import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
 import { ResearchTreasury } from "@/app/app/[id]/components/ResearchTreasury";
 import { Table, TableCell, TableRow } from "@/components/table";
-import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
 import React from "react";
 
-interface Props {
-	params: {
-		id: string;
-	};
-}
-
-export default function Page({ params }: Props) {
-	const { node } = useFetchTechTreeNode(params.id);
+export default function Page() {
+	//const { node } = useResearchPage();
 	return (
 		<>
-			<div className="techtree-title mb-6">
-				<h1 className="font-bold text-3xl">{node?.label}</h1>
-			</div>
-			<ProjectMenu id={params.id} />
-			{node?.fundingState && (
-				<ResearchTreasury
-					title={node?.label}
-					fundingState={node?.fundingState}
-				/>
-			)}
+			<ResearchTreasury />
 			<div className="mt-10">
 				<div className="font-bold mb-4">Active Payroll</div>
 				<Table

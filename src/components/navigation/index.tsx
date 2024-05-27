@@ -3,14 +3,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
 
-type NavigationItemBaseProps = {
+export type NavigationItemProps = {
 	label: string;
 	icon?: ReactNode;
 	href: string;
 };
 
 interface Props {
-	menu: NavigationItemBaseProps[];
+	menu: NavigationItemProps[];
 }
 
 export function Navigation({ menu }: Props) {
@@ -23,7 +23,7 @@ export function Navigation({ menu }: Props) {
 					className={clsx(
 						"flex items-center px-4 pb-2 pt-2 border-b hover:border-primary hover:text-primary",
 						pathname === href
-							? "text-black font-bold border-black"
+							? "text-black font-medium border-black"
 							: "border-gray-200 text-gray-600",
 					)}
 				>

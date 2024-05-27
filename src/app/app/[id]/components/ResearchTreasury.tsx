@@ -3,6 +3,7 @@ import { Modal } from "@/components/modal";
 import { FundingState } from "@/typings";
 import { formatNumber } from "@/utils/number.utils";
 
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import React, { useEffect, useState } from "react";
@@ -63,14 +64,12 @@ function DepositFunds({ close }: DepositFundsProps) {
 	);
 }
 
-interface ResearchTreasuryProps {
-	fundingState: FundingState;
-	title?: string;
-}
-
-export function ResearchTreasury({ fundingState }: ResearchTreasuryProps) {
+export function ResearchTreasury() {
+	const { fundingState } = useResearchPage();
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);
+
+	if (!fundingState) return <></>;
 
 	const fundingPercentage =
 		(fundingState.fundingRaised / fundingState.fundingRequest) * 100;
@@ -88,23 +87,7 @@ export function ResearchTreasury({ fundingState }: ResearchTreasuryProps) {
 								</span>{" "}
 								of ${formatNumber(fundingState.fundingRequest)}
 							</div>
-
-							<div className="text-gray-300 text-sm">|</div>
-							<div className="horizontal space-x-1 text-sm">
-								<div className="font-medium text-black">
-									{formatNumber(fundingState.funders)}
-								</div>
-								<div className="text-gray-600">backers</div>
-							</div>
 						</div>
-					</div>
-					<div>
-						<Button
-							onClick={() => setIntentionToAddFunds(true)}
-							variant="primary"
-						>
-							Fund Research
-						</Button>
 					</div>
 				</div>
 				<div className="horizontal space-x-1">

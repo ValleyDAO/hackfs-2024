@@ -1,3 +1,4 @@
+import { ResearchPageProvider } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -10,10 +11,10 @@ export const metadata: Metadata = {
 
 function TopBar() {
 	return (
-		<div className="flex pl-1 pt-1">
+		<div className="flex mx-1 py-1 border-b border-gray-100">
 			<Link
 				href="/app"
-				className="horizontal px-3 text-xs space-x-1.5 py-2 text-gray-500 transition-colors bg-gray-100/75 rounded-sm cursor-pointer hover:bg-blue-50 hover:text-blue-700"
+				className="horizontal px-3 text-xs space-x-1.5 py-2  transition-colors bg-blue-50 rounded-sm cursor-pointer hover:bg-blue-100/50 text-blue-700"
 			>
 				<ArrowLeftOutlined />
 				<span>Back</span>
@@ -24,13 +25,17 @@ function TopBar() {
 
 export default function RootLayout({
 	children,
+	params,
 }: Readonly<{
 	children: React.ReactNode;
+	params: { id: string };
 }>) {
 	return (
 		<div className="w-full rounded bg-white overflow-y-scroll">
 			<TopBar />
-			<div className="layout pt-14 w-full">{children}</div>
+			<div className="layout pt-6 w-full">
+				<ResearchPageProvider id={params.id}>{children}</ResearchPageProvider>
+			</div>
 		</div>
 	);
 }

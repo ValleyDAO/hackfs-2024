@@ -4,9 +4,11 @@ import { FundingState } from "@/typings";
 import { formatNumber } from "@/utils/number.utils";
 
 import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -31,12 +33,7 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	}, [debounced]);
 
 	return (
-		<Modal
-			wrapperWidth="max-w-2xl"
-			bodyClassName="px-4 py-6"
-			open
-			close={close}
-		>
+		<Modal bodyClassName="px-4 py-6" open close={close}>
 			<div className="mb-10">
 				<h2 className="font-bold">Add GROW</h2>
 				<p className="text-sm text-gray-700 w-10/12">
@@ -67,17 +64,14 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	);
 }
 
-interface RfpProposalProps {
-	nodeId?: string;
-	rfp?: string;
-	updateStatus?(): void;
-}
-
-export function RfpProposal({ nodeId, rfp, updateStatus }: RfpProposalProps) {
+export function RfpProposal() {
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);
+	const { handleStatusChange, rfp } = useResearchPage();
+
+	const compensation = rfp?.compensation || 0;
 	return (
-		<div className="flex items-start space-x-4 mt-6">
+		<div className="flex items-start space-x-4 mt-4">
 			<div className="w-9/12 space-y-4">
 				<DocumentViewer
 					documents={[
@@ -86,11 +80,32 @@ export function RfpProposal({ nodeId, rfp, updateStatus }: RfpProposalProps) {
 						},
 					]}
 				>
-					<RichText value={rfp} />
+					<RichText value={rfp?.content} />
 				</DocumentViewer>
 			</div>
-			<div className="w-4/12 p-6 bg-gray-50">
-				<div className="font-bold mb-8">Fund Research</div>
+			<div className="w-4/12 py-4 px-6 bg-gray-50 rounded">
+				<div className="font-semibold text-sm">Fund Research</div>
+				<div className="text-xs text-gray-700">
+					The estimated funding to complete the R&D is around{" "}
+					<span className="font-bold text-black">
+						$1,500 ({compensation} GROW)
+					</span>{" "}
+					to complete the research.
+				</div>
+				<div className="mt-4 mb-8">
+					<div className="py-2.5 flex justify-between text-xs border-y border-gray-200">
+						<div className="text-gray-700">Continuous Compensation (25%)</div>
+						<div className="font-medium">{(compensation / 100) * 25} GROW</div>
+					</div>
+					<div className="py-2.5 flex justify-between text-xs border-b border-gray-200">
+						<div className="text-gray-700">Completion fee (75%)</div>
+						<div className="font-medium">{(compensation / 100) * 75} GROW</div>
+					</div>
+					<div className="mt-2 text-[10px] w-11/12 leading-snug text-gray-800 flex items-start space-x-2">
+						* These numbers are estimates as researchers can join/leave. Actual
+						numbers will become accurate once the researcher starts.
+					</div>
+				</div>
 				<div>
 					<Button
 						onClick={() => setIntentionToAddFunds(true)}
@@ -104,7 +119,7 @@ export function RfpProposal({ nodeId, rfp, updateStatus }: RfpProposalProps) {
 			</div>
 			{intentionToAddFunds && (
 				<DepositFunds
-					onSuccess={() => updateStatus?.()}
+					onSuccess={() => handleStatusChange?.("in-progress")}
 					close={() => setIntentionToAddFunds(false)}
 				/>
 			)}
