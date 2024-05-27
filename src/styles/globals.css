@@ -27,11 +27,12 @@ html {
 }
 
 .layout {
-    @apply w-[95%] xl:w-[90%] mx-auto max-w-[1140px];
+    @apply w-[95%] xl:w-[90%] mx-auto max-w-[1240px];
 }
 
 .tiptap {
-    @apply text-sm leading-relaxed outline-none;
+
+    @apply text-[.85em] leading-relaxed outline-none;
 
     p {
         @apply inline;

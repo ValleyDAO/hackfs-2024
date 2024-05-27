@@ -3,6 +3,7 @@ import { Modal } from "@/components/modal";
 import { FundingState } from "@/typings";
 import { formatNumber } from "@/utils/number.utils";
 
+import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -11,9 +12,10 @@ import toast from "react-hot-toast";
 
 interface DepositFundsProps {
 	close(): void;
+	onSuccess?(): void;
 }
 
-function DepositFunds({ close }: DepositFundsProps) {
+function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [value, setValue] = useState<number>(0);
 
@@ -23,6 +25,7 @@ function DepositFunds({ close }: DepositFundsProps) {
 		if (isSubmitting && debounced) {
 			setIsSubmitting(false);
 			toast.success("Funds deposited successfully");
+			onSuccess?.();
 			close();
 		}
 	}, [debounced]);
@@ -74,16 +77,17 @@ export function RfpProposal({ nodeId, rfp, updateStatus }: RfpProposalProps) {
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);
 	return (
-		<div className="flex items-start space-x-10 mt-6">
-			<div className="w-9/12 space-y-4 border border-gray-100 bg-gray-50/50 rounded p-6">
-				<div className="horizontal justify-between">
-					<div>
-						<div className="text-base font-bold mb-1">Request For Proposal</div>
-					</div>
-				</div>
-				<div className="p-2">
+		<div className="flex items-start space-x-4 mt-6">
+			<div className="w-9/12 space-y-4">
+				<DocumentViewer
+					documents={[
+						{
+							name: "RFP",
+						},
+					]}
+				>
 					<RichText value={rfp} />
-				</div>
+				</DocumentViewer>
 			</div>
 			<div className="w-4/12 p-6 bg-gray-50">
 				<div className="font-bold mb-8">Fund Research</div>
@@ -100,10 +104,8 @@ export function RfpProposal({ nodeId, rfp, updateStatus }: RfpProposalProps) {
 			</div>
 			{intentionToAddFunds && (
 				<DepositFunds
-					close={() => {
-						setIntentionToAddFunds(false);
-						updateStatus?.();
-					}}
+					onSuccess={() => updateStatus?.()}
+					close={() => setIntentionToAddFunds(false)}
 				/>
 			)}
 		</div>

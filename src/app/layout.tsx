@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import {
+	Baskervville,
+	Libre_Baskerville,
+	Space_Grotesk,
+} from "next/font/google";
 import "../styles/globals.css";
 import { Container } from "@/components/Container";
 import Providers from "@/providers";
+import clsx from "clsx";
 import React from "react";
 
 const spaceGrotesk = Space_Grotesk({
 	subsets: ["latin"],
 	display: "swap",
+});
+
+const baskervville = Libre_Baskerville({
+	subsets: ["latin"],
+	display: "swap",
+	weight: ["400", "700"],
+	variable: "--font-baskervville",
 });
 
 export const metadata: Metadata = {
@@ -22,7 +34,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={spaceGrotesk.className}>
+			<body className={clsx(spaceGrotesk.className)}>
 				<Providers>
 					<Container>{children}</Container>
 				</Providers>
