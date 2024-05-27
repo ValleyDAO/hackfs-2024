@@ -1,24 +1,67 @@
 import { BoldOutlined } from "@/components/icons/BoldOutlined";
 import { UnOrderedListOutlined } from "@/components/icons/UnOrderedListOutlined";
-import { BoldExtension } from "@remirror/extension-bold";
-import { BulletListExtension } from "@remirror/extension-list";
-import {
-	OnChangeJSON,
-	PlaceholderExtension,
-	Remirror,
-	useRemirror,
-} from "@remirror/react";
+
+import { EditorProvider, useCurrentEditor } from "@tiptap/react";
+import { StarterKit } from "@tiptap/starter-kit";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { RemirrorJSON } from "remirror";
 
 interface InputRichTextProps {
 	minRows?: number;
 	maxRows?: number;
 	label?: string;
 	placeholder?: string;
-	value?: string; // External state for content
-	onChange: (newContent: string) => void; // Function to update external state
+	value?: string;
+	onChange(newContent: string): void;
+}
+
+const extensions = [
+	StarterKit.configure({
+		bulletList: {
+			keepMarks: true,
+			keepAttributes: false,
+		},
+		orderedList: {
+			keepMarks: true,
+			keepAttributes: false,
+		},
+	}),
+];
+
+function MenuBar() {
+	const { editor } = useCurrentEditor();
+
+	if (!editor) {
+		return null;
+	}
+	return (
+		<div className="mb-3 border-b pb-3 border-gray-100 horizontal space-x-2">
+			<div
+				onClick={() => editor.chain().focus().toggleBold().run()}
+				className={clsx(
+					"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
+					editor.isActive("bold")
+						? "bg-blue-50 text-blue-800"
+						: "text-gray-600",
+				)}
+			>
+				<BoldOutlined className=" text-base" />
+			</div>
+			<div
+				onClick={() => {
+					editor.chain().focus().toggleBulletList().run();
+				}}
+				className={clsx(
+					"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
+					editor.isActive("bulletList")
+						? "bg-blue-50 text-blue-800"
+						: "text-gray-600",
+				)}
+			>
+				<UnOrderedListOutlined className=" text-base" />
+			</div>
+		</div>
+	);
 }
 
 export function InputRichText({
@@ -30,15 +73,6 @@ export function InputRichText({
 	maxRows,
 }: InputRichTextProps) {
 	const [isFocused, setIsFocused] = React.useState(false);
-	const { manager } = useRemirror({
-		extensions: () => [
-			new BoldExtension({}),
-			new BulletListExtension({}),
-			new PlaceholderExtension({
-				placeholder,
-			}),
-		],
-	});
 
 	const [textAreaHeight, setTextAreaHeight] = useState("auto");
 	const textAreaRef = useRef<HTMLDivElement>(null);
@@ -92,7 +126,7 @@ export function InputRichText({
 		}
 	}, [value]);
 
-	const handleChange = (value: RemirrorJSON) => {
+	const handleChange = (value: Record<string, any>) => {
 		onChange(JSON.stringify(value));
 		calculateHeight();
 	};
@@ -120,42 +154,12 @@ export function InputRichText({
 				)}
 				style={{ height: textAreaHeight }}
 			>
-				<div className="mb-3 border-b pb-3 border-gray-100 horizontal space-x-2">
-					<div
-						onClick={() => {
-							manager.store.commands.toggleBold();
-						}}
-						className={clsx(
-							"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
-							manager.mounted && manager.store.active.bold?.()
-								? "bg-blue-50 text-blue-800"
-								: "text-gray-600",
-						)}
-					>
-						<BoldOutlined className=" text-base" />
-					</div>
-					<div
-						onClick={() => {
-							manager.store.commands.toggleBulletList();
-						}}
-						className={clsx(
-							"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
-							manager.mounted && manager.store.active.bulletList?.()
-								? "bg-blue-50 text-blue-800"
-								: "text-gray-600",
-						)}
-					>
-						<UnOrderedListOutlined className=" text-base" />
-					</div>
-				</div>
-				<Remirror
-					manager={manager}
-					autoRender
-					initialContent={content}
-					classNames={["focus:outline-none !h-full !w-full"]}
-				>
-					<OnChangeJSON onChange={handleChange} />
-				</Remirror>
+				<EditorProvider
+					slotBefore={<MenuBar />}
+					extensions={extensions}
+					content={content}
+					onUpdate={(params) => handleChange(params.editor.getJSON())}
+				/>
 			</div>
 		</>
 	);

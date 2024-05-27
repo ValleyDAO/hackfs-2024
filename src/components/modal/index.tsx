@@ -57,29 +57,27 @@ export function Modal({
 						onClick={(e) => e.stopPropagation()}
 						onKeyDown={(e) => e.stopPropagation()}
 						className={clsx(
-							"mx-auto flex w-full flex-col items-center overflow-scroll bg-white p-6",
+							"mx-auto w-full overflow-scroll bg-white p-6",
 							{
 								"absolute inset-0 z-10 rounded": !position,
 								"absolute m-auto left-0 right-0 rounded top-32":
 									position === "bottom",
 								"fixed inset-0 left-auto": position === "right",
 							},
-							bodyClassName,
 							wrapperWidth,
 						)}
 					>
-						{title && (
-							<div className="mb-2.5 left- flex w-full items-center justify-between border-b border-gray-100 pb-2.5">
-								<div className="text-lg font-bold">{title}</div>
-								<div className="hover:bg-gray-100 rounded px-1 group">
-									<CloseOutlined
-										className="text-base cursor-pointer group-hover:text-black transition-colors text-gray-400"
-										onClick={() => close?.()}
-									/>
-								</div>
+						<div className="flex w-full items-center justify-end">
+							<div className="hover:bg-gray-100 rounded px-1 group">
+								<CloseOutlined
+									className="text-base cursor-pointer group-hover:text-black transition-colors text-gray-400"
+									onClick={() => close?.()}
+								/>
 							</div>
-						)}
-						<div className="flex h-full w-full flex-col">{children}</div>
+						</div>
+						<div className={clsx("h-full w-full", bodyClassName)}>
+							{children}
+						</div>
 					</div>
 				</motion.div>
 			</AnimatePresence>

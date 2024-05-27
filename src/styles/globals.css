@@ -36,4 +36,8 @@ html {
     p {
         @apply inline;
     }
+
+    strong {
+        @apply font-semibold;
+    }
 }

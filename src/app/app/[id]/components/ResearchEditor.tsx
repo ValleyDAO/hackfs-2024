@@ -1,8 +1,6 @@
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
-import { DifferenceTracker } from "@/components/richText/DifferenceTracker";
 import { InputRichText } from "@/components/richText/InputRichText";
-import { InputRichTextV2 } from "@/components/richText/InputRichTextV2";
 import { RichText } from "@/components/richText/RichText";
 import { useEscapeKeydown } from "@radix-ui/react-use-escape-keydown";
 import clsx from "clsx";
@@ -96,7 +94,7 @@ export function ResearchEditor({ close, research }: ResearchEditorProps) {
 							/>
 						) : (
 							<>
-								<InputRichTextV2
+								<InputRichText
 									minRows={10}
 									label="Research"
 									value={editedResearch}

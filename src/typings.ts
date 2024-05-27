@@ -6,10 +6,17 @@ export interface FundingState {
 	funders: number;
 }
 
+export type NodeStatus = "finished" | "in-progress" | "rfp";
+
 export interface NodeData {
 	id?: string;
 	label: string;
 	fundingState?: FundingState;
+	rfp?: {
+		content: string;
+	};
+	content?: string;
+	status?: NodeStatus;
 }
 
 export type TechTreeNode = Node<NodeData> & {

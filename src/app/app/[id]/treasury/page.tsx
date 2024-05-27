@@ -1,7 +1,7 @@
 "use client";
 
-import { ProjectMenu } from "@/app/app/[id]/ProjectMenu";
-import { ResearchTreasury } from "@/app/app/[id]/ResearchTreasury";
+import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
+import { ResearchTreasury } from "@/app/app/[id]/components/ResearchTreasury";
 import { Table, TableCell, TableRow } from "@/components/table";
 import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
 import React from "react";

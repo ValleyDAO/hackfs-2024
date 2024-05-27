@@ -7,10 +7,14 @@ interface InputRichTextProps {
 }
 
 export function RichText({ value }: InputRichTextProps) {
+	let content;
+	try {
+		content = value && JSON.parse(value);
+	} catch (e) {}
 	return (
 		<EditorProvider
 			extensions={[StarterKit]}
-			content={value && JSON.parse(value)}
+			content={content}
 			editable={false}
 		/>
 	);

@@ -1,10 +1,8 @@
 "use client";
 
-import { Contributors } from "@/app/app/[id]/Contributors";
-import { ProjectMenu } from "@/app/app/[id]/ProjectMenu";
-import { Navigation } from "@/components/navigation";
+import { Contributors } from "@/app/app/[id]/components/Contributors";
+import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
 import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
-import { usePathname } from "next/navigation";
 import React from "react";
 
 interface Props {
