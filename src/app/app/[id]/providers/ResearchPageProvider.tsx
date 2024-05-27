@@ -29,6 +29,8 @@ export function ResearchPageProvider({
 	const { node } = useFetchTechTreeNode(id);
 	const [localNode, setLocalNode] = React.useState<NodeData>();
 
+	useEffect(() => {}, []);
+
 	useEffect(() => {
 		if (node) {
 			setLocalNode(node);
@@ -41,16 +43,6 @@ export function ResearchPageProvider({
 
 	return (
 		<ResearchPageContext.Provider value={{ ...localNode, handleStatusChange }}>
-			<div className="techtree-title mb-6">
-				<h1 className="font-black text-2xl">{localNode?.label}</h1>
-				<div className="mt-1">
-					<div className="flex items-center space-x-2">
-						<div className="text-xs">Status:</div>
-						<StatusTag status={localNode?.status} />
-					</div>
-				</div>
-			</div>
-			<ProjectMenu status={localNode?.status} id={id} />
 			{children}
 		</ResearchPageContext.Provider>
 	);

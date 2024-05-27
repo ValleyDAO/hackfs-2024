@@ -1,10 +1,8 @@
 "use client";
 
-import { Contributors } from "@/app/app/[id]/components/Contributors";
-import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
 import { ResearchContent } from "@/app/app/[id]/components/ResearchContent";
-import { ResearchTreasury } from "@/app/app/[id]/components/ResearchTreasury";
 import { RfpProposal } from "@/app/app/[id]/components/RfpProposal";
+import { ContributionAndTreasury } from "@/app/app/[id]/components/overview/ContributionAndTreasury";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 
 import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
@@ -19,8 +17,7 @@ export default function Page() {
 				<RfpProposal />
 			) : status === "in-progress" ? (
 				<>
-					<ResearchTreasury />
-					<Contributors />
+					<ContributionAndTreasury />
 					<ResearchContent />
 				</>
 			) : status === "finished" ? (

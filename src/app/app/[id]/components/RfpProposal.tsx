@@ -33,7 +33,7 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	}, [debounced]);
 
 	return (
-		<Modal bodyClassName="px-4 py-6" open close={close}>
+		<Modal open close={close}>
 			<div className="mb-10">
 				<h2 className="font-bold">Add GROW</h2>
 				<p className="text-sm text-gray-700 w-10/12">

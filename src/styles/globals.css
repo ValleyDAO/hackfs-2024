@@ -32,13 +32,13 @@ html {
 
 .tiptap {
 
-    @apply text-[.85em] leading-relaxed outline-none;
+    @apply text-[.85em] leading-relaxed outline-none text-gray-800;
 
     p {
         @apply inline;
     }
 
     strong {
-        @apply font-semibold;
+        @apply font-semibold text-gray-900;
     }
 }
