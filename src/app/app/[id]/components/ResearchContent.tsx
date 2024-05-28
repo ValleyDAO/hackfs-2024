@@ -1,16 +1,14 @@
 "use client";
 
 import { ResearchEditor } from "@/app/app/[id]/components/ResearchEditor";
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { EditOutlined } from "@/components/icons/EditOutlined";
 import { ExperimentOutlined } from "@/components/icons/ExperimentOutlined";
 import { RichText } from "@/components/richText/RichText";
 import React from "react";
 
-interface ResearchContentProps {
-	research?: string;
-}
-
-export function ResearchContent({ research }: ResearchContentProps) {
+export function ResearchContent() {
+	const { content } = useResearchPage();
 	const [isEditing, setIsEditing] = React.useState(false);
 	return (
 		<>
@@ -31,11 +29,11 @@ export function ResearchContent({ research }: ResearchContentProps) {
 					</div>
 				</div>
 				<div className="p-6">
-					<RichText value={research} />
+					<RichText value={content} />
 				</div>
 			</div>
-			{isEditing && research && (
-				<ResearchEditor close={() => setIsEditing(false)} research={research} />
+			{isEditing && content && (
+				<ResearchEditor close={() => setIsEditing(false)} research={content} />
 			)}
 		</>
 	);

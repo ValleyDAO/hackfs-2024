@@ -64,7 +64,7 @@ function DepositFunds({ close }: DepositFundsProps) {
 	);
 }
 
-export function ResearchTreasury() {
+export function ContributionAndTreasury() {
 	const { fundingState } = useResearchPage();
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);

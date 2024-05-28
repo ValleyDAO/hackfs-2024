@@ -26,10 +26,10 @@ export function DocumentViewer({
 }: ResearchContentProps) {
 	return (
 		<div className="border border-gray-100 rounded bg-gray-50/25 leading-relaxed">
-			<div className="flex items-end pt-1 justify-between border-b border-gray-100 bg-gray-50 pl-6">
+			<div className="flex items-end pt-2 justify-between border-b border-gray-100 bg-gray-100/75 pl-6">
 				<div className="flex">
 					{documents?.map((doc) => (
-						<div className="pb-0.5 space-x-1 border-b border-primary font-semibold">
+						<div className=" space-x-1 border-b border-primary font-semibold">
 							<FileOutlined className="text-base text-gray-600" />
 							<span className="uppercase text-gray-900 text-sm ">
 								{doc.name}

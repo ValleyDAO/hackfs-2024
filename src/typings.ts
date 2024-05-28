@@ -13,10 +13,12 @@ export interface NodeData {
 	label: string;
 	fundingState?: FundingState;
 	rfp?: {
+		compensation: number;
 		content: string;
 	};
 	content?: string;
 	status?: NodeStatus;
+	contributors?: Contributor[];
 }
 
 export type TechTreeNode = Node<NodeData> & {
@@ -30,4 +32,5 @@ export type TechTreeData = { nodes: TechTreeNode[]; edges: TechTreeEdge[] };
 
 export interface Contributor {
 	address: string;
+	ensName?: string;
 }

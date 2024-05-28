@@ -1,11 +1,14 @@
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { InputRichText } from "@/components/richText/InputRichText";
 import { RichText } from "@/components/richText/RichText";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useEscapeKeydown } from "@radix-ui/react-use-escape-keydown";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import React from "react";
+import React, { useEffect } from "react";
+import toast from "react-hot-toast";
 
 type ResearchEditorProps = {
 	close(): void;
@@ -15,10 +18,23 @@ type ResearchEditorProps = {
 interface UploadChangesProps {
 	research: string;
 	editedResearch: string;
+	close(): void;
 }
 
-function UploadChanges({ research, editedResearch }: UploadChangesProps) {
+function UploadChanges({ editedResearch, close }: UploadChangesProps) {
+	const { handleStatusChange } = useResearchPage();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+	const debouncedVal = useDebouncedValue(isSubmitting, 2500);
+
+	useEffect(() => {
+		if (debouncedVal) {
+			setIsSubmitting(false);
+			toast.success("Transaction successful");
+			handleStatusChange?.("finished");
+			close();
+		}
+	}, [debouncedVal]);
+
 	return (
 		<>
 			<h2 className="font-bold text-lg">Almost there</h2>
@@ -30,8 +46,7 @@ function UploadChanges({ research, editedResearch }: UploadChangesProps) {
 				<div className="text-xs font-medium text-gray-500 uppercase mb-2">
 					Differences
 				</div>
-				<RichText value={research} />
-				<div className="mt-4">{JSON.stringify(editedResearch)}</div>
+				<RichText value={editedResearch} />
 			</div>
 			<div className="mt-4">
 				<Button
@@ -52,11 +67,6 @@ export function ResearchEditor({ close, research }: ResearchEditorProps) {
 	useEscapeKeydown(() => close?.());
 	const [editedResearch, setEditedResearch] = React.useState<string>(research);
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
-	async function handleUpdate() {
-		//await update({ description });
-		close();
-	}
 
 	return (
 		<div
@@ -91,6 +101,7 @@ export function ResearchEditor({ close, research }: ResearchEditorProps) {
 							<UploadChanges
 								research={research}
 								editedResearch={editedResearch}
+								close={close}
 							/>
 						) : (
 							<>
