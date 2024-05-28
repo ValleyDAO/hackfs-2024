@@ -1,6 +1,7 @@
 import { Navigation, NavigationItemProps } from "@/components/navigation";
 
 import { NodeStatus } from "@/typings";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 interface ProjectMenuProps {
@@ -11,6 +12,7 @@ interface ProjectMenuProps {
 export function ProjectMenu({ id, status }: ProjectMenuProps) {
 	const basePath = `/app/${id}`;
 	let menu: NavigationItemProps[] = [];
+	const pathname = usePathname();
 
 	if (status === "rfp") {
 		menu.push({
@@ -22,6 +24,7 @@ export function ProjectMenu({ id, status }: ProjectMenuProps) {
 			{
 				href: basePath,
 				label: "Home",
+				isActive: pathname === `${basePath}/contribute`,
 			},
 			{
 				href: `${basePath}/contributions`,

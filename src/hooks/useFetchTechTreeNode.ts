@@ -40,6 +40,7 @@ export function useFetchTechTreeNode(id: string): useFetchTechTreeNodeProps {
 
 		return {
 			...node,
+			id,
 			rfp: {
 				compensation: 500,
 				content:

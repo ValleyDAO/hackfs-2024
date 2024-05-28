@@ -10,28 +10,24 @@ import {
 	web3Client,
 } from "@/lib/constants";
 import { getShortenedFormat } from "@/utils/string.utils";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import { AutoConnect, useActiveAccount } from "thirdweb/react";
 
-const menu = [
-	{
-		href: "/app",
-		label: "Logout",
-		icon: undefined,
-	},
-];
-
 export function Header() {
 	const account = useActiveAccount();
 	return (
 		<header className="w-full px-6 h-16 flex items-center text-gray-800 justify-between">
 			<div className="flex items-center space-x-3">
-				<div className="w-[125px] font-semibold text-white">
-					<FullLogo />
-				</div>
+				<Link
+					href={account?.address ? "/app" : "/"}
+					className="w-[110px] font-semibold text-white"
+				>
+					<FullLogo className="hover:!fill-blue-700" />
+				</Link>
 				<span className="text-xs text-gray-400">|</span>
 				<div className="text-sm">HackFS</div>
 			</div>

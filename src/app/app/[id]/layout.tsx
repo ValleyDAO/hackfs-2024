@@ -8,10 +8,10 @@ import React from "react";
 
 function TopBar() {
 	return (
-		<div className="flex mx-1 pt-1">
+		<div className="flex mb-2">
 			<Link
 				href="/app"
-				className="horizontal px-3 text-xs space-x-1.5 py-2  transition-colors bg-blue-50 rounded-sm cursor-pointer hover:bg-blue-100/50 text-blue-700"
+				className="horizontal text-xs space-x-1.5 cursor-pointer hover:text-blue-700 text-gray-500"
 			>
 				<ArrowLeftOutlined />
 				<span>Back</span>
@@ -29,14 +29,14 @@ export default function RootLayout({
 }>) {
 	return (
 		<div className="w-full rounded bg-white overflow-y-scroll">
-			<TopBar />
 			<ResearchPageProvider id={params.id}>
-				<div className="flex w-full h-full">
-					<div className="layout pt-6 w-full">
+				<div className="flex w-full h-full pt-10">
+					<div className="layout w-full">
+						<TopBar />
 						<ResearchHead id={params.id} />
 						{children}
 					</div>
-					{/*<ActivityLogs />*/}
+					<ActivityLogs />
 				</div>
 			</ResearchPageProvider>
 		</div>

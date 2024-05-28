@@ -9,6 +9,7 @@ export type NavigationItemProps = {
 	label: string;
 	icon?: ReactNode;
 	href: string;
+	isActive?: boolean;
 };
 
 interface Props {
@@ -19,12 +20,12 @@ export function Navigation({ menu }: Props) {
 	const pathname = usePathname();
 	return (
 		<div className="flex">
-			{menu.map(({ href, label, icon }) => (
+			{menu.map(({ href, label, icon, isActive }) => (
 				<Link
 					href={href}
 					className={clsx(
 						"flex items-center px-4 pb-2 pt-2 border-b hover:border-primary hover:text-primary",
-						pathname === href
+						pathname === href || isActive
 							? "text-black font-medium border-black"
 							: "border-gray-200 text-gray-600",
 					)}

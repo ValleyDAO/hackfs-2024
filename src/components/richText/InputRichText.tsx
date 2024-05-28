@@ -1,10 +1,19 @@
 import { BoldOutlined } from "@/components/icons/BoldOutlined";
 import { UnOrderedListOutlined } from "@/components/icons/UnOrderedListOutlined";
 
+import { HeadingOneOutlined } from "@/components/icons/HeadingOneOutlined";
+import { HeadingThreeOutlined } from "@/components/icons/HeadingThreeOutlined";
+import { HeadingTwoOutlined } from "@/components/icons/HeadingTwoOutlined";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import clsx from "clsx";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+	ReactNode,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 interface InputRichTextProps {
 	minRows?: number;
@@ -28,6 +37,24 @@ const extensions = [
 	}),
 ];
 
+function MenuBarItem({
+	icon,
+	onClick,
+	isActive,
+}: { onClick: () => void; isActive: boolean; icon: ReactNode }) {
+	return (
+		<div
+			onClick={onClick}
+			className={clsx(
+				"px-1.5 pb-1 hover:bg-gray-50 rounded cursor-pointer text-base",
+				isActive ? "bg-blue-50 text-blue-800" : "text-gray-600",
+			)}
+		>
+			{icon}
+		</div>
+	);
+}
+
 function MenuBar() {
 	const { editor } = useCurrentEditor();
 
@@ -35,31 +62,32 @@ function MenuBar() {
 		return null;
 	}
 	return (
-		<div className="mb-3 border-b pb-3 border-gray-100 horizontal space-x-2">
-			<div
+		<div className="mb-3 border-b pb-2 border-gray-100 horizontal space-x-1">
+			<MenuBarItem
 				onClick={() => editor.chain().focus().toggleBold().run()}
-				className={clsx(
-					"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
-					editor.isActive("bold")
-						? "bg-blue-50 text-blue-800"
-						: "text-gray-600",
-				)}
-			>
-				<BoldOutlined className=" text-base" />
-			</div>
-			<div
-				onClick={() => {
-					editor.chain().focus().toggleBulletList().run();
-				}}
-				className={clsx(
-					"px-1.5 py-1 hover:bg-gray-50 rounded cursor-pointer",
-					editor.isActive("bulletList")
-						? "bg-blue-50 text-blue-800"
-						: "text-gray-600",
-				)}
-			>
-				<UnOrderedListOutlined className=" text-base" />
-			</div>
+				isActive={editor.isActive("bold")}
+				icon={<BoldOutlined />}
+			/>
+			<MenuBarItem
+				onClick={() => editor.chain().focus().toggleBulletList().run()}
+				isActive={editor.isActive("bulletList")}
+				icon={<UnOrderedListOutlined />}
+			/>
+			<MenuBarItem
+				onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+				isActive={editor.isActive("heading", { level: 1 })}
+				icon={<HeadingOneOutlined />}
+			/>
+			<MenuBarItem
+				onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+				isActive={editor.isActive("heading", { level: 2 })}
+				icon={<HeadingTwoOutlined />}
+			/>
+			<MenuBarItem
+				onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+				isActive={editor.isActive("heading", { level: 3 })}
+				icon={<HeadingThreeOutlined />}
+			/>
 		</div>
 	);
 }
@@ -148,7 +176,7 @@ export function InputRichText({
 				onFocus={() => !isFocused && setIsFocused(true)}
 				onBlur={() => isFocused && setIsFocused(false)}
 				className={clsx(
-					"m-0 w-full resize-none text-sm rounded border shadow-none outline-none transition-all duration-300 border-gray-200 bg-white pt-3 pb-6 px-6",
+					"m-0 w-full resize-none text-sm rounded border shadow-none outline-none transition-all duration-300 border-gray-200 bg-white pt-4 pb-6 px-4",
 					isFocused && "!border-blue-300 !shadow-blue-300",
 					"input--rich-text",
 				)}

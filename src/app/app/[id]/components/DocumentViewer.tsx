@@ -25,26 +25,23 @@ export function DocumentViewer({
 	actions,
 }: ResearchContentProps) {
 	return (
-		<div className="border border-gray-100 rounded bg-gray-50/25 leading-relaxed">
-			<div className="flex items-end pt-2 justify-between border-b border-gray-100 bg-gray-100/75 pl-6">
-				<div className="flex">
+		<div className="border border-gray-100 rounded bg-gray-50/75 leading-relaxed">
+			<div className="horizontal  justify-between border-b border-gray-100 bg-black rounded-t px-4">
+				<div className="flex pt-2">
 					{documents?.map((doc) => (
-						<div className=" space-x-1 border-b border-primary font-semibold">
-							<FileOutlined className="text-base text-gray-600" />
-							<span className="uppercase text-gray-900 text-sm ">
-								{doc.name}
-							</span>
+						<div className=" space-x-1.5 border-b-2 pb-0.5 border-blue-800 ">
+							<FileOutlined className="text-sm text-gray-200" />
+							<span className="text-gray-100 text-xs">{doc.name}</span>
 						</div>
 					))}
 				</div>
-				<div className="flex">
+				<div className="flex items-center">
 					{actions?.map((action) => (
 						<div
-							className="hover:bg-blue-50 text-primary transition-colors cursor-pointer space-x-2 px-4 py-1.5 rounded-tr"
+							className="text-gray-100 hover:text-white transition-colors cursor-pointer"
 							onClick={action.onClick}
 						>
-							<EditOutlined className="text-sm leading-none" />
-							<span className="text-xs font-semibold">{action.label}</span>
+							<EditOutlined className="leading-none text-lg" />
 						</div>
 					))}
 				</div>
