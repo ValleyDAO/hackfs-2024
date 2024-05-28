@@ -12,7 +12,7 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0xfcc2be343357ccc9b80c621b00438c6dd365bb39";
+	"0x309601c3d08a4c9f84ec9bfa327c6b011db7edc5";
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
 export const chain = defineChain({
@@ -55,7 +55,7 @@ export const contributionContract = getContract({
 				{
 					indexed: false,
 					internalType: "string",
-					name: "description",
+					name: "ipfsHash",
 					type: "string",
 				},
 				{
@@ -65,7 +65,7 @@ export const contributionContract = getContract({
 					type: "uint256",
 				},
 			],
-			name: "DescriptionAdded",
+			name: "ContributionAdded",
 			type: "event",
 		},
 		{
@@ -134,11 +134,11 @@ export const contributionContract = getContract({
 				},
 				{
 					internalType: "string",
-					name: "_description",
+					name: "_ipfsHash",
 					type: "string",
 				},
 			],
-			name: "addDescription",
+			name: "addContribution",
 			outputs: [],
 			stateMutability: "nonpayable",
 			type: "function",
@@ -149,6 +149,11 @@ export const contributionContract = getContract({
 					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
+				},
+				{
+					internalType: "string",
+					name: "_ipfsHash",
+					type: "string",
 				},
 			],
 			name: "addFunds",
@@ -164,9 +169,9 @@ export const contributionContract = getContract({
 					type: "string",
 				},
 				{
-					internalType: "string[]",
-					name: "_descriptions",
-					type: "string[]",
+					internalType: "string",
+					name: "_ipfsHash",
+					type: "string",
 				},
 			],
 			name: "addNode",
@@ -212,59 +217,8 @@ export const contributionContract = getContract({
 			type: "function",
 		},
 		{
-			inputs: [
-				{
-					internalType: "uint256",
-					name: "nodeIndex",
-					type: "uint256",
-				},
-			],
-			name: "getNode",
-			outputs: [
-				{
-					components: [
-						{
-							internalType: "string",
-							name: "title",
-							type: "string",
-						},
-						{
-							internalType: "string[]",
-							name: "descriptions",
-							type: "string[]",
-						},
-						{
-							internalType: "uint256",
-							name: "points",
-							type: "uint256",
-						},
-						{
-							internalType: "uint256",
-							name: "fundingPool",
-							type: "uint256",
-						},
-						{
-							internalType: "uint256",
-							name: "creationTime",
-							type: "uint256",
-						},
-						{
-							internalType: "bool",
-							name: "isFinished",
-							type: "bool",
-						},
-					],
-					internalType: "struct Contribution.Node",
-					name: "",
-					type: "tuple",
-				},
-			],
-			stateMutability: "view",
-			type: "function",
-		},
-		{
 			inputs: [],
-			name: "getNodes",
+			name: "getNodesLite",
 			outputs: [
 				{
 					components: [
@@ -274,14 +228,31 @@ export const contributionContract = getContract({
 							type: "string",
 						},
 						{
-							internalType: "string[]",
-							name: "descriptions",
-							type: "string[]",
+							components: [
+								{
+									internalType: "address",
+									name: "contributor",
+									type: "address",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+							],
+							internalType: "struct Contribution.ContributionDetail[]",
+							name: "contributions",
+							type: "tuple[]",
 						},
 						{
 							internalType: "uint256",
 							name: "points",
 							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "fundingAddress",
+							type: "address",
 						},
 						{
 							internalType: "uint256",
@@ -295,11 +266,16 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "bool",
+							name: "isFunded",
+							type: "bool",
+						},
+						{
+							internalType: "bool",
 							name: "isFinished",
 							type: "bool",
 						},
 					],
-					internalType: "struct Contribution.Node[]",
+					internalType: "struct Contribution.NodeLite[]",
 					name: "",
 					type: "tuple[]",
 				},
@@ -352,6 +328,11 @@ export const contributionContract = getContract({
 					type: "uint256",
 				},
 				{
+					internalType: "address",
+					name: "fundingAddress",
+					type: "address",
+				},
+				{
 					internalType: "uint256",
 					name: "fundingPool",
 					type: "uint256",
@@ -363,8 +344,52 @@ export const contributionContract = getContract({
 				},
 				{
 					internalType: "bool",
+					name: "isFunded",
+					type: "bool",
+				},
+				{
+					internalType: "bool",
 					name: "isFinished",
 					type: "bool",
+				},
+				{
+					components: [
+						{
+							internalType: "address",
+							name: "funder",
+							type: "address",
+						},
+						{
+							internalType: "uint256",
+							name: "amount",
+							type: "uint256",
+						},
+						{
+							internalType: "string",
+							name: "ipfsHash",
+							type: "string",
+						},
+					],
+					internalType: "struct Contribution.Funder",
+					name: "funder",
+					type: "tuple",
+				},
+				{
+					components: [
+						{
+							internalType: "address",
+							name: "rpc",
+							type: "address",
+						},
+						{
+							internalType: "string",
+							name: "ipfsHash",
+							type: "string",
+						},
+					],
+					internalType: "struct Contribution.RPC",
+					name: "rpc",
+					type: "tuple",
 				},
 			],
 			stateMutability: "view",
@@ -386,30 +411,6 @@ export const contributionContract = getContract({
 			name: "updateLastDripBlock",
 			outputs: [],
 			stateMutability: "nonpayable",
-			type: "function",
-		},
-		{
-			inputs: [
-				{
-					internalType: "address",
-					name: "",
-					type: "address",
-				},
-				{
-					internalType: "uint256",
-					name: "",
-					type: "uint256",
-				},
-			],
-			name: "userLastDripBlock",
-			outputs: [
-				{
-					internalType: "uint256",
-					name: "",
-					type: "uint256",
-				},
-			],
-			stateMutability: "view",
 			type: "function",
 		},
 		{

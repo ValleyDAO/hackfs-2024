@@ -6,7 +6,6 @@ contract Contribution {
         string title;
         string[] descriptions;
         uint256 points;
-        mapping(address => uint256) lastDripBlock;
         uint256 fundingPool;
         uint256 creationTime;
         bool isFinished;
@@ -14,6 +13,7 @@ contract Contribution {
 
     Node[] public nodes;
     mapping(address => mapping(uint256 => uint256)) public userNodePoints;
+    mapping(address => mapping(uint256 => uint256)) public userLastDripBlock;
 
     event NodeAdded(uint256 indexed nodeId, string title, uint256 points);
     event DescriptionAdded(address indexed user, uint256 nodeIndex, string description, uint256 points);
@@ -30,7 +30,7 @@ contract Contribution {
         newNode.isFinished = false;
 
         uint256 nodeId = nodes.length - 1;
-        newNode.lastDripBlock[msg.sender] = block.number;
+        userLastDripBlock[msg.sender][nodeId] = block.number;
 
         emit NodeAdded(nodeId, _title, newNode.points);
     }
@@ -44,7 +44,7 @@ contract Contribution {
         uint256 descriptionPoints = 5; // Fixed points for adding a description
         node.points += descriptionPoints;
         userNodePoints[msg.sender][nodeIndex] += descriptionPoints;
-        node.lastDripBlock[msg.sender] = block.number;
+        userLastDripBlock[msg.sender][nodeIndex] = block.number;
 
         emit DescriptionAdded(msg.sender, nodeIndex, _description, descriptionPoints);
     }
@@ -72,17 +72,19 @@ contract Contribution {
         return nodes;
     }
 
+    function getNode(uint256 nodeIndex) external view returns (Node memory) {
+        return nodes[nodeIndex];
+    }
+
     function getUserNodePoints(address _user, uint256 nodeIndex) external view returns (uint256) {
         return userNodePoints[_user][nodeIndex];
     }
 
     function getLastDripBlock(address _user, uint256 nodeIndex) external view returns (uint256) {
-        Node storage node = nodes[nodeIndex];
-        return node.lastDripBlock[_user];
+        return userLastDripBlock[_user][nodeIndex];
     }
 
     function updateLastDripBlock(address _user, uint256 nodeIndex) external {
-        Node storage node = nodes[nodeIndex];
-        node.lastDripBlock[_user] = block.number;
+        userLastDripBlock[_user][nodeIndex] = block.number;
     }
 }

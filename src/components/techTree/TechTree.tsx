@@ -58,7 +58,7 @@ export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 			const transaction = prepareContractCall({
 				contract: contributionContract,
 				method: "addNode",
-				params: ["Added node", ["dsfsdf"]],
+				params: ["Added node", "dsfsdf"],
 			});
 			// @ts-ignore
 			const tx = mutate(transaction);
