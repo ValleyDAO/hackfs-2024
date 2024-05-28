@@ -3,15 +3,22 @@
 import { SidePanel } from "@/app/app/SidePanel";
 import { TechTree } from "@/components/techTree/TechTree";
 import { useFetchNodes } from "@/hooks/useFetchNodes";
+import { contributionContract } from "@/lib/constants";
 import { TechTreeNode } from "@/typings";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { useActiveWalletConnectionStatus } from "thirdweb/react";
+import {
+	useActiveWalletConnectionStatus,
+	useReadContract,
+} from "thirdweb/react";
 
 export default function Home() {
 	const router = useRouter();
 	const status = useActiveWalletConnectionStatus();
-
+	const { data } = useReadContract({
+		contract: contributionContract,
+		method: "getNodesLite",
+	});
 	const [showActiveNodeContent, setShowActiveNodeContent] = React.useState<
 		"sidepanel" | "details"
 	>();
@@ -35,6 +42,8 @@ export default function Home() {
 		setShowActiveNodeContent(undefined);
 		setActiveNode(undefined);
 	}
+
+	console.log(data);
 
 	if (!techTree) {
 		return <></>;

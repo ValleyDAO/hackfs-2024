@@ -12,7 +12,7 @@ import {
 	initialNodes,
 } from "@/utils/nodes.utils";
 import { prepareContractCall } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
+import { useReadContract, useSendTransaction } from "thirdweb/react";
 
 interface TechTreeProps {
 	setActiveNode(activeNode?: TechTreeNode): void;
@@ -24,11 +24,6 @@ const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTree({ setActiveNode, data, setData }: TechTreeProps) {
 	const { mutate, isPending, status, error } = useSendTransaction();
-	console.log({
-		isPending,
-		status,
-		error,
-	});
 
 	useEffect(() => {
 		const data = getLayoutElements(initialNodes, initialEdges);

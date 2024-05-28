@@ -12,7 +12,7 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0x309601c3d08a4c9f84ec9bfa327c6b011db7edc5";
+	"0x7952A2d5fA150c78C1FFD0434175ee3D59b628B7";
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
 export const chain = defineChain({
