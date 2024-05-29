@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 contract Contribution {
-    struct RPC {
-        address rpc;
+    struct RFP {
+        address rfp;
         string ipfsHash;
     }
 
@@ -28,8 +28,15 @@ contract Contribution {
         bool isFunded;
         bool isFinished;
         Funder funder;
-        RPC rpc;
+        RFP rfp;
         mapping(address => uint256) lastDripBlock;
+    }
+
+    struct Edge {
+        string source;
+        string target;
+        address creator;
+        uint256 creationTime;
     }
 
     struct NodeLite {
@@ -43,10 +50,22 @@ contract Contribution {
         bool isFinished;
     }
 
+    struct NodeInput {
+        string title;
+        string ipfsHash;
+    }
+
+    struct EdgeInput {
+        string source;
+        string target;
+    }
+
     Node[] public nodes;
+    Edge[] public edges;
     mapping(address => mapping(uint256 => uint256)) public userNodePoints;
 
     event NodeAdded(uint256 indexed nodeId, string title, uint256 points);
+    event EdgeAdded(uint256 indexed edgeId, string source, string target);
     event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash, uint256 points);
     event FundsAdded(uint256 indexed nodeIndex, uint256 amount);
     event NodeFinished(uint256 indexed nodeId);
@@ -59,13 +78,34 @@ contract Contribution {
         newNode.creationTime = block.timestamp;
         newNode.isFinished = false;
         newNode.isFunded = false;
-        newNode.rpc = RPC({rpc: msg.sender, ipfsHash: _ipfsHash});
+        newNode.rfp = RFP({rfp: msg.sender, ipfsHash: _ipfsHash});
 
         uint256 nodeId = nodes.length - 1;
         newNode.lastDripBlock[msg.sender] = block.number;
 
-
         emit NodeAdded(nodeId, _title, newNode.points);
+    }
+
+    function addEdge(string memory _source, string memory _target) public {
+        Edge storage newEdge = edges.push();
+        newEdge.source = _source;
+        newEdge.target = _target;
+
+        newEdge.creationTime = block.timestamp;
+        newEdge.creator = msg.sender;
+
+        uint256 edgeId = edges.length - 1;
+
+        emit EdgeAdded(edgeId, _source, _target);
+    }
+
+    function updateTechTree(NodeInput[] memory _nodes, EdgeInput[] memory _edges) public {
+        for (uint i = 0; i < _nodes.length; i++) {
+            addNode(_nodes[i].title, _nodes[i].ipfsHash);
+        }
+        for (uint i = 0; i < _edges.length; i++) {
+            addEdge(_edges[i].source, _edges[i].target);
+        }
     }
 
     function addContribution(uint256 nodeIndex, string memory _ipfsHash) public {
@@ -88,7 +128,7 @@ contract Contribution {
 
         Node storage node = nodes[nodeIndex];
         require(node.fundingAddress == address(0) || node.fundingAddress == msg.sender, "Only the funder can add more funds");
-        
+
         if (node.fundingAddress == address(0)) {
             node.fundingAddress = msg.sender;
         }
@@ -126,6 +166,25 @@ contract Contribution {
             });
         }
         return nodesLite;
+    }
+
+    function getNode(uint256 nodeIndex) external view returns (NodeLite memory) {
+        Node storage node = nodes[nodeIndex];
+        NodeLite memory nodeLite = NodeLite({
+            title: node.title,
+            contributions: node.contributions,
+            points: node.points,
+            fundingAddress: node.fundingAddress,
+            fundingPool: node.fundingPool,
+            creationTime: node.creationTime,
+            isFunded: node.isFunded,
+            isFinished: node.isFinished
+        });
+        return nodeLite;
+    }
+
+    function getEdges() external view returns (Edge[] memory) {
+        return edges;
     }
 
     function getUserNodePoints(address _user, uint256 nodeIndex) external view returns (uint256) {

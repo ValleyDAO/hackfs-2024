@@ -29,8 +29,10 @@ export const useTechTreeContext = (): TechTreeContextProps => {
 };
 
 export function TechTreeContextProvider({ children }: { children: ReactNode }) {
-	const { nodes } = useTechTreeData();
-	const [mode, setMode] = React.useState<TechTreeMode>("move");
+	const { nodes, hasUpdates } = useTechTreeData();
+	const [mode, setMode] = React.useState<TechTreeMode>(
+		hasUpdates ? "edit" : "move",
+	);
 	const [activeEditType, setActiveEditType] = React.useState<
 		TechTreeAddType | undefined
 	>("node");
@@ -47,9 +49,7 @@ export function TechTreeContextProvider({ children }: { children: ReactNode }) {
 
 	function handleSetActiveNode(nodeId?: string) {
 		const node = nodes.find((n) => n.id === nodeId);
-		if (node) {
-			setActiveNode(node);
-		}
+		setActiveNode(node);
 	}
 
 	const value = useMemo(

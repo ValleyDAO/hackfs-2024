@@ -26,7 +26,7 @@ export function ResearchPageProvider({
 	children,
 	id,
 }: { children: ReactNode; id: string }) {
-	const { node } = useFetchTechTreeNode(id);
+	const { node } = useFetchTechTreeNode(BigInt(id));
 	const [localNode, setLocalNode] = React.useState<NodeData>();
 
 	useEffect(() => {}, []);

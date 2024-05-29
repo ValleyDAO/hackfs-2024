@@ -4,11 +4,13 @@ import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EdgeOutlined } from "@/components/icons/EdgeOutlined";
 import { NodeOutlined } from "@/components/icons/NodeOutlined";
+import { Modal } from "@/components/modal";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { useTechTreeData } from "@/providers/TechTreeDataProvider";
 import { TechTreeAddType, TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
+import toast, { useToaster } from "react-hot-toast";
 
 function AddObjectInEditModeItem({
 	icon,
@@ -42,10 +44,11 @@ function AddObjectInEditModeItem({
 }
 
 export function EditTechTreeMenu() {
-	const { hasUpdates } = useTechTreeData();
-	const { setMode, activeEditType } = useTechTreeContext();
+	const { hasUpdates, handlePublish, isPublishing } = useTechTreeData();
+	const { setMode, activeEditType, activeNode } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
+		handlePublish("reset");
 		setMode("move");
 	}
 
@@ -62,7 +65,8 @@ export function EditTechTreeMenu() {
 							Leave{" "}
 							<span className="font-medium group-hover:text-blue-700 text-gray-600">
 								Edit Mode
-							</span>
+							</span>{" "}
+							{hasUpdates && "& Reset Changes"}
 						</div>
 					</div>
 					<div className="flex items-center space-x-8">
@@ -82,9 +86,22 @@ export function EditTechTreeMenu() {
 					</div>
 				</div>
 			</div>
-			<Button disabled={!hasUpdates} variant="black">
-				Publish
-			</Button>
+			<div className="flex items-center space-x-4">
+				<div
+					onClick={() => handlePublish("reset")}
+					className="text-gray-500 hover:text-red-700 transition-colors text-xs cursor-pointer"
+				>
+					Reset
+				</div>
+				<Button
+					loading={isPublishing}
+					onClick={() => handlePublish("publish")}
+					disabled={!hasUpdates}
+					variant="black"
+				>
+					Publish
+				</Button>
+			</div>
 		</div>
 	);
 }

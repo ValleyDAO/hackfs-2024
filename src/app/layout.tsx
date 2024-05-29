@@ -15,13 +15,6 @@ const spaceGrotesk = Space_Grotesk({
 	display: "swap",
 });
 
-const baskervville = Libre_Baskerville({
-	subsets: ["latin"],
-	display: "swap",
-	weight: ["400", "700"],
-	variable: "--font-baskervville",
-});
-
 export const metadata: Metadata = {
 	title: "ValleyDAO | HackFS 2024",
 	description: "-",

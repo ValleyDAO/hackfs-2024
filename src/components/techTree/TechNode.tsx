@@ -43,7 +43,7 @@ export function TechNode({
 				)}
 			>
 				<span className="">{data?.title}</span>
-				{showDelete && (
+				{/*{showDelete && (
 					<div
 						onClick={handleDelete}
 						className="absolute cursor-pointer horizontal justify-center top-0 right-0 w-5 aspect-square bg-red-600 border-2 rounded-full border-white -mt-2 -mr-2"
@@ -52,7 +52,7 @@ export function TechNode({
 							x
 						</span>
 					</div>
-				)}
+				)}*/}
 			</div>
 			<Handle
 				type="source"

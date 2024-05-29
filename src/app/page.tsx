@@ -5,15 +5,6 @@ import React, { useEffect } from "react";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
 
 export default function Home() {
-	const router = useRouter();
-	const account = useActiveAccount();
-
-	useEffect(() => {
-		if (account?.address) {
-			router.push("/app");
-		}
-	}, [account?.address]);
-
 	return (
 		<div className="w-full h-full text-center flex flex-col items-center justify-center space-y-10">
 			<div className="mb-6">

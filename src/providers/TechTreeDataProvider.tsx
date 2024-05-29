@@ -1,7 +1,7 @@
 "use client";
 
 import { contributionContract } from "@/lib/constants";
-import { EdgeData, NodeData, TechTreeData } from "@/typings";
+import { EdgeData, NodeData } from "@/typings";
 import { generateId } from "@/utils/nodes.utils";
 import deepEqual from "deep-equal";
 import React, {
@@ -10,10 +10,13 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
+	useEffect,
 } from "react";
 import toast from "react-hot-toast";
 import { prepareContractCall } from "thirdweb";
 import { useReadContract, useSendTransaction } from "thirdweb/react";
+
+type PublishMode = "reset" | "publish";
 
 type TechTreeDataContextProps = {
 	nodes: NodeData[];
@@ -22,6 +25,9 @@ type TechTreeDataContextProps = {
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	removeNode(nodeId: string): void;
 	hasUpdates: boolean;
+	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
+	handlePublish(mode: PublishMode): void;
+	isPublishing: boolean;
 };
 
 export const TechTreeContext = createContext<TechTreeDataContextProps>({
@@ -31,6 +37,9 @@ export const TechTreeContext = createContext<TechTreeDataContextProps>({
 	nodes: [],
 	edges: [],
 	addNewNode: () => {},
+	handleNodeUpdate: () => {},
+	handlePublish: () => {},
+	isPublishing: false,
 });
 
 export const useTechTreeData = (): TechTreeDataContextProps => {
@@ -42,48 +51,56 @@ export const useTechTreeData = (): TechTreeDataContextProps => {
 };
 
 export function TechTreeDataProvider({ children }: { children: ReactNode }) {
-	const { data: onChainNodes, isLoading } = useReadContract({
+	const { data: onChainNodes, isLoading: isLoadingNodes } = useReadContract({
 		contract: contributionContract,
 		method: "getNodesLite",
 	});
-
-	// TODO: update to onChainEdges
-	const onChainEdges: EdgeData[] = [];
-
-	const nodes = useMemo(() => {
-		return (
-			onChainNodes?.map(
-				(node, idx) =>
-					({
-						id: `${idx}`,
-						title: node.title,
-					}) as NodeData,
-			) || []
-		);
-	}, [onChainNodes]);
+	const { data: onChainEdges, isLoading: isLoadingEdges } = useReadContract({
+		contract: contributionContract,
+		method: "getEdges",
+	});
 
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
-	const { mutate } = useSendTransaction();
+	const { mutate, isPending, isSuccess } = useSendTransaction();
 
-	async function onAdd() {
-		try {
-			const transaction = prepareContractCall({
-				contract: contributionContract,
-				method: "addNode",
-				params: ["Added node", "dsfsdf"],
-			});
-			// @ts-ignore
-			const tx = mutate(transaction);
-		} catch (error) {
-			console.error(error);
+	const nodes = useMemo<NodeData[]>(
+		() =>
+			onChainNodes?.map((node, idx) => ({
+				id: `${idx}`,
+				title: node.title,
+			})) || [],
+		[onChainNodes],
+	);
+
+	const edges = useMemo<EdgeData[]>(
+		() =>
+			onChainEdges?.map((edge, idx) => ({
+				id: `${idx}`,
+				source: edge.source,
+				target: edge.target,
+			})) || [],
+		[onChainEdges],
+	);
+
+	useEffect(() => {
+		if (isSuccess) {
+			toast.success("Tech tree updated successfully");
 		}
-	}
+	}, [isSuccess]);
+
+	const nodesWithUpdates = useMemo(() => {
+		return [...nodes, ...updatedNodes];
+	}, [nodes, updatedNodes]);
+
+	const edgesWithUpdates = useMemo(() => {
+		return [...edges, ...updatedEdges];
+	}, [edges, updatedEdges]);
 
 	function handleEdgeUpdate(source: string | null, target: string | null) {
 		if (!source || !target) return;
 		setUpdatedEdges([
-			...updatedEdges,
+			...edgesWithUpdates,
 			{
 				id: generateId(),
 				source,
@@ -108,23 +125,61 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		setUpdatedEdges(newEdges);
 	}
 
-	function handleNewNode(data: NodeData) {
-		setUpdatedNodes([...(updatedNodes || []), data]);
+	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
+		const updatedNode = nodesWithUpdates.find((node) => node.id === nodeId);
+		if (!updatedNode) return;
+
+		const updatedNodesCopy = nodesWithUpdates.map((node) =>
+			node.id === nodeId ? { ...node, ...data } : node,
+		);
+		setUpdatedNodes(updatedNodesCopy);
 	}
 
-	const nodesWithUpdates = [...(nodes || []), ...(updatedNodes || [])];
-	const edgesWithUpdates = [...(onChainEdges || []), ...(updatedEdges || [])];
+	function handlePublish(mode: PublishMode) {
+		if (mode === "reset") {
+			setUpdatedNodes([]);
+			setUpdatedEdges([]);
+			return;
+		}
+
+		// PUBLISH MODE
+		try {
+			const transaction = prepareContractCall({
+				contract: contributionContract,
+				method: "updateTechTree",
+				params: [
+					updatedNodes.map((node) => ({
+						title: node.title,
+						ipfsHash: "node.ipfsHash,",
+					})),
+					updatedEdges.map((edge) => ({
+						source: edge.source,
+						target: edge.target,
+					})),
+				],
+			});
+			// @ts-ignore
+			mutate(transaction);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	const value = useMemo<TechTreeDataContextProps>(
 		() => ({
 			nodes: nodesWithUpdates,
-			edges: updatedEdges,
-			addNewNode: handleNewNode,
+			edges: edgesWithUpdates,
+			addNewNode: (node) => setUpdatedNodes([...(updatedNodes || []), node]),
 			handleEdgeUpdate,
 			removeNode,
-			hasUpdates: !deepEqual(nodes, nodesWithUpdates),
+			handleNodeUpdate,
+			hasUpdates:
+				!deepEqual(nodes, nodesWithUpdates) ||
+				!deepEqual(edges, edgesWithUpdates),
+			handlePublish,
+			isPublishing: isPending,
 		}),
-		[nodesWithUpdates, nodes],
+		[nodesWithUpdates, edgesWithUpdates],
 	);
 
 	return (

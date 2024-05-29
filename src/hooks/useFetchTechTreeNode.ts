@@ -1,24 +1,33 @@
 "use client";
 
-import { web3Client } from "@/lib/constants";
+import { contributionContract, web3Client } from "@/lib/constants";
 import { Contributor, NodeData } from "@/typings";
 import { initialNodes } from "@/utils/nodes.utils";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { resolveName } from "thirdweb/extensions/ens";
+import { useReadContract } from "thirdweb/react";
 
 interface useFetchTechTreeNodeProps {
 	isLoading: boolean;
 	node?: NodeData;
 }
 
-export function useFetchTechTreeNode(id: string): useFetchTechTreeNodeProps {
-	const { data, isLoading } = useQuery({
-		queryKey: ["techTree", id],
-		queryFn: () => fetchTechTreeNode(id),
+export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
+	const { data: onChainNode, isLoading } = useReadContract({
+		contract: contributionContract,
+		method: "getNode",
+		params: [id],
 	});
 
-	async function fetchTechTreeNode(id: string): Promise<NodeData> {
-		const node = initialNodes.find((node) => node.id === id)?.data;
+	const [node, setNode] = useState<NodeData>();
+
+	useEffect(() => {
+		if (!onChainNode || isLoading) return;
+		fetchTechTreeNode(onChainNode);
+	}, [onChainNode, isLoading]);
+
+	async function fetchTechTreeNode(data: Record<string, any>) {
 		const contributors: Contributor[] = [
 			{
 				address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -38,9 +47,9 @@ export function useFetchTechTreeNode(id: string): useFetchTechTreeNodeProps {
 			}
 		}
 
-		return {
-			...node,
-			id,
+		setNode({
+			title: data.title,
+			id: `${id}`,
 			rfp: {
 				compensation: 500,
 				content:
@@ -55,11 +64,11 @@ export function useFetchTechTreeNode(id: string): useFetchTechTreeNodeProps {
 				funders: 25,
 			},
 			contributors,
-		} as NodeData;
+		});
 	}
 
 	return {
-		node: data,
+		node,
 		isLoading,
 	};
 }

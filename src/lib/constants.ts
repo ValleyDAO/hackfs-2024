@@ -12,7 +12,7 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0x7952A2d5fA150c78C1FFD0434175ee3D59b628B7";
+	"0x8F9A6c5F2f41F0f71E28B21ae32C26C6B0330702";
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
 export const chain = defineChain({
@@ -66,6 +66,31 @@ export const contributionContract = getContract({
 				},
 			],
 			name: "ContributionAdded",
+			type: "event",
+		},
+		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "edgeId",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "source",
+					type: "string",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "target",
+					type: "string",
+				},
+			],
+			name: "EdgeAdded",
 			type: "event",
 		},
 		{
@@ -146,6 +171,24 @@ export const contributionContract = getContract({
 		{
 			inputs: [
 				{
+					internalType: "string",
+					name: "_source",
+					type: "string",
+				},
+				{
+					internalType: "string",
+					name: "_target",
+					type: "string",
+				},
+			],
+			name: "addEdge",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
 					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
@@ -183,6 +226,40 @@ export const contributionContract = getContract({
 			inputs: [
 				{
 					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			name: "edges",
+			outputs: [
+				{
+					internalType: "string",
+					name: "source",
+					type: "string",
+				},
+				{
+					internalType: "string",
+					name: "target",
+					type: "string",
+				},
+				{
+					internalType: "address",
+					name: "creator",
+					type: "address",
+				},
+				{
+					internalType: "uint256",
+					name: "creationTime",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
 				},
@@ -190,6 +267,41 @@ export const contributionContract = getContract({
 			name: "finishNode",
 			outputs: [],
 			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [],
+			name: "getEdges",
+			outputs: [
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "source",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "target",
+							type: "string",
+						},
+						{
+							internalType: "address",
+							name: "creator",
+							type: "address",
+						},
+						{
+							internalType: "uint256",
+							name: "creationTime",
+							type: "uint256",
+						},
+					],
+					internalType: "struct Contribution.Edge[]",
+					name: "",
+					type: "tuple[]",
+				},
+			],
+			stateMutability: "view",
 			type: "function",
 		},
 		{
@@ -211,6 +323,79 @@ export const contributionContract = getContract({
 					internalType: "uint256",
 					name: "",
 					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+			],
+			name: "getNode",
+			outputs: [
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "title",
+							type: "string",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "contributor",
+									type: "address",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+							],
+							internalType: "struct Contribution.ContributionDetail[]",
+							name: "contributions",
+							type: "tuple[]",
+						},
+						{
+							internalType: "uint256",
+							name: "points",
+							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "fundingAddress",
+							type: "address",
+						},
+						{
+							internalType: "uint256",
+							name: "fundingPool",
+							type: "uint256",
+						},
+						{
+							internalType: "uint256",
+							name: "creationTime",
+							type: "uint256",
+						},
+						{
+							internalType: "bool",
+							name: "isFunded",
+							type: "bool",
+						},
+						{
+							internalType: "bool",
+							name: "isFinished",
+							type: "bool",
+						},
+					],
+					internalType: "struct Contribution.NodeLite",
+					name: "",
+					type: "tuple",
 				},
 			],
 			stateMutability: "view",
@@ -378,7 +563,7 @@ export const contributionContract = getContract({
 					components: [
 						{
 							internalType: "address",
-							name: "rpc",
+							name: "rfp",
 							type: "address",
 						},
 						{
@@ -387,8 +572,8 @@ export const contributionContract = getContract({
 							type: "string",
 						},
 					],
-					internalType: "struct Contribution.RPC",
-					name: "rpc",
+					internalType: "struct Contribution.RFP",
+					name: "rfp",
 					type: "tuple",
 				},
 			],
@@ -409,6 +594,48 @@ export const contributionContract = getContract({
 				},
 			],
 			name: "updateLastDripBlock",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "title",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "ipfsHash",
+							type: "string",
+						},
+					],
+					internalType: "struct Contribution.NodeInput[]",
+					name: "_nodes",
+					type: "tuple[]",
+				},
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "source",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "target",
+							type: "string",
+						},
+					],
+					internalType: "struct Contribution.EdgeInput[]",
+					name: "_edges",
+					type: "tuple[]",
+				},
+			],
+			name: "updateTechTree",
 			outputs: [],
 			stateMutability: "nonpayable",
 			type: "function",

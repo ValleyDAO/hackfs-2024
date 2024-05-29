@@ -1,18 +1,52 @@
+import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
+import InputText from "@/components/input/InputText";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { NodeData } from "@/typings";
 import { AnimatePresence, motion } from "framer-motion";
-import React from "react";
+import Link from "next/link";
+import React, { useEffect } from "react";
 
 function EditMode() {
-	const { activeNode } = useTechTreeContext();
+	const { handleNodeUpdate } = useTechTreeData();
+	const { activeNode, setActiveNode } = useTechTreeContext();
+	const [update, setUpdate] = React.useState<Partial<NodeData>>({
+		title: activeNode?.title,
+	});
+
+	useEffect(() => {
+		setUpdate({
+			title: activeNode?.title,
+		});
+	}, [activeNode]);
+
+	function handleSave() {
+		if (!activeNode?.id) return;
+		handleNodeUpdate(activeNode.id, update);
+		setUpdate({});
+		setActiveNode(undefined);
+	}
+
+	if (!activeNode?.id) return <></>;
+
 	return (
 		<div>
 			<div className="mb-6">
-				<div className="text-xs uppercase text-gray-500">Active Node</div>
+				<div className="text-xs uppercase text-gray-500">Edit Mode</div>
 				<div className="text-lg font-bold">{activeNode?.title}</div>
 			</div>
-			<div className="text-xs uppercase text-gray-500">Edit Mode</div>
-			<div className="text-sm">650</div>
+
+			<InputText
+				label="Title"
+				value={update.title}
+				onChange={(value) => setUpdate((prev) => ({ ...prev, title: value }))}
+			/>
+			<div className="mt-4 flex justify-end">
+				<Button onClick={handleSave} variant="primary">
+					Save
+				</Button>
+			</div>
 		</div>
 	);
 }
@@ -21,21 +55,21 @@ function SummaryMode() {
 	const { activeNode, setActiveNode } = useTechTreeContext();
 	return (
 		<>
-			<div className="mb-6">
-				<div className="text-xs uppercase text-gray-500">Active Node</div>
-				<div className="text-lg font-bold">{activeNode?.title}</div>
-			</div>
 			<div>
-				<div className="text-xs uppercase text-gray-500">Research Papers</div>
-				<div className="text-sm">650</div>
-
-				<div
-					onClick={() => setActiveNode(undefined)}
-					className="mt-10 cursor-pointer hover:text-blue-700"
-				>
-					Expand
+				<div className="mb-6">
+					<div className="text-xs uppercase text-gray-500">Active Node</div>
+					<div className="text-lg font-bold">{activeNode?.title}</div>
+				</div>
+				<div>
+					<div className="text-xs uppercase text-gray-500">Research Papers</div>
+					<div className="text-sm">650</div>
 				</div>
 			</div>
+			<Link href={`/app/${activeNode?.id}`} className="mt-10 block w-full">
+				<Button className="!py-3" fullSize variant="black">
+					Visit Details Page
+				</Button>
+			</Link>
 		</>
 	);
 }
@@ -54,7 +88,7 @@ export function SidePanel() {
 						visible: { x: 0, transition: { duration: 0.15 } },
 						exit: { x: "100%", transition: { duration: 0.15 } },
 					}}
-					className="overflow-y-scroll h-full !w-[450px] border-l border-gray-200"
+					className="overflow-y-scroll h-full !w-[450px] border-l ml-2 border-gray-200"
 					initial="hidden"
 					animate="visible"
 					exit="exit"

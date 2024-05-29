@@ -27,7 +27,7 @@ export function TechTreeLayout() {
 		if (mode === "edit" && activeEditType === "node") {
 			ev.preventDefault();
 			const newNode: NodeData = {
-				id: `${(nodes || []).length + 1}`,
+				id: `${(nodes || []).length}`,
 				title: "Placeholder",
 			};
 			addNewNode(newNode);
