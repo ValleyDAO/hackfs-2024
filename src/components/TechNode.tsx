@@ -1,11 +1,6 @@
+import { useTechTree } from "@/providers/TechTreeProvider";
 import clsx from "clsx";
-import {
-	Handle,
-	NodeProps,
-	Position,
-	ReactFlowState,
-	useStore,
-} from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 
 type TechNodeProps = { label: string };
 
@@ -16,6 +11,7 @@ export function TechNode({
 	sourcePosition = Position.Bottom,
 	selected,
 }: NodeProps<TechNodeProps>) {
+	const { mode } = useTechTree();
 	return (
 		<>
 			<Handle

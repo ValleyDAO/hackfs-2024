@@ -1,11 +1,19 @@
 "use client";
 import { web3Client } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { ConnectButton } from "thirdweb/react";
+import React, { useEffect } from "react";
+import { ConnectButton, useActiveAccount } from "thirdweb/react";
 
 export default function Home() {
 	const router = useRouter();
+	const account = useActiveAccount();
+
+	useEffect(() => {
+		if (account?.address) {
+			router.push("/app");
+		}
+	}, [account?.address]);
+
 	return (
 		<div className="w-full h-full text-center flex flex-col items-center justify-center space-y-10">
 			<div className="mb-6">
@@ -21,10 +29,7 @@ export default function Home() {
 					</a>
 				</div>
 			</div>
-			<ConnectButton
-				client={web3Client}
-				onConnect={() => router.push("/app")}
-			/>
+			<ConnectButton client={web3Client} />
 		</div>
 	);
 }

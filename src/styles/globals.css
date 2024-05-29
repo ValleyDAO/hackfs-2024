@@ -11,6 +11,25 @@ html {
     display: none !important;
 }
 
+.tech-tree-edit {
+    /*.react-flow .react-flow__handle-right  {
+        @apply rounded-full border  border-gray-200 bg-gray-950;
+        width: 15px;
+        height: 15px;
+        margin-right: -2px !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        &::after {
+            content: '+';
+            @apply text-gray-50 text-xs;
+        }
+    } */
+}
+
+
+
 .bg-grid {
     background-size: 15px 15px;
     background-image:

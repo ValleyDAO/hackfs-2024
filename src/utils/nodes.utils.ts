@@ -1,4 +1,9 @@
-import { TechTreeEdge, TechTreeNode } from "@/typings";
+import {
+	NodeData,
+	TechTreeData,
+	TechTreeEdge,
+	TechTreeLayoutNode,
+} from "@/typings";
 import dagre from "dagre";
 
 export const defaultPosition = { x: 0, y: 0 };
@@ -10,144 +15,92 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 225;
 const nodeHeight = 50;
 
-export const initialNodes: TechTreeNode[] = [
+function transformTechTreeDataToNode({
+	id,
+	...data
+}: NodeData): TechTreeLayoutNode {
+	return {
+		id: id || "",
+		type: "tech-tree",
+		data: data,
+		position: defaultPosition,
+	};
+}
+
+export const nodesData: NodeData[] = [
 	{
 		id: "33xkw",
-		type: "tech-tree",
-		data: {
-			label: "Synthetic Biology",
-		},
-		position: defaultPosition,
+		label: "Synthetic Biology",
 	},
 	{
 		id: "ofxk0l",
-		type: "tech-tree",
-		data: {
-			label: "Foundational Knowledge",
-		},
-		position: defaultPosition,
+		label: "Foundational Knowledge",
 	},
 	{
 		id: "l1lwtv",
-		type: "tech-tree",
-		data: {
-			label: "Genetic Engineering",
-		},
-		position: defaultPosition,
+		label: "Genetic Engineering",
 	},
 	{
 		id: "ah9ojp",
-		type: "tech-tree",
-		data: {
-			label: "Molecular Biology",
-		},
-		position: defaultPosition,
+		label: "Molecular Biology",
 	},
 	{
 		id: "22u5p7",
-		type: "tech-tree",
-		data: {
-			label: "Core Techniques",
-		},
-		position: defaultPosition,
+		label: "Core Techniques",
 	},
 	{
 		id: "9dcbeg",
-		type: "tech-tree",
-		data: {
-			label: "DNA Assembly",
-		},
-		position: defaultPosition,
+		label: "DNA Assembly",
 	},
 	{
 		id: "gvomav",
-		type: "tech-tree",
-		data: {
-			label: "Protein Engineering",
-		},
-		position: defaultPosition,
+		label: "Protein Engineering",
 	},
 	{
 		id: "iz0ese",
-		type: "tech-tree",
-		data: {
-			label: "Enabling Technologies",
-		},
-		position: defaultPosition,
+		label: "Enabling Technologies",
 	},
 	{
 		id: "g70yat",
-		type: "tech-tree",
-		data: {
-			label: "Bioinformatics",
-		},
-		position: defaultPosition,
+		label: "Bioinformatics",
 	},
 	{
 		id: "gthqe",
-		type: "tech-tree",
-		data: {
-			label: "Microfluidics",
-		},
-		position: defaultPosition,
+		label: "Microfluidics",
 	},
 	{
 		id: "mp1z3o",
-		type: "tech-tree",
-		data: {
-			label: "Directed Evolution",
-		},
-		position: defaultPosition,
+		label: "Directed Evolution",
 	},
 	{
 		id: "lun1re",
-		type: "tech-tree",
-		data: {
-			label: "Rational Design",
-		},
-		position: defaultPosition,
+		label: "Rational Design",
 	},
 	{
 		id: "n2uv9i",
-		type: "tech-tree",
-		data: {
-			label: "Protein Folding",
-		},
-		position: defaultPosition,
+		label: "Protein Folding",
 	},
 	{
 		id: "fwb3dl9",
-		type: "tech-tree",
-		data: {
-			label: "Protein Screening",
-		},
-		position: defaultPosition,
+		label: "Protein Screening",
 	},
 	{
 		id: "9i7mjw",
-		type: "tech-tree",
-		data: {
-			label: "Chaperone Proteins",
-		},
-		position: defaultPosition,
+		label: "Chaperone Proteins",
 	},
 	{
 		id: "ku8zk8",
-		type: "tech-tree",
-		data: {
-			label: "Folding Pathways",
-		},
-		position: defaultPosition,
+		label: "Folding Pathways",
 	},
 	{
 		id: "szlku",
-		type: "tech-tree",
-		data: {
-			label: "Misfolding and Aggregation",
-		},
-		position: defaultPosition,
+		label: "Misfolding and Aggregation",
 	},
 ];
+
+export const initialNodes: TechTreeLayoutNode[] = nodesData?.map(
+	transformTechTreeDataToNode,
+);
 
 export const initialEdges: TechTreeEdge[] = [
 	// Layer 1
@@ -256,12 +209,14 @@ export const initialEdges: TechTreeEdge[] = [
 ];
 
 export function getLayoutElements(
-	nodes: TechTreeNode[],
-	edges: TechTreeEdge[],
-) {
+	nodes: NodeData[] = [],
+	edges: TechTreeEdge[] = [],
+): { nodes: TechTreeLayoutNode[]; edges: TechTreeEdge[] } {
+	const initialNodes = nodes.map(transformTechTreeDataToNode);
+
 	dagreGraph.setGraph({ rankdir: "LR" });
 
-	nodes.forEach((node) => {
+	initialNodes.forEach((node) => {
 		dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
 	});
 
@@ -271,7 +226,7 @@ export function getLayoutElements(
 
 	dagre.layout(dagreGraph);
 
-	nodes.forEach((node) => {
+	initialNodes.forEach((node) => {
 		const nodeWithPosition = dagreGraph.node(node.id);
 		// @ts-ignore
 		node.targetPosition = "left";
@@ -288,5 +243,5 @@ export function getLayoutElements(
 		return node;
 	});
 
-	return { nodes, edges };
+	return { nodes: initialNodes, edges };
 }

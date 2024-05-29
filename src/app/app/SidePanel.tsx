@@ -1,16 +1,11 @@
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
-import { TechTreeNode } from "@/typings";
+import { useTechTree } from "@/providers/TechTreeProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-interface SidePanelProps {
-	activeNode: TechTreeNode;
-	close(): void;
-	openDetails(): void;
-}
-
-export function SidePanel({ activeNode, close, openDetails }: SidePanelProps) {
+export function SidePanel() {
+	const { activeNode, setActiveNode } = useTechTree();
 	const [loading, setLoading] = React.useState(true);
 
 	React.useEffect(() => {
@@ -19,6 +14,8 @@ export function SidePanel({ activeNode, close, openDetails }: SidePanelProps) {
 			setLoading(false);
 		}, 1000);
 	}, [activeNode]);
+
+	if (!activeNode) return <></>;
 
 	return (
 		<>
@@ -37,7 +34,7 @@ export function SidePanel({ activeNode, close, openDetails }: SidePanelProps) {
 					<div className="w-full p-2 pl-6 pr-1 text-xs relative h-full">
 						<div className="flex justify-end mb-3">
 							<div
-								onClick={close}
+								onClick={() => setActiveNode(undefined)}
 								className="bg-gray-100 hover:bg-red-100 group transition-colors cursor-pointer rounded px-2 py-1.5"
 							>
 								<CloseOutlined className="group-hover:text-red-700 transition-colors" />
@@ -57,7 +54,7 @@ export function SidePanel({ activeNode, close, openDetails }: SidePanelProps) {
 								<div className="text-sm">650</div>
 
 								<div
-									onClick={openDetails}
+									onClick={() => setActiveNode}
 									className="mt-10 cursor-pointer hover:text-blue-700"
 								>
 									Expand

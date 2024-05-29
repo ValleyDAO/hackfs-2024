@@ -1,9 +1,16 @@
 "use client";
 
-import { NodeData, TechTreeData, TechTreeEdge, TechTreeNode } from "@/typings";
-import { initialEdges, initialNodes } from "@/utils/nodes.utils";
+import { contributionContract } from "@/lib/constants";
+import {
+	NodeData,
+	TechTreeData,
+	TechTreeEdge,
+	TechTreeLayoutNode,
+} from "@/typings";
+import { initialEdges, initialNodes, nodesData } from "@/utils/nodes.utils";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { useReadContract } from "thirdweb/react";
 
 interface useFetchTechTreeNodeProps {
 	isLoading: boolean;
@@ -12,6 +19,10 @@ interface useFetchTechTreeNodeProps {
 }
 
 export function useFetchNodes(): useFetchTechTreeNodeProps {
+	const { data } = useReadContract({
+		contract: contributionContract,
+		method: "getNodesLite",
+	});
 	const [techTree, setTechTree] = useState<TechTreeData>();
 	const [isLoading, setLoading] = useState<boolean>(true);
 
@@ -21,7 +32,7 @@ export function useFetchNodes(): useFetchTechTreeNodeProps {
 
 	function fetchNodes() {
 		setTechTree({
-			nodes: initialNodes,
+			nodes: nodesData,
 			edges: initialEdges,
 		});
 		setLoading(false);

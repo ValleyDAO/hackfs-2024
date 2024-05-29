@@ -21,16 +21,19 @@ export interface NodeData {
 	contributors?: Contributor[];
 }
 
-export type TechTreeNode = Node<NodeData> & {
+export type TechTreeLayoutNode = Node<NodeData> & {
 	targetPosition?: Position;
 	sourcePosition?: Position;
 };
 
 export type TechTreeEdge = Edge;
 
-export type TechTreeData = { nodes: TechTreeNode[]; edges: TechTreeEdge[] };
+export type TechTreeData = { nodes: NodeData[]; edges: TechTreeEdge[] };
 
 export interface Contributor {
 	address: string;
 	ensName?: string;
 }
+
+export type TechTreeMode = "move" | "edit";
+export type TechTreeAddType = "node" | "edge";
