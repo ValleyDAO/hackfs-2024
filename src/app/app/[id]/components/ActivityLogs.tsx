@@ -52,7 +52,7 @@ function BasicActivityLog({
 
 export function ActivityLogs() {
 	const [loading, setLoading] = React.useState(true);
-	const { label, contributors } = useResearchPage();
+	const { contributors } = useResearchPage();
 
 	React.useEffect(() => {
 		setLoading(true);

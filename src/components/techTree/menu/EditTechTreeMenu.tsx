@@ -4,7 +4,8 @@ import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EdgeOutlined } from "@/components/icons/EdgeOutlined";
 import { NodeOutlined } from "@/components/icons/NodeOutlined";
-import { useTechTree } from "@/providers/TechTreeProvider";
+import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeData } from "@/providers/TechTreeDataProvider";
 import { TechTreeAddType, TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
@@ -18,25 +19,21 @@ function AddObjectInEditModeItem({
 	type: TechTreeAddType;
 	activeEditType?: TechTreeAddType;
 }) {
-	const { setActiveEditType } = useTechTree();
+	const { setActiveEditType } = useTechTreeContext();
 	const isActive = activeEditType === type;
 	return (
 		<div
 			onClick={() => setActiveEditType(type)}
 			className={clsx(
-				"h-12 horizontal justify-center space-x-1 cursor-pointer group hover:text-blue-700 rounded",
+				"h-12 horizontal justify-center space-x-1 cursor-pointer text-gray-600 group transition-colors hover:text-black rounded",
 				{
 					"text-blue-700": isActive,
-					"bg-white text-black": !isActive,
 				},
 			)}
 		>
-			<div className="text-xl">{icon}</div>
+			<div className={clsx("text-xl", isActive && "text-blue-700")}>{icon}</div>
 			<div
-				className={clsx("text-xs mt-1 capitalize", {
-					"text-blue-700": isActive,
-					"text-black group-hover:text-blue-700 transition-colors": !isActive,
-				})}
+				className={clsx("text-xs mt-1 capitalize", isActive && "text-blue-700")}
 			>
 				{type}
 			</div>
@@ -45,7 +42,8 @@ function AddObjectInEditModeItem({
 }
 
 export function EditTechTreeMenu() {
-	const { setMode, activeEditType } = useTechTree();
+	const { hasUpdates } = useTechTreeData();
+	const { setMode, activeEditType } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
 		setMode("move");
@@ -68,6 +66,9 @@ export function EditTechTreeMenu() {
 						</div>
 					</div>
 					<div className="flex items-center space-x-8">
+						<div className="text-xs text-gray-400">
+							Select an input type to start:
+						</div>
 						<AddObjectInEditModeItem
 							type="node"
 							activeEditType={activeEditType}
@@ -81,7 +82,7 @@ export function EditTechTreeMenu() {
 					</div>
 				</div>
 			</div>
-			<Button disabled variant="black">
+			<Button disabled={!hasUpdates} variant="black">
 				Publish
 			</Button>
 		</div>

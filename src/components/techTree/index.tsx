@@ -1,26 +1,39 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import ReactFlow, { ConnectionLineType } from "reactflow";
 
 import "reactflow/dist/style.css";
 import { TechNode } from "@/components/techTree/TechNode";
 import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 
-import { useTechTree } from "@/providers/TechTreeProvider";
+import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { NodeData } from "@/typings";
 import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
 
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
-	const {
-		mode,
-		techTree,
-		onPossibleNodeAdd,
-		setActiveNode,
-		activeEditType,
-		handleEdgeUpdate,
-	} = useTechTree();
-	const { nodes, edges } = getLayoutElements(techTree?.nodes, techTree?.edges);
+	const { nodes, edges, handleEdgeUpdate, addNewNode } = useTechTreeData();
+	const { mode, setActiveNode, activeEditType, setActiveEditType } =
+		useTechTreeContext();
+
+	const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
+		nodes,
+		edges,
+	);
+
+	function onPossibleNodeAdd(ev: MouseEvent<HTMLDivElement>) {
+		if (mode === "edit" && activeEditType === "node") {
+			ev.preventDefault();
+			const newNode: NodeData = {
+				id: `${(nodes || []).length + 1}`,
+				title: "Placeholder",
+			};
+			addNewNode(newNode);
+			setActiveEditType(undefined);
+		}
+	}
 
 	return (
 		<div
@@ -30,16 +43,16 @@ export function TechTreeLayout() {
 			)}
 		>
 			<ReactFlow
-				nodes={nodes}
-				edges={edges}
+				nodes={layoutNodes}
+				edges={layoutEdges}
 				connectionLineType={ConnectionLineType.SmoothStep}
 				fitView
 				defaultEdgeOptions={{ animated: true }}
 				maxZoom={1.1}
 				nodeTypes={nodeTypes}
 				nodesDraggable={mode === "move"}
-				zoomOnPinch={mode === "move"}
-				zoomOnScroll={mode === "move"}
+				zoomOnPinch
+				zoomOnScroll
 				draggable={mode === "move"}
 				autoPanOnNodeDrag={mode === "move"}
 				onSelectionEnd={() => setActiveNode(undefined)}
@@ -47,7 +60,7 @@ export function TechTreeLayout() {
 				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 				onEdgesChange={(newEdges) => console.log(newEdges)}
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
-				onNodeClick={(evt, node) => setActiveNode(node)}
+				onNodeClick={(evt, { id }) => setActiveNode(id)}
 			/>
 			<TechTreeMenu />
 		</div>

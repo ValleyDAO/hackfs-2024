@@ -10,13 +10,13 @@ interface ResearchHeadProps {
 }
 
 export function ResearchHead({ id }: ResearchHeadProps) {
-	const { label, status } = useResearchPage();
+	const { title, status } = useResearchPage();
 
-	if (!label || !status) return <></>;
+	if (!title || !status) return <></>;
 	return (
 		<>
 			<div className="techtree-title mb-6">
-				<h1 className="font-black text-2xl">{label}</h1>
+				<h1 className="font-black text-2xl">{title}</h1>
 				<div className="mt-1">
 					<div className="flex items-center space-x-2">
 						<div className="text-xs">Status:</div>

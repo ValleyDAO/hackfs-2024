@@ -38,71 +38,71 @@ function transformEdgeDataToLayoutEdge(data: EdgeData): TechTreeLayoutEdge {
 export const nodesData: NodeData[] = [
 	{
 		id: "33xkw",
-		label: "Synthetic Biology",
+		title: "Synthetic Biology",
 	},
 	{
 		id: "ofxk0l",
-		label: "Foundational Knowledge",
+		title: "Foundational Knowledge",
 	},
 	{
 		id: "l1lwtv",
-		label: "Genetic Engineering",
+		title: "Genetic Engineering",
 	},
 	{
 		id: "ah9ojp",
-		label: "Molecular Biology",
+		title: "Molecular Biology",
 	},
 	{
 		id: "22u5p7",
-		label: "Core Techniques",
+		title: "Core Techniques",
 	},
 	{
 		id: "9dcbeg",
-		label: "DNA Assembly",
+		title: "DNA Assembly",
 	},
 	{
 		id: "gvomav",
-		label: "Protein Engineering",
+		title: "Protein Engineering",
 	},
 	{
 		id: "iz0ese",
-		label: "Enabling Technologies",
+		title: "Enabling Technologies",
 	},
 	{
 		id: "g70yat",
-		label: "Bioinformatics",
+		title: "Bioinformatics",
 	},
 	{
 		id: "gthqe",
-		label: "Microfluidics",
+		title: "Microfluidics",
 	},
 	{
 		id: "mp1z3o",
-		label: "Directed Evolution",
+		title: "Directed Evolution",
 	},
 	{
 		id: "lun1re",
-		label: "Rational Design",
+		title: "Rational Design",
 	},
 	{
 		id: "n2uv9i",
-		label: "Protein Folding",
+		title: "Protein Folding",
 	},
 	{
 		id: "fwb3dl9",
-		label: "Protein Screening",
+		title: "Protein Screening",
 	},
 	{
 		id: "9i7mjw",
-		label: "Chaperone Proteins",
+		title: "Chaperone Proteins",
 	},
 	{
 		id: "ku8zk8",
-		label: "Folding Pathways",
+		title: "Folding Pathways",
 	},
 	{
 		id: "szlku",
-		label: "Misfolding and Aggregation",
+		title: "Misfolding and Aggregation",
 	},
 ];
 

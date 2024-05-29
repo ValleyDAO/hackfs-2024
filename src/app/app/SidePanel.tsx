@@ -1,19 +1,47 @@
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
-import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
-import { useTechTree } from "@/providers/TechTreeProvider";
+import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-export function SidePanel() {
-	const { activeNode, setActiveNode } = useTechTree();
-	const [loading, setLoading] = React.useState(true);
+function EditMode() {
+	const { activeNode } = useTechTreeContext();
+	return (
+		<div>
+			<div className="mb-6">
+				<div className="text-xs uppercase text-gray-500">Active Node</div>
+				<div className="text-lg font-bold">{activeNode?.title}</div>
+			</div>
+			<div className="text-xs uppercase text-gray-500">Edit Mode</div>
+			<div className="text-sm">650</div>
+		</div>
+	);
+}
 
-	React.useEffect(() => {
-		setLoading(true);
-		setTimeout(() => {
-			setLoading(false);
-		}, 1000);
-	}, [activeNode]);
+function SummaryMode() {
+	const { activeNode, setActiveNode } = useTechTreeContext();
+	return (
+		<>
+			<div className="mb-6">
+				<div className="text-xs uppercase text-gray-500">Active Node</div>
+				<div className="text-lg font-bold">{activeNode?.title}</div>
+			</div>
+			<div>
+				<div className="text-xs uppercase text-gray-500">Research Papers</div>
+				<div className="text-sm">650</div>
+
+				<div
+					onClick={() => setActiveNode(undefined)}
+					className="mt-10 cursor-pointer hover:text-blue-700"
+				>
+					Expand
+				</div>
+			</div>
+		</>
+	);
+}
+
+export function SidePanel() {
+	const { activeNode, setActiveNode, mode } = useTechTreeContext();
 
 	if (!activeNode) return <></>;
 
@@ -35,32 +63,12 @@ export function SidePanel() {
 						<div className="flex justify-end mb-3">
 							<div
 								onClick={() => setActiveNode(undefined)}
-								className="bg-gray-100 hover:bg-red-100 group transition-colors cursor-pointer rounded px-2 py-1.5"
+								className="bg-white hover:bg-red-100 group transition-colors cursor-pointer rounded px-2 py-1.5"
 							>
-								<CloseOutlined className="group-hover:text-red-700 transition-colors" />
+								<CloseOutlined className="group-hover:text-red-700 text-gray-500 transition-colors" />
 							</div>
 						</div>
-						<div className="mb-6">
-							<div className="text-xs uppercase text-gray-500">Active Node</div>
-							<div className="text-lg font-bold">{activeNode.data.label}</div>
-						</div>
-						{loading ? (
-							<LoadingOutlined />
-						) : (
-							<div>
-								<div className="text-xs uppercase text-gray-500">
-									Research Papers
-								</div>
-								<div className="text-sm">650</div>
-
-								<div
-									onClick={() => setActiveNode}
-									className="mt-10 cursor-pointer hover:text-blue-700"
-								>
-									Expand
-								</div>
-							</div>
-						)}
+						{mode === "edit" ? <EditMode /> : <SummaryMode />}
 					</div>
 				</motion.div>
 			</AnimatePresence>

@@ -1,7 +1,7 @@
 import { AddFilled } from "@/components/icons/AddFilled";
 import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EditTechTreeMenu } from "@/components/techTree/menu/EditTechTreeMenu";
-import { useTechTree } from "@/providers/TechTreeProvider";
+import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React from "react";
@@ -10,7 +10,7 @@ function ModeSelectionItem({
 	icon,
 	mode,
 }: { icon: React.ReactNode; mode: TechTreeMode }) {
-	const { mode: activeMode, setMode } = useTechTree();
+	const { mode: activeMode, setMode } = useTechTreeContext();
 	const isActive = activeMode === mode;
 	return (
 		<div
@@ -40,7 +40,7 @@ function BaseMenuBar() {
 }
 
 export function TechTreeMenu() {
-	const { mode, setMode } = useTechTree();
+	const { mode, setMode } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
 		setMode("move");

@@ -1,20 +1,19 @@
-import { CloseOutlined } from "@/components/icons/CloseOutlined";
-import { useTechTree } from "@/providers/TechTreeProvider";
+import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { NodeData } from "@/typings";
 import clsx from "clsx";
 import { MouseEvent } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
-
-type TechNodeProps = { label: string };
 
 export function TechNode({
 	data,
 	isConnectable,
 	targetPosition = Position.Top,
 	sourcePosition = Position.Bottom,
-	selected,
 	id,
-}: NodeProps<TechNodeProps>) {
-	const { mode, activeNode, activeEditType } = useTechTree();
+}: NodeProps<NodeData>) {
+	const { removeNode } = useTechTreeData();
+	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
 	const isActive = activeNode?.id === id;
 	const showDelete = mode === "edit" && isActive;
@@ -22,7 +21,7 @@ export function TechNode({
 	function handleDelete(ev: MouseEvent<HTMLDivElement>) {
 		ev.preventDefault();
 		ev.stopPropagation();
-		alert("deleting");
+		removeNode(activeNode?.id || "");
 	}
 
 	return (
@@ -43,7 +42,7 @@ export function TechNode({
 						: "border-gray-200 bg-white",
 				)}
 			>
-				<span className="">{data?.label}</span>
+				<span className="">{data?.title}</span>
 				{showDelete && (
 					<div
 						onClick={handleDelete}

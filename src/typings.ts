@@ -11,7 +11,7 @@ export type NodeStatus = "finished" | "in-progress" | "rfp";
 
 export interface NodeData {
 	id?: string;
-	label: string;
+	title: string;
 	fundingState?: FundingState;
 	rfp?: {
 		compensation: number;
