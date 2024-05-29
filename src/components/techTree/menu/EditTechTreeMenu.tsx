@@ -2,6 +2,7 @@ import { Button } from "@/components/button";
 import { AddFilled } from "@/components/icons/AddFilled";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { CursorFilled } from "@/components/icons/CursorFilled";
+import { EdgeOutlined } from "@/components/icons/EdgeOutlined";
 import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { useTechTree } from "@/providers/TechTreeProvider";
 import { TechTreeAddType, TechTreeMode } from "@/typings";
@@ -14,7 +15,7 @@ function AddObjectInEditModeItem({
 	activeEditType,
 }: {
 	icon: React.ReactNode;
-	type: "node";
+	type: TechTreeAddType;
 	activeEditType?: TechTreeAddType;
 }) {
 	const { setActiveEditType } = useTechTree();
@@ -23,7 +24,7 @@ function AddObjectInEditModeItem({
 		<div
 			onClick={() => setActiveEditType(type)}
 			className={clsx(
-				"h-12 horizontal justify-center space-x-2 cursor-pointer group hover:text-blue-700 rounded",
+				"h-12 horizontal justify-center space-x-1 cursor-pointer group hover:text-blue-700 rounded",
 				{
 					"text-blue-700": isActive,
 					"bg-white text-black": !isActive,
@@ -66,11 +67,16 @@ export function EditTechTreeMenu() {
 							</span>
 						</div>
 					</div>
-					<div className="flex items-center">
+					<div className="flex items-center space-x-8">
 						<AddObjectInEditModeItem
 							type="node"
 							activeEditType={activeEditType}
 							icon={<NodeOutlined />}
+						/>
+						<AddObjectInEditModeItem
+							type="edge"
+							activeEditType={activeEditType}
+							icon={<EdgeOutlined />}
 						/>
 					</div>
 				</div>

@@ -3,13 +3,15 @@
 import { useFetchNodes } from "@/hooks/useFetchNodes";
 import { contributionContract } from "@/lib/constants";
 import {
+	EdgeData,
 	NodeData,
 	TechTreeAddType,
 	TechTreeData,
+	TechTreeLayoutEdge,
 	TechTreeLayoutNode,
 	TechTreeMode,
 } from "@/typings";
-import { defaultPosition } from "@/utils/nodes.utils";
+import { edgeType, generateId } from "@/utils/nodes.utils";
 import React, {
 	ReactNode,
 	createContext,
@@ -30,6 +32,7 @@ type TechTreeContextProps = {
 	activeNode?: TechTreeLayoutNode;
 	activeEditType?: TechTreeAddType;
 	setActiveEditType: (type?: TechTreeAddType) => void;
+	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 };
 
 export const TechTreeContext = createContext<TechTreeContextProps>({
@@ -38,6 +41,7 @@ export const TechTreeContext = createContext<TechTreeContextProps>({
 	onPossibleNodeAdd: () => {},
 	setActiveNode: () => {},
 	setActiveEditType: () => {},
+	handleEdgeUpdate: () => {},
 });
 
 export const useTechTree = (): TechTreeContextProps => {
@@ -111,8 +115,24 @@ export function TechTreeProvider({ children }: { children: ReactNode }) {
 	function handleSetMode(mode: TechTreeMode) {
 		if (mode === "edit") {
 			setActiveEditType("node");
+			setActiveNode(undefined);
 		}
 		setMode(mode);
+	}
+
+	function handleEdgeUpdate(source: string | null, target: string | null) {
+		if (!source || !target) return;
+		setTechTree?.({
+			nodes: techTree?.nodes || [],
+			edges: [
+				...(techTree?.edges || []),
+				{
+					id: generateId(),
+					source,
+					target,
+				},
+			],
+		});
 	}
 
 	const value = useMemo(
@@ -125,6 +145,7 @@ export function TechTreeProvider({ children }: { children: ReactNode }) {
 			setActiveNode,
 			activeNode,
 			activeEditType,
+			handleEdgeUpdate,
 			setActiveEditType,
 		}),
 		[mode, techTree, activeNode, activeEditType],

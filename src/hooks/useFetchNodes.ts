@@ -4,7 +4,7 @@ import { contributionContract } from "@/lib/constants";
 import {
 	NodeData,
 	TechTreeData,
-	TechTreeEdge,
+	TechTreeLayoutEdge,
 	TechTreeLayoutNode,
 } from "@/typings";
 import { initialEdges, initialNodes, nodesData } from "@/utils/nodes.utils";

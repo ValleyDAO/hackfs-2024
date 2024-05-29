@@ -1,3 +1,4 @@
+import { edgeType } from "@/utils/nodes.utils";
 import { Edge, Node, Position } from "reactflow";
 
 export interface FundingState {
@@ -21,14 +22,22 @@ export interface NodeData {
 	contributors?: Contributor[];
 }
 
+export interface EdgeData {
+	id: string;
+	source: string;
+	target: string;
+}
+
 export type TechTreeLayoutNode = Node<NodeData> & {
 	targetPosition?: Position;
 	sourcePosition?: Position;
 };
 
-export type TechTreeEdge = Edge;
+export type TechTreeLayoutEdge = EdgeData & {
+	type?: typeof edgeType;
+};
 
-export type TechTreeData = { nodes: NodeData[]; edges: TechTreeEdge[] };
+export type TechTreeData = { nodes: NodeData[]; edges: EdgeData[] };
 
 export interface Contributor {
 	address: string;
