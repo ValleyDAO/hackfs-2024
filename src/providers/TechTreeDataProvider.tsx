@@ -28,6 +28,7 @@ type TechTreeDataContextProps = {
 	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
 	handlePublish(mode: PublishMode): void;
 	isPublishing: boolean;
+	isLoading: boolean;
 };
 
 export const TechTreeContext = createContext<TechTreeDataContextProps>({
@@ -40,6 +41,7 @@ export const TechTreeContext = createContext<TechTreeDataContextProps>({
 	handleNodeUpdate: () => {},
 	handlePublish: () => {},
 	isPublishing: false,
+	isLoading: false,
 });
 
 export const useTechTreeData = (): TechTreeDataContextProps => {
@@ -178,8 +180,9 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 				!deepEqual(edges, edgesWithUpdates),
 			handlePublish,
 			isPublishing: isPending,
+			isLoading: isLoadingNodes || isLoadingEdges,
 		}),
-		[nodesWithUpdates, edgesWithUpdates],
+		[nodesWithUpdates, edgesWithUpdates, isLoadingEdges, isLoadingEdges],
 	);
 
 	return (

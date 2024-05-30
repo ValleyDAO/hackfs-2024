@@ -67,10 +67,11 @@ contract Contribution {
     event NodeAdded(uint256 indexed nodeId, string title, uint256 points);
     event EdgeAdded(uint256 indexed edgeId, string source, string target);
     event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash, uint256 points);
+    event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash);
     event FundsAdded(uint256 indexed nodeIndex, uint256 amount);
     event NodeFinished(uint256 indexed nodeId);
 
-    function addNode(string memory _title, string memory _ipfsHash) public {
+    function addNode(string memory _title) public {
         Node storage newNode = nodes.push();
         newNode.title = _title;
         newNode.points = 10; // Fixed points for adding a node
@@ -78,12 +79,20 @@ contract Contribution {
         newNode.creationTime = block.timestamp;
         newNode.isFinished = false;
         newNode.isFunded = false;
-        newNode.rfp = RFP({rfp: msg.sender, ipfsHash: _ipfsHash});
 
         uint256 nodeId = nodes.length - 1;
         newNode.lastDripBlock[msg.sender] = block.number;
 
         emit NodeAdded(nodeId, _title, newNode.points);
+    }
+
+    function addRfp(uint256 nodeIndex, string memory _ipfsHash) public {
+        require(nodeIndex < nodes.length, "Node does not exist");
+
+        Node storage node = nodes[nodeIndex];
+        node.rfp = RFP({rfp: msg.sender, ipfsHash: _ipfsHash});
+
+        emit RfpAdded(nodeIndex, _ipfsHash);
     }
 
     function addEdge(string memory _source, string memory _target) public {

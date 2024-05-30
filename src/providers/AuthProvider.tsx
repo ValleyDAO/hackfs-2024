@@ -26,10 +26,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const account = useActiveAccount();
 	const status = useActiveWalletConnectionStatus();
 
-	console.log("status", status);
-	console.log("account", account);
-	console.log(pathname);
-
 	useEffect(() => {
 		if (status === "connecting") return;
 
@@ -46,7 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	return (
 		<AuthContext.Provider value={{}}>
-			{status === "connecting" ? <LoadingOutlined /> : children}
+			{status === "connecting" ? (
+				<div className="w-full h-full horizontal justify-center">
+					<LoadingOutlined />
+				</div>
+			) : (
+				children
+			)}
 		</AuthContext.Provider>
 	);
 }

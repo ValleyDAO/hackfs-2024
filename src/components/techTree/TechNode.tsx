@@ -33,7 +33,7 @@ export function TechNode({
 			/>
 			<div
 				className={clsx(
-					"px-10 py-4 relative !text-xs border rounded",
+					"px-10 py-4 relative !text-xs hover:border-gray-500 duration-300 transition-colors border rounded",
 					hasActiveNodeInMoveMode
 						? {
 								"border-gray-600 bg-white text-black": isActive,

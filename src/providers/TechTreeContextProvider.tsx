@@ -61,7 +61,7 @@ export function TechTreeContextProvider({ children }: { children: ReactNode }) {
 			activeEditType,
 			setActiveEditType,
 		}),
-		[mode, activeNode, activeEditType],
+		[mode, activeNode, activeEditType, nodes],
 	);
 
 	return (

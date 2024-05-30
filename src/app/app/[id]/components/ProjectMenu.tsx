@@ -14,9 +14,14 @@ export function ProjectMenu({ id, status }: ProjectMenuProps) {
 	let menu: NavigationItemProps[] = [];
 	const pathname = usePathname();
 
-	if (status === "rfp") {
+	if (status === "idle") {
 		menu.push({
-			href: `${basePath}`,
+			href: basePath,
+			label: "Home",
+		});
+	} else if (status === "rfp") {
+		menu.push({
+			href: basePath,
 			label: "RFP",
 		});
 	} else {

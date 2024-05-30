@@ -5,6 +5,7 @@ import "reactflow/dist/style.css";
 import { TechNode } from "@/components/techTree/TechNode";
 import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 
+import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { useTechTreeData } from "@/providers/TechTreeDataProvider";
 import { NodeData } from "@/typings";
@@ -14,7 +15,8 @@ import clsx from "clsx";
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
-	const { nodes, edges, handleEdgeUpdate, addNewNode } = useTechTreeData();
+	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
+		useTechTreeData();
 	const { mode, setActiveNode, activeEditType, setActiveEditType } =
 		useTechTreeContext();
 
@@ -42,6 +44,11 @@ export function TechTreeLayout() {
 				"flex-1 relative h-full bg-grid flex",
 			)}
 		>
+			{isLoading && (
+				<div className="absolute inset-0 z-10 horizontal justify-center">
+					<LoadingOutlined className="text-2xl text-gray-400" />
+				</div>
+			)}
 			<ReactFlow
 				nodes={layoutNodes}
 				edges={layoutEdges}

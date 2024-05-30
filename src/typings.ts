@@ -7,7 +7,7 @@ export interface FundingState {
 	funders: number;
 }
 
-export type NodeStatus = "finished" | "in-progress" | "rfp";
+export type NodeStatus = "finished" | "in-progress" | "rfp" | "idle";
 
 export interface NodeData {
 	id?: string;

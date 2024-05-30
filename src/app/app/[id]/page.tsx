@@ -6,6 +6,7 @@ import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 
 import { Contributors } from "@/app/app/[id]/components/Contributors";
 import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
+import { WriteRfp } from "@/app/app/[id]/components/WriteRfp";
 import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { EditOutlined } from "@/components/icons/EditOutlined";
 import { RichText } from "@/components/richText/RichText";
@@ -17,7 +18,9 @@ export default function Page() {
 	const router = useRouter();
 	return (
 		<>
-			{status === "rfp" ? (
+			{status === "idle" ? (
+				<WriteRfp />
+			) : status === "rfp" ? (
 				<RfpProposal />
 			) : status === "in-progress" ? (
 				<>
