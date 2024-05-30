@@ -26,19 +26,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const account = useActiveAccount();
 	const status = useActiveWalletConnectionStatus();
 
+	console.log("status", status);
+	console.log("account", account);
+	console.log(pathname);
+
 	useEffect(() => {
 		if (status === "connecting") return;
 
-		if (status === "connected" && account?.address && pathname === "/") {
-			router.push("/app");
+		if (status === "connected" && !!account?.address && pathname === "/") {
+			router.replace("/app");
 		} else if (
 			status === "disconnected" &&
 			!account?.address &&
 			pathname.startsWith("/app")
 		) {
-			router.push("/");
+			router.replace("/");
 		}
-	}, [account?.address, status]);
+	}, [account, status]);
 
 	return (
 		<AuthContext.Provider value={{}}>

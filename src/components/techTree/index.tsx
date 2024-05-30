@@ -58,7 +58,6 @@ export function TechTreeLayout() {
 				onSelectionEnd={() => setActiveNode(undefined)}
 				onClick={onPossibleNodeAdd}
 				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
-				onEdgesChange={(newEdges) => console.log(newEdges)}
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 				onNodeClick={(evt, { id }) => setActiveNode(id)}
 			/>

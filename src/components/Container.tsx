@@ -11,11 +11,12 @@ import {
 } from "@/lib/constants";
 import { getShortenedFormat } from "@/utils/string.utils";
 
+import { LoginButton } from "@/components/LoginButton";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import { AutoConnect, useActiveAccount } from "thirdweb/react";
+import { AutoConnect, ConnectButton, useActiveAccount } from "thirdweb/react";
 
 export function Header() {
 	const account = useActiveAccount();
@@ -31,23 +32,37 @@ export function Header() {
 				<span className="text-xs text-gray-400">|</span>
 				<div className="text-sm">HackFS</div>
 			</div>
-			{account && (
-				<DropDown
-					menu={[
-						{
-							href: "/app/logout",
-							label: "Logout",
-						},
-					]}
-				>
-					<div className="h-full rounded-full cursor-pointer transition-colors flex items-center space-x-2">
-						<EthAvatar address={account.address} />
-						<div className=" text-sm">
-							{getShortenedFormat(account.address)}
-						</div>
-						<CaretDownOutlined className="text-[9px]" />
+			{account ? (
+				<div className="horizontal">
+					<div className="mr-6 pr-6 border-r border-gray-300">
+						<a
+							className="text-xs text-gray-700 hover:text-blue-700"
+							href="https://docs.filecoin.io/smart-contracts/developing-contracts/get-test-tokens"
+						>
+							Get Testnet Tokens
+						</a>
 					</div>
-				</DropDown>
+					<DropDown
+						menu={[
+							{
+								href: "/app/logout",
+								label: "Logout",
+							},
+						]}
+					>
+						<div className="h-full rounded-full cursor-pointer transition-colors flex items-center space-x-2">
+							<EthAvatar address={account.address} />
+							<div className=" text-sm">
+								{getShortenedFormat(account.address)}
+							</div>
+							<CaretDownOutlined className="text-[9px]" />
+						</div>
+					</DropDown>
+				</div>
+			) : (
+				<div>
+					<LoginButton label="Login" />
+				</div>
 			)}
 		</header>
 	);

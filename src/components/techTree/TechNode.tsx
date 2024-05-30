@@ -16,7 +16,7 @@ export function TechNode({
 	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
 	const isActive = activeNode?.id === id;
-	const showDelete = mode === "edit" && isActive;
+	// const showDelete = mode === "edit" && isActive;
 
 	function handleDelete(ev: MouseEvent<HTMLDivElement>) {
 		ev.preventDefault();

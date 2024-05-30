@@ -40,11 +40,7 @@ function BaseMenuBar() {
 }
 
 export function TechTreeMenu() {
-	const { mode, setMode } = useTechTreeContext();
-
-	function handleBackFromEditMode() {
-		setMode("move");
-	}
+	const { mode } = useTechTreeContext();
 
 	return (
 		<div
