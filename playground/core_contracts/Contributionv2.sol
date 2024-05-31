@@ -7,10 +7,9 @@ contract Contribution {
         string ipfsHash;
     }
 
-    struct Funder {
+    struct Treasury {
         address funder;
         uint256 amount;
-        string ipfsHash;
     }
 
     struct ContributionDetail {
@@ -22,13 +21,9 @@ contract Contribution {
         string title;
         string nodeType;
         ContributionDetail[] contributions;
-        uint256 points;
-        address fundingAddress;
-        uint256 fundingPool;
         uint256 creationTime;
-        bool isFunded;
         bool isFinished;
-        Funder funder;
+        Treasury treasury;
         RFP rfp;
         mapping(address => uint256) lastDripBlock;
     }
@@ -44,12 +39,10 @@ contract Contribution {
         string title;
         string nodeType;
         ContributionDetail[] contributions;
-        uint256 points;
-        address fundingAddress;
-        uint256 fundingPool;
         uint256 creationTime;
-        bool isFunded;
         bool isFinished;
+        Treasury treasury;
+        RFP rfp;
     }
 
     struct NodeInput {
@@ -68,22 +61,21 @@ contract Contribution {
 
     event NodeAdded(uint256 indexed nodeId, string title,  string nodeType);
     event EdgeAdded(uint256 indexed edgeId, string source, string target);
-    event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash, uint256 points);
+    event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash);
     event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash);
-    event FundsAdded(uint256 indexed nodeIndex, uint256 amount);
+    event TreasuryAdded(uint256 indexed nodeIndex, uint256 amount);
     event NodeFinished(uint256 indexed nodeId);
 
     function addNode(string memory _title, string memory _nodeType) public {
         Node storage newNode = nodes.push();
         newNode.title = _title;
         newNode.nodeType = _nodeType;
-        newNode.points = 10; // Fixed points for adding a node
-        newNode.fundingPool = 0;
         newNode.creationTime = block.timestamp;
         newNode.isFinished = false;
-        newNode.isFunded = false;
 
         uint256 nodeId = nodes.length - 1;
+
+        userNodePoints[msg.sender][nodeId] += 10;
         newNode.lastDripBlock[msg.sender] = block.number;
 
         emit NodeAdded(nodeId, _title, _nodeType);
@@ -125,37 +117,34 @@ contract Contribution {
         Node storage node = nodes[nodeIndex];
         node.contributions.push(ContributionDetail({contributor: msg.sender, ipfsHash: _ipfsHash}));
 
-        uint256 contributionPoints = 5; // Fixed points for adding a contribution
-        node.points += contributionPoints;
-        userNodePoints[msg.sender][nodeIndex] += contributionPoints;
+        userNodePoints[msg.sender][nodeIndex] += 5;
         node.lastDripBlock[msg.sender] = block.number;
 
-        emit ContributionAdded(msg.sender, nodeIndex, _ipfsHash, contributionPoints);
+        emit ContributionAdded(msg.sender, nodeIndex, _ipfsHash);
     }
 
-    function addFunds(uint256 nodeIndex, string memory _ipfsHash) public payable {
+    function addFunds(uint256 nodeIndex) public payable {
         require(nodeIndex < nodes.length, "Node does not exist");
-        require(msg.value > 0, "Must send some ether to fund the node");
+        require(msg.value > 0, "Must send some TFIL to fund the node");
 
         Node storage node = nodes[nodeIndex];
-        require(node.fundingAddress == address(0) || node.fundingAddress == msg.sender, "Only the funder can add more funds");
+        require(node.treasury.funder == address(0) || node.treasury.funder == msg.sender, "Only the funder can add more funds");
 
-        if (node.fundingAddress == address(0)) {
-            node.fundingAddress = msg.sender;
+        if (node.treasury.funder == address(0)) {
+            node.treasury = Treasury({ funder: msg.sender, amount: msg.value });
+        } else {
+            require(node.treasury.funder == msg.sender, "Only the funder can add more funds");
+            node.treasury.amount += msg.value;
         }
 
-        node.fundingPool += msg.value;
-        node.isFunded = true;
-        node.funder = Funder({funder: msg.sender, amount: msg.value, ipfsHash: _ipfsHash});
-
-        emit FundsAdded(nodeIndex, msg.value);
+        emit TreasuryAdded(nodeIndex, msg.value);
     }
 
     function finishNode(uint256 nodeIndex) public {
         require(nodeIndex < nodes.length, "Node does not exist");
 
         Node storage node = nodes[nodeIndex];
-        require(node.funder.funder == msg.sender, "Only the funder can finish the node");
+        require(node.treasury.funder == msg.sender, "Only the funder can finish the node");
         node.isFinished = true;
 
         emit NodeFinished(nodeIndex);
@@ -169,12 +158,10 @@ contract Contribution {
                 title: node.title,
                 nodeType: node.nodeType,
                 contributions: node.contributions,
-                points: node.points,
-                fundingAddress: node.fundingAddress,
-                fundingPool: node.fundingPool,
                 creationTime: node.creationTime,
-                isFunded: node.isFunded,
-                isFinished: node.isFinished
+                isFinished: node.isFinished,
+                treasury: node.treasury,
+                rfp: node.rfp
             });
         }
         return nodesLite;
@@ -186,12 +173,10 @@ contract Contribution {
             title: node.title,
             nodeType: node.nodeType,
             contributions: node.contributions,
-            points: node.points,
-            fundingAddress: node.fundingAddress,
-            fundingPool: node.fundingPool,
             creationTime: node.creationTime,
-            isFunded: node.isFunded,
-            isFinished: node.isFinished
+            isFinished: node.isFinished,
+            rfp: node.rfp,
+            treasury: node.treasury
         });
         return nodeLite;
     }
