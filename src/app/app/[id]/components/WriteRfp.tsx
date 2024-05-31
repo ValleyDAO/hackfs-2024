@@ -1,17 +1,48 @@
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { LoginButton } from "@/components/LoginButton";
 import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
-import { Modal } from "@/components/modal";
 import { InputRichText } from "@/components/richText/InputRichText";
 import { useSendTx } from "@/hooks/useSendTx";
-import React from "react";
+import { contributionContract } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { prepareContractCall } from "thirdweb";
+import { useActiveAccount } from "thirdweb/react";
 
 export function WriteRfp() {
+	const router = useRouter();
+	const account = useActiveAccount();
+	const { id } = useResearchPage();
 	const [writeRfp, setWriteRfp] = React.useState(false);
 	const [proposal, setProposal] = React.useState<string>();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-	const { loading, sendTx } = useSendTx({
+	const { loading, sendTx, isSuccess } = useSendTx({
 		type: "RfpAdded",
 	});
+
+	useEffect(() => {
+		if (isSuccess) {
+			setProposal("");
+			setWriteRfp(false);
+			router.refresh();
+		}
+	}, [isSuccess]);
+
+	async function handlePublish() {
+		if (!proposal || !id) return;
+		await setIsSubmitting(true);
+
+		const transaction = prepareContractCall({
+			contract: contributionContract,
+			method: "addRfp",
+			params: [id, proposal],
+		});
+
+		// @ts-ignore
+		await sendTx(transaction);
+	}
+
 	return (
 		<div className="mt-4">
 			{!writeRfp ? (
@@ -27,9 +58,17 @@ export function WriteRfp() {
 						</span>
 					</div>
 					<div className="mt-4">
-						<Button onClick={() => setWriteRfp(true)} variant="primary">
-							Write & Upload an RFP
-						</Button>
+						{account?.address ? (
+							<Button
+								withAuth
+								onClick={() => setWriteRfp(true)}
+								variant="primary"
+							>
+								Write & Upload an RFP
+							</Button>
+						) : (
+							<LoginButton label="Login" />
+						)}
 					</div>
 				</>
 			) : (
@@ -44,19 +83,15 @@ export function WriteRfp() {
 						<div className="mt-4 flex justify-end">
 							<Button
 								className="!py-2 !px-6"
-								loading={isSubmitting}
+								loading={isSubmitting || loading}
 								disabled={!proposal || proposal?.length < 2}
 								variant="primary"
-								onClick={() => setIsSubmitting(true)}
+								onClick={() => handlePublish()}
 							>
 								Publish
 							</Button>
 						</div>
 					</div>
-					<Modal open={isSubmitting} close={() => setIsSubmitting(false)}>
-						sdfsdf
-						<Button onClick={() => sendTx}></Button>
-					</Modal>
 				</>
 			)}
 		</div>

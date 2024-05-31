@@ -1,5 +1,6 @@
 "use client";
 
+import { ContractEventsProvider } from "@/providers/ContractEventsProvider";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThirdwebProvider } from "thirdweb/react";
@@ -13,7 +14,9 @@ const queryClient = new QueryClient();
 const Providers = ({ children }: ProviderType) => {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<ThirdwebProvider>{children}</ThirdwebProvider>
+			<ThirdwebProvider>
+				<ContractEventsProvider>{children}</ContractEventsProvider>
+			</ThirdwebProvider>
 		</QueryClientProvider>
 	);
 };

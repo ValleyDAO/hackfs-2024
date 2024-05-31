@@ -20,8 +20,9 @@ export function Navigation({ menu }: Props) {
 	const pathname = usePathname();
 	return (
 		<div className="flex">
-			{menu.map(({ href, label, icon, isActive }) => (
+			{menu.map(({ href, label, icon, isActive }, idx) => (
 				<Link
+					key={`${idx}-${href}`}
 					href={href}
 					className={clsx(
 						"flex items-center px-4 pb-2 pt-2 border-b hover:border-primary hover:text-primary",

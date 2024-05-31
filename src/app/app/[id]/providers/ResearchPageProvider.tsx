@@ -2,8 +2,11 @@
 
 import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
 import { StatusTag } from "@/components/StatusTag";
+import { Button } from "@/components/button";
+import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
 import { NodeData, NodeStatus } from "@/typings";
+import Link from "next/link";
 import React, { ReactNode, createContext, useContext, useEffect } from "react";
 
 type ResearchContextProps = Partial<NodeData> & {
@@ -26,7 +29,7 @@ export function ResearchPageProvider({
 	children,
 	id,
 }: { children: ReactNode; id: string }) {
-	const { node } = useFetchTechTreeNode(BigInt(id));
+	const { node, isLoading } = useFetchTechTreeNode(BigInt(id));
 	const [localNode, setLocalNode] = React.useState<NodeData>();
 
 	useEffect(() => {}, []);
@@ -43,7 +46,20 @@ export function ResearchPageProvider({
 
 	return (
 		<ResearchPageContext.Provider value={{ ...localNode, handleStatusChange }}>
-			{children}
+			{isLoading ? (
+				<div className="pt-10 layout">
+					<LoadingOutlined />
+				</div>
+			) : node && !isLoading ? (
+				children
+			) : (
+				<div className="pt-10 layout">
+					<h1 className="font-semibold text-2xl mb-6">Node not found</h1>
+					<Link href="/app">
+						<Button variant="primary">Go Back</Button>
+					</Link>
+				</div>
+			)}
 		</ResearchPageContext.Provider>
 	);
 }

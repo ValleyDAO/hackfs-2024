@@ -24,7 +24,7 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 	const nodes = useMemo<NodeData[]>(
 		() =>
 			onChainNodes?.map((node, idx) => ({
-				id: `${idx}`,
+				id: BigInt(idx),
 				title: node.title,
 				type: node.nodeType as NodeType,
 				origin: "on-chain",

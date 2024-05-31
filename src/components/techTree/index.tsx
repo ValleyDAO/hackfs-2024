@@ -41,7 +41,7 @@ export function TechTreeLayout() {
 		if (mode === "edit" && activeEditType === "node") {
 			ev.preventDefault();
 			const newNode: NodeData = {
-				id: `${(nodes || []).length}`,
+				id: BigInt((nodes || []).length),
 				title: "Placeholder",
 				type: "end-goal",
 			};
@@ -78,10 +78,9 @@ export function TechTreeLayout() {
 				onClick={onPossibleNodeAdd}
 				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
-				onNodeClick={(evt, { id }) => setActiveNode(id)}
+				onNodeClick={(evt, { id }) => setActiveNode(BigInt(id))}
 			/>
 			{account?.address && <TechTreeMenu />}
-
 			<Legend />
 		</div>
 	);

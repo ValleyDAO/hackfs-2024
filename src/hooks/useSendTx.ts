@@ -1,53 +1,53 @@
-import { contributionContract } from "@/lib/constants";
+import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useEffect, useMemo, useState } from "react";
-import { prepareContractCall, prepareEvent } from "thirdweb";
-import { useContractEvents, useSendTransaction } from "thirdweb/react";
+import toast from "react-hot-toast";
+import { PreparedTransaction } from "thirdweb";
+import { useSendTransaction } from "thirdweb/react";
+
+type TxStatus = "loading" | "success" | "error" | "idle";
 
 interface SendTxProps {
 	loading: boolean;
-	sendTx(tx: SendTx): void;
+	isSuccess: boolean;
+	sendTx(tx: PreparedTransaction): Promise<void>;
+	txHash?: string;
+	status: TxStatus;
 }
 
 interface SendTxInputProps {
-	type: "RfpAdded";
+	type?: "RfpAdded";
 }
 
-type SendTx = typeof prepareContractCall;
-
-const event = prepareEvent({
-	signature:
-		"event NodeAdded(uint256 indexed nodeId, string title, uint256 points)",
-});
-
-const rfpEvent = prepareEvent({
-	signature: "event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash)",
-});
-
 export function useSendTx({ type }: SendTxInputProps): SendTxProps {
-	const { mutateAsync, isPending, isSuccess, isPaused } = useSendTransaction();
-	const [loading, setLoading] = useState(false);
+	const { mutateAsync, isPending, isPaused } = useSendTransaction();
+	const [status, setStatus] = useState<TxStatus>("idle");
 	const [txHash, setTxHash] = useState<string>();
-	const { data } = useContractEvents({
-		contract: contributionContract,
-		events: [rfpEvent],
-		watch: true,
-	});
+
+	const { events } = useTxEvents();
 
 	useEffect(() => {
-		console.log(data);
-	}, [data]);
+		const event = events.find((event) => event.transactionHash === txHash);
+		if (event) {
+			toast.success(`Transaction successful!`);
+			setStatus("success");
+		}
+	}, [events, txHash]);
 
-	async function sendTx(tx: SendTx) {
+	async function sendTx(tx: PreparedTransaction) {
+		setStatus("loading");
 		// @ts-ignore
-		await mutateAsync(tx);
-		//setTxHash(txHash);
+		const response = await mutateAsync(tx);
+		setTxHash(response.transactionHash);
 	}
 
 	return useMemo(
 		() => ({
-			loading,
+			loading: status === "loading",
 			sendTx,
+			isSuccess: status === "success",
+			status,
+			txHash,
 		}),
-		[isPending, isSuccess, isPaused],
+		[isPending, status, isPaused, txHash],
 	);
 }

@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 import { LoadingOutlined } from "../icons/LoadingOutlined";
 
-export type ButtonProps = {
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	children?: React.ReactNode;
 	variant?: "primary" | "default" | "black" | "secondary" | "danger";
 	size?: "small" | "medium" | "large";
@@ -13,6 +13,7 @@ export type ButtonProps = {
 	disabled?: boolean;
 	className?: string;
 	fullSize?: boolean;
+	withAuth?: boolean;
 };
 
 export function Button({
@@ -25,8 +26,9 @@ export function Button({
 	loading = false,
 	disabled = false,
 	fullSize,
+	withAuth,
 	...props
-}: ButtonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
+}: ButtonProps) {
 	return (
 		<button
 			type="button"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
+import { useSendTx } from "@/hooks/useSendTx";
 import { contributionContract } from "@/lib/constants";
 import { EdgeData, NodeData } from "@/typings";
 import { areAllNodesConnected, generateId } from "@/utils/nodes.utils";
@@ -11,11 +12,9 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
-	useEffect,
 } from "react";
 import toast from "react-hot-toast";
 import { prepareContractCall } from "thirdweb";
-import { useReadContract, useSendTransaction } from "thirdweb/react";
 
 type PublishMode = "reset" | "publish";
 
@@ -24,9 +23,8 @@ type TechTreeDataContextProps = {
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
-	removeNode(nodeId: string): void;
 	hasUpdates: boolean;
-	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
+	handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>): void;
 	handlePublish(mode: PublishMode): void;
 	isPublishing: boolean;
 	isLoading: boolean;
@@ -34,7 +32,6 @@ type TechTreeDataContextProps = {
 
 export const TechTreeContext = createContext<TechTreeDataContextProps>({
 	handleEdgeUpdate: () => {},
-	removeNode: () => {},
 	hasUpdates: false,
 	nodes: [],
 	edges: [],
@@ -55,46 +52,46 @@ export const useTechTreeData = (): TechTreeDataContextProps => {
 
 export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
-
+	const { sendTx, loading: hasTxInTransit, isSuccess } = useSendTx({});
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([
-		/*		{
-			id: "1",
+		/*{
+			id: BigInt(1),
 			title: "Improve Basic Solar Cell Efficiency",
 			type: "research",
 		},
 		{
-			id: "2",
+			id: BigInt(2),
 			title: "Develop Multi-Junction Solar Cells",
 			type: "development",
 		},
 		{
-			id: "3",
+			id: BigInt(3),
 			title: "Research Perovskite Solar Cells",
 			type: "research",
 		},
 		{
-			id: "4",
+			id: BigInt(4),
 			title: "Combine Perovskite with Silicon",
 			type: "development",
 		},
 		{
-			id: "5",
+			id: BigInt(5),
 			title: "Develop Flexible and Lightweight Substrates",
 			type: "development",
 		},
 		{
-			id: "6",
+			id: BigInt(6),
 			title: "Integrate Advanced Energy Storage",
 			type: "optimisation",
 		},
 		{
-			id: "7",
+			id: BigInt(7),
 			title: "Omni Solar Panels",
 			type: "end-goal",
 		},*/
 	]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([
-		/*		{
+		/*{
 			id: "1",
 			source: "1",
 			target: "2",
@@ -110,13 +107,6 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		{ id: "6", source: "5", target: "6" },
 		{ id: "7", source: "6", target: "7" },*/
 	]);
-	const { mutate, isPending, isSuccess } = useSendTransaction();
-
-	useEffect(() => {
-		if (isSuccess) {
-			toast.success("Tech tree updated successfully");
-		}
-	}, [isSuccess]);
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];
@@ -138,7 +128,7 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		]);
 	}
 
-	function removeNode(nodeId: string) {
+	/*	function removeNode(nodeId: bigint) {
 		// can't node if its a node with target nodes
 		const isMiddleNode =
 			(updatedEdges || []).filter((edge) => edge.source === nodeId)?.length > 0;
@@ -152,9 +142,9 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		const newEdges = updatedEdges.filter((edge) => edge.target !== nodeId);
 		setUpdatedNodes(newNodes);
 		setUpdatedEdges(newEdges);
-	}
+	}*/
 
-	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
+	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
 		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
 
@@ -164,7 +154,7 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		setUpdatedNodes(updatedNodesCopy);
 	}
 
-	function handlePublish(mode: PublishMode) {
+	async function handlePublish(mode: PublishMode) {
 		if (mode === "reset") {
 			setUpdatedNodes([]);
 			setUpdatedEdges([]);
@@ -191,8 +181,9 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 					})),
 				],
 			});
+
 			// @ts-ignore
-			mutate(transaction);
+			await sendTx(transaction);
 		} catch (error) {
 			console.log(error);
 		}
@@ -204,16 +195,15 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
 			handleEdgeUpdate,
-			removeNode,
 			handleNodeUpdate,
 			hasUpdates:
 				!deepEqual(nodes, nodesWithUpdates) ||
 				!deepEqual(edges, edgesWithUpdates),
 			handlePublish,
-			isPublishing: isPending,
+			isPublishing: hasTxInTransit,
 			isLoading: isLoadingOnChain,
 		}),
-		[nodesWithUpdates, edgesWithUpdates, isLoadingOnChain],
+		[nodesWithUpdates, edgesWithUpdates, hasTxInTransit, isLoadingOnChain],
 	);
 
 	return (

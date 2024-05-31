@@ -7,7 +7,7 @@ import React, { ReactNode, createContext, useContext, useMemo } from "react";
 type TechTreeContextProps = {
 	mode: TechTreeMode;
 	setMode: (mode: TechTreeMode) => void;
-	setActiveNode: (nodeId?: string) => void;
+	setActiveNode: (nodeId?: bigint) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
 	setActiveEditType: (type?: TechTreeAddType) => void;
@@ -46,7 +46,7 @@ export function TechTreeContextProvider({ children }: { children: ReactNode }) {
 		setMode(mode);
 	}
 
-	function handleSetActiveNode(nodeId?: string) {
+	function handleSetActiveNode(nodeId?: bigint) {
 		const node = nodes.find((n) => n.id === nodeId);
 		setActiveNode(node);
 	}

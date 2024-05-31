@@ -1,7 +1,7 @@
 "use client";
 
 import { contributionContract, web3Client } from "@/lib/constants";
-import { Contributor, NodeData, NodeType } from "@/typings";
+import { Contributor, NodeData, NodeStatus, NodeType } from "@/typings";
 import { useEffect, useState } from "react";
 import { resolveName } from "thirdweb/extensions/ens";
 import { useReadContract } from "thirdweb/react";
@@ -51,14 +51,25 @@ export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
 			}
 		}
 
+		const status: NodeStatus =
+			data.rfp.ipfsHash?.length === 0
+				? "idle"
+				: data.rfp.ipfsHash?.length > 0 && data.treasury.amount === BigInt(0)
+					? "rfp"
+					: data.treasury.amount > BigInt(0) && data.rfp.ipfsHash?.length > 0
+						? "in-progress"
+						: data.isFinished
+							? "finished"
+							: "idle";
+
 		setNode({
 			title: data.title,
-			id: `${id}`,
+			id: BigInt(id),
 			type: data.nodeType,
 			rfp,
 			content:
 				'{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","marks":[{"type":"bold"}],"text":"Abstract"},{"type":"text","text":": Endometriosis is a prevalent chronic inflammatory disease characterized by a considerable delay"}]},{"type":"paragraph","content":[{"type":"text","text":"between initial symptoms and diagnosis through surgery. The pressing need for a timely, non-invasive"}]},{"type":"paragraph","content":[{"type":"text","text":"diagnostic solution underscores the focus of current research efforts. This study examines the diagnostic"}]},{"type":"paragraph","content":[{"type":"text","text":"potential of the menstrual blood lipidome. The lipid profile of 39 samples (23 women with endometriosis and"}]},{"type":"paragraph","content":[{"type":"text","text":"16 patient of control group) was acquired using reverse-phase high-performance liquid chromatography-mass"}]},{"type":"paragraph","content":[{"type":"text","text":"spectrometry with LipidMatch processing and identification. "}]}]}',
-			status: "rfp",
+			status,
 			fundingState: {
 				fundingRequest: 500000,
 				fundingRaised: 25750,

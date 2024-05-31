@@ -61,7 +61,7 @@ export function EditTechTreeMenu() {
 
 	function handleAddNewNode() {
 		const newNode: NodeData = {
-			id: `${(nodes || []).length}`,
+			id: BigInt((nodes || []).length),
 			title: undefined,
 			type: "end-goal",
 		};

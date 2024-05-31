@@ -12,7 +12,7 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0xD457f401f9ed27dC23b65331dc03BAf73C47b7eD";
+	"0x9Af3eE02548b2F7B4153f8CD89d5559ec1586b54";
 
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
@@ -59,12 +59,6 @@ export const contributionContract = getContract({
 					name: "ipfsHash",
 					type: "string",
 				},
-				{
-					indexed: false,
-					internalType: "uint256",
-					name: "points",
-					type: "uint256",
-				},
 			],
 			name: "ContributionAdded",
 			type: "event",
@@ -92,25 +86,6 @@ export const contributionContract = getContract({
 				},
 			],
 			name: "EdgeAdded",
-			type: "event",
-		},
-		{
-			anonymous: false,
-			inputs: [
-				{
-					indexed: true,
-					internalType: "uint256",
-					name: "nodeIndex",
-					type: "uint256",
-				},
-				{
-					indexed: false,
-					internalType: "uint256",
-					name: "amount",
-					type: "uint256",
-				},
-			],
-			name: "FundsAdded",
 			type: "event",
 		},
 		{
@@ -171,6 +146,25 @@ export const contributionContract = getContract({
 			type: "event",
 		},
 		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "amount",
+					type: "uint256",
+				},
+			],
+			name: "TreasuryAdded",
+			type: "event",
+		},
+		{
 			inputs: [
 				{
 					internalType: "uint256",
@@ -212,11 +206,6 @@ export const contributionContract = getContract({
 					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
-				},
-				{
-					internalType: "string",
-					name: "_ipfsHash",
-					type: "string",
 				},
 			],
 			name: "addFunds",
@@ -407,33 +396,47 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "uint256",
-							name: "points",
-							type: "uint256",
-						},
-						{
-							internalType: "address",
-							name: "fundingAddress",
-							type: "address",
-						},
-						{
-							internalType: "uint256",
-							name: "fundingPool",
-							type: "uint256",
-						},
-						{
-							internalType: "uint256",
 							name: "creationTime",
 							type: "uint256",
 						},
 						{
 							internalType: "bool",
-							name: "isFunded",
+							name: "isFinished",
 							type: "bool",
 						},
 						{
-							internalType: "bool",
-							name: "isFinished",
-							type: "bool",
+							components: [
+								{
+									internalType: "address",
+									name: "funder",
+									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "amount",
+									type: "uint256",
+								},
+							],
+							internalType: "struct Contribution.Treasury",
+							name: "treasury",
+							type: "tuple",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "rfp",
+									type: "address",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+							],
+							internalType: "struct Contribution.RFP",
+							name: "rfp",
+							type: "tuple",
 						},
 					],
 					internalType: "struct Contribution.NodeLite",
@@ -479,33 +482,47 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "uint256",
-							name: "points",
-							type: "uint256",
-						},
-						{
-							internalType: "address",
-							name: "fundingAddress",
-							type: "address",
-						},
-						{
-							internalType: "uint256",
-							name: "fundingPool",
-							type: "uint256",
-						},
-						{
-							internalType: "uint256",
 							name: "creationTime",
 							type: "uint256",
 						},
 						{
 							internalType: "bool",
-							name: "isFunded",
+							name: "isFinished",
 							type: "bool",
 						},
 						{
-							internalType: "bool",
-							name: "isFinished",
-							type: "bool",
+							components: [
+								{
+									internalType: "address",
+									name: "funder",
+									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "amount",
+									type: "uint256",
+								},
+							],
+							internalType: "struct Contribution.Treasury",
+							name: "treasury",
+							type: "tuple",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "rfp",
+									type: "address",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+							],
+							internalType: "struct Contribution.RFP",
+							name: "rfp",
+							type: "tuple",
 						},
 					],
 					internalType: "struct Contribution.NodeLite[]",
@@ -562,28 +579,8 @@ export const contributionContract = getContract({
 				},
 				{
 					internalType: "uint256",
-					name: "points",
-					type: "uint256",
-				},
-				{
-					internalType: "address",
-					name: "fundingAddress",
-					type: "address",
-				},
-				{
-					internalType: "uint256",
-					name: "fundingPool",
-					type: "uint256",
-				},
-				{
-					internalType: "uint256",
 					name: "creationTime",
 					type: "uint256",
-				},
-				{
-					internalType: "bool",
-					name: "isFunded",
-					type: "bool",
 				},
 				{
 					internalType: "bool",
@@ -602,14 +599,9 @@ export const contributionContract = getContract({
 							name: "amount",
 							type: "uint256",
 						},
-						{
-							internalType: "string",
-							name: "ipfsHash",
-							type: "string",
-						},
 					],
-					internalType: "struct Contribution.Funder",
-					name: "funder",
+					internalType: "struct Contribution.Treasury",
+					name: "treasury",
 					type: "tuple",
 				},
 				{

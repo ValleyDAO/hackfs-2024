@@ -21,7 +21,7 @@ export function transformTechTreeDataToNode({
 	...data
 }: NodeData): TechTreeLayoutNode {
 	return {
-		id: id || "",
+		id: `${id}` || "",
 		type: "tech-tree",
 		data: data,
 		position: defaultPosition,
@@ -87,7 +87,7 @@ export function areAllNodesConnected(
 	// Initialize adjacency list
 	nodes.forEach((node) => {
 		if (!node.id) return;
-		adjList[node.id] = [];
+		adjList[`${node.id}`] = [];
 	});
 
 	// Populate adjacency list
@@ -108,7 +108,7 @@ export function areAllNodesConnected(
 
 	// Perform DFS from the first node
 	const visited = new Set<string>();
-	if (nodes[0]?.id) dfs(nodes[0]?.id, visited);
+	if (nodes[0]?.id) dfs(`${nodes[0]?.id}`, visited);
 
 	// Check if all nodes were visited
 	return nodes.length === visited.size;

@@ -18,15 +18,8 @@ export const NodeTypeValues: NodeType[] = [
 	"end-goal",
 ];
 
-export enum NodeType2 {
-	OPTIMISATION = "optimisation",
-	DEVELOPMENT = "development",
-	RESEARCH = "research",
-	END_GOAL = "end-goal",
-}
-
 export interface NodeData {
-	id?: string;
+	id?: bigint;
 	title?: string;
 	origin?: NodeOrigin;
 	type: NodeType;

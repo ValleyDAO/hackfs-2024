@@ -12,7 +12,7 @@ export function TechNode({
 }: NodeProps<NodeData>) {
 	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
-	const isActive = activeNode?.id === id;
+	const isActive = activeNode?.id === BigInt(id);
 
 	return (
 		<>
