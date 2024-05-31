@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useCallback, useEffect } from "react";
 import ReactFlow, { ConnectionLineType } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -6,9 +6,10 @@ import { TechNode } from "@/components/techTree/TechNode";
 import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
+import { Legend } from "@/components/techTree/Legend";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { useTechTreeData } from "@/providers/TechTreeDataProvider";
-import { NodeData } from "@/typings";
+import { NodeData, NodeType } from "@/typings";
 import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
 
@@ -25,15 +26,22 @@ export function TechTreeLayout() {
 		edges,
 	);
 
+	useEffect(() => {
+		if (nodes && mode === "edit" && activeEditType === "node") {
+			setActiveEditType(undefined);
+			setActiveNode(nodes?.[nodes.length - 1]?.id);
+		}
+	}, [nodes]);
+
 	function onPossibleNodeAdd(ev: MouseEvent<HTMLDivElement>) {
 		if (mode === "edit" && activeEditType === "node") {
 			ev.preventDefault();
 			const newNode: NodeData = {
 				id: `${(nodes || []).length}`,
 				title: "Placeholder",
+				type: NodeType.END_GOAL,
 			};
 			addNewNode(newNode);
-			setActiveEditType(undefined);
 		}
 	}
 
@@ -67,8 +75,11 @@ export function TechTreeLayout() {
 				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 				onNodeClick={(evt, { id }) => setActiveNode(id)}
-			/>
-			<TechTreeMenu />
+			>
+				<TechTreeMenu />
+			</ReactFlow>
+
+			<Legend />
 		</div>
 	);
 }

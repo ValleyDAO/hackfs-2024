@@ -1,5 +1,5 @@
 import { edgeType } from "@/utils/nodes.utils";
-import { Edge, Node, Position } from "reactflow";
+import { Node, Position } from "reactflow";
 
 export interface FundingState {
 	fundingRaised: number;
@@ -8,10 +8,20 @@ export interface FundingState {
 }
 
 export type NodeStatus = "finished" | "in-progress" | "rfp" | "idle";
+export type NodeOrigin = "on-chain" | "off-chain";
+
+export enum NodeType {
+	OPTIMISATION = "optimisation",
+	DEVELOPMENT = "development",
+	RESEARCH = "research",
+	END_GOAL = "end-goal",
+}
 
 export interface NodeData {
 	id?: string;
-	title: string;
+	title?: string;
+	origin?: NodeOrigin;
+	type: NodeType;
 	fundingState?: FundingState;
 	rfp?: {
 		compensation: number;
@@ -26,6 +36,7 @@ export interface EdgeData {
 	id: string;
 	source: string;
 	target: string;
+	origin?: NodeOrigin;
 }
 
 export type TechTreeLayoutNode = Node<NodeData> & {
@@ -37,8 +48,6 @@ export type TechTreeLayoutEdge = EdgeData & {
 	type?: typeof edgeType;
 };
 
-export type TechTreeData = { nodes: NodeData[]; edges: EdgeData[] };
-
 export interface Contributor {
 	address: string;
 	ensName?: string;
@@ -46,3 +55,8 @@ export interface Contributor {
 
 export type TechTreeMode = "move" | "edit";
 export type TechTreeAddType = "node" | "edge";
+
+export interface SelectOptionItem {
+	label: string;
+	value: string;
+}

@@ -1,8 +1,9 @@
 "use client";
 
+import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { contributionContract } from "@/lib/constants";
 import { EdgeData, NodeData } from "@/typings";
-import { generateId } from "@/utils/nodes.utils";
+import { areAllNodesConnected, generateId } from "@/utils/nodes.utils";
 import deepEqual from "deep-equal";
 import React, {
 	ReactNode,
@@ -53,37 +54,11 @@ export const useTechTreeData = (): TechTreeDataContextProps => {
 };
 
 export function TechTreeDataProvider({ children }: { children: ReactNode }) {
-	const { data: onChainNodes, isLoading: isLoadingNodes } = useReadContract({
-		contract: contributionContract,
-		method: "getNodesLite",
-	});
-	const { data: onChainEdges, isLoading: isLoadingEdges } = useReadContract({
-		contract: contributionContract,
-		method: "getEdges",
-	});
+	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
 
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
 	const { mutate, isPending, isSuccess } = useSendTransaction();
-
-	const nodes = useMemo<NodeData[]>(
-		() =>
-			onChainNodes?.map((node, idx) => ({
-				id: `${idx}`,
-				title: node.title,
-			})) || [],
-		[onChainNodes],
-	);
-
-	const edges = useMemo<EdgeData[]>(
-		() =>
-			onChainEdges?.map((edge, idx) => ({
-				id: `${idx}`,
-				source: edge.source,
-				target: edge.target,
-			})) || [],
-		[onChainEdges],
-	);
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -128,10 +103,10 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	}
 
 	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
-		const updatedNode = nodesWithUpdates.find((node) => node.id === nodeId);
+		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
 
-		const updatedNodesCopy = nodesWithUpdates.map((node) =>
+		const updatedNodesCopy = updatedNodes.map((node) =>
 			node.id === nodeId ? { ...node, ...data } : node,
 		);
 		setUpdatedNodes(updatedNodesCopy);
@@ -144,14 +119,19 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-		// PUBLISH MODE
+		if (!areAllNodesConnected(nodesWithUpdates, edgesWithUpdates)) {
+			toast.error("All nodes need to be connected");
+			return;
+		}
+
 		try {
 			const transaction = prepareContractCall({
 				contract: contributionContract,
 				method: "updateTechTree",
 				params: [
 					updatedNodes.map((node) => ({
-						title: node.title,
+						title: node.title || "",
+						type: node.type?.toLowerCase(),
 						ipfsHash: "node.ipfsHash,",
 					})),
 					updatedEdges.map((edge) => ({
@@ -171,7 +151,7 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		() => ({
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
-			addNewNode: (node) => setUpdatedNodes([...(updatedNodes || []), node]),
+			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
 			handleEdgeUpdate,
 			removeNode,
 			handleNodeUpdate,
@@ -180,9 +160,9 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 				!deepEqual(edges, edgesWithUpdates),
 			handlePublish,
 			isPublishing: isPending,
-			isLoading: isLoadingNodes || isLoadingEdges,
+			isLoading: isLoadingOnChain,
 		}),
-		[nodesWithUpdates, edgesWithUpdates, isLoadingEdges, isLoadingEdges],
+		[nodesWithUpdates, edgesWithUpdates, isLoadingOnChain],
 	);
 
 	return (

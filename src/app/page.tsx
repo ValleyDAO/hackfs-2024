@@ -1,7 +1,9 @@
 "use client";
 import { LoginButton } from "@/components/LoginButton";
+import { Button } from "@/components/button";
 import { web3Client } from "@/lib/constants";
 import clsx from "clsx";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
@@ -26,6 +28,7 @@ function WalkthroughItem({
 }
 
 export default function Home() {
+	const account = useActiveAccount();
 	return (
 		<div className="w-full h-full pt-20 space-y-10 overflow-y-scroll">
 			<div className="mb-14 flex flex-col items-center mx-auto w-7/12">
@@ -44,7 +47,13 @@ export default function Home() {
 					hackathon.
 				</p>
 				<div className="mt-6 mx-auto">
-					<LoginButton variant="black" />
+					{account?.address ? (
+						<Link href="/app">
+							<Button variant="black">Go To App</Button>
+						</Link>
+					) : (
+						<LoginButton variant="black" />
+					)}
 				</div>
 			</div>
 			<div className="w-8/12 mx-auto">
@@ -63,14 +72,14 @@ export default function Home() {
 				<div className="flex items-stretch space-x-2">
 					<WalkthroughItem
 						className="w-5/12"
-						title="1. Connect Wallet"
-						description="Connect your wallet to get started"
+						title="3. Collaborate on research projects"
+						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 					/>
 
 					<WalkthroughItem
 						className="w-7/12"
-						title="2. Navigate & Explore"
-						description="Explore the tech tree and discover research projects"
+						title="4. Receive rewards & recognition"
+						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 					/>
 				</div>
 			</div>

@@ -1,8 +1,6 @@
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
-import { useTechTreeData } from "@/providers/TechTreeDataProvider";
-import { NodeData } from "@/typings";
+import { NodeData, NodeType } from "@/typings";
 import clsx from "clsx";
-import { MouseEvent } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 export function TechNode({
@@ -12,17 +10,9 @@ export function TechNode({
 	sourcePosition = Position.Bottom,
 	id,
 }: NodeProps<NodeData>) {
-	const { removeNode } = useTechTreeData();
 	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
 	const isActive = activeNode?.id === id;
-	// const showDelete = mode === "edit" && isActive;
-
-	function handleDelete(ev: MouseEvent<HTMLDivElement>) {
-		ev.preventDefault();
-		ev.stopPropagation();
-		removeNode(activeNode?.id || "");
-	}
 
 	return (
 		<>
@@ -33,26 +23,30 @@ export function TechNode({
 			/>
 			<div
 				className={clsx(
-					"px-10 py-4 relative !text-xs hover:border-gray-500 duration-300 transition-colors border rounded",
+					"px-10 py-4 relative !text-xs duration-300 transition-all border rounded",
+					{
+						"bg-green-50 border-green-600 text-green-800":
+							data.type === NodeType.END_GOAL,
+						"bg-blue-50 border-blue-600 text-blue-800":
+							data.type === NodeType.RESEARCH,
+						"bg-yellow-50 border-yellow-600 text-yellow-800":
+							data.type === NodeType.DEVELOPMENT,
+						"bg-red-50 border-red-600 text-red-800":
+							data.type === NodeType.OPTIMISATION,
+					},
 					hasActiveNodeInMoveMode
 						? {
 								"border-gray-600 bg-white text-black": isActive,
-								"border-gray-200 bg-white text-gray-400": !isActive,
+								"opacity-50 hover:opacity-100": !isActive,
 							}
 						: "border-gray-200 bg-white",
 				)}
 			>
-				<span className="">{data?.title}</span>
-				{/*{showDelete && (
-					<div
-						onClick={handleDelete}
-						className="absolute cursor-pointer horizontal justify-center top-0 right-0 w-5 aspect-square bg-red-600 border-2 rounded-full border-white -mt-2 -mr-2"
-					>
-						<span className="text-[10px] mb-[2px] leading-none text-white">
-							x
-						</span>
-					</div>
-				)}*/}
+				<span
+					className={clsx(data?.title?.length === 0 && "text-green-800/50")}
+				>
+					{data?.title || "no title yet"}
+				</span>
 			</div>
 			<Handle
 				type="source"

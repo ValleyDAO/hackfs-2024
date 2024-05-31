@@ -35,13 +35,12 @@ export function TechTreeContextProvider({ children }: { children: ReactNode }) {
 	);
 	const [activeEditType, setActiveEditType] = React.useState<
 		TechTreeAddType | undefined
-	>("node");
+	>();
 
 	const [activeNode, setActiveNode] = React.useState<NodeData>();
 
 	function handleSetMode(mode: TechTreeMode) {
 		if (mode === "edit") {
-			setActiveEditType("node");
 			setActiveNode(undefined);
 		}
 		setMode(mode);

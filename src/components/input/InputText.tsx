@@ -1,4 +1,5 @@
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
+import { InputLabel } from "@/components/input/InputLabel";
 import clsx from "clsx";
 import * as React from "react";
 import { ReactNode } from "react";
@@ -58,11 +59,7 @@ function InputText({
 
 	return (
 		<div className="w-full">
-			{label && (
-				<label className="font-semibold mb-1.5 text-gray-600 text-sm block">
-					{label}
-				</label>
-			)}
+			{label && <InputLabel label={label} />}
 			<div
 				className={clsx(
 					"leading-11 m-0 flex h-9 w-full rounded border border-gray-200 p-0 align-middle shadow-none transition-all duration-300",
@@ -87,7 +84,7 @@ function InputText({
 					onBlur={onBlur}
 					tabIndex={tabIndex}
 					className={clsx(
-						"leading-11 h-full w-full rounded border-0 p-0 px-3 text-sm text-gray-600 outline-none transition-all duration-300 ease-in",
+						"leading-11 h-full w-full rounded border-0 p-0 px-3 text-xs text-black outline-none transition-all duration-300 ease-in",
 						{ "cursor-not-allowed": disabled },
 						className,
 					)}

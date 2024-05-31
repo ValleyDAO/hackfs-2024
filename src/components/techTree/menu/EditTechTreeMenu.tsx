@@ -7,7 +7,7 @@ import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { Modal } from "@/components/modal";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { useTechTreeData } from "@/providers/TechTreeDataProvider";
-import { TechTreeAddType, TechTreeMode } from "@/typings";
+import { NodeData, NodeType, TechTreeAddType, TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 import toast, { useToaster } from "react-hot-toast";
@@ -16,16 +16,22 @@ function AddObjectInEditModeItem({
 	icon,
 	type,
 	activeEditType,
+	onAction,
+	label,
 }: {
 	icon: React.ReactNode;
 	type: TechTreeAddType;
 	activeEditType?: TechTreeAddType;
+	onAction?(): void;
+	label: string;
 }) {
 	const { setActiveEditType } = useTechTreeContext();
 	const isActive = activeEditType === type;
 	return (
 		<div
-			onClick={() => setActiveEditType(type)}
+			onClick={() =>
+				onAction ? onAction() : setActiveEditType(isActive ? undefined : type)
+			}
 			className={clsx(
 				"h-12 horizontal justify-center space-x-1 cursor-pointer text-gray-600 group transition-colors hover:text-black rounded",
 				{
@@ -37,19 +43,30 @@ function AddObjectInEditModeItem({
 			<div
 				className={clsx("text-xs mt-1 capitalize", isActive && "text-blue-700")}
 			>
-				{type}
+				{label}
 			</div>
 		</div>
 	);
 }
 
 export function EditTechTreeMenu() {
-	const { hasUpdates, handlePublish, isPublishing } = useTechTreeData();
-	const { setMode, activeEditType, activeNode } = useTechTreeContext();
+	const { hasUpdates, handlePublish, isPublishing, nodes, addNewNode } =
+		useTechTreeData();
+	const { setMode, activeEditType, setActiveEditType } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
 		handlePublish("reset");
 		setMode("move");
+	}
+
+	function handleAddNewNode() {
+		const newNode: NodeData = {
+			id: `${(nodes || []).length}`,
+			title: undefined,
+			type: NodeType.END_GOAL,
+		};
+		setActiveEditType("node");
+		addNewNode(newNode);
 	}
 
 	return (
@@ -75,11 +92,14 @@ export function EditTechTreeMenu() {
 						</div>
 						<AddObjectInEditModeItem
 							type="node"
+							label="Add node"
 							activeEditType={activeEditType}
 							icon={<NodeOutlined />}
+							onAction={handleAddNewNode}
 						/>
 						<AddObjectInEditModeItem
 							type="edge"
+							label="Connect nodes"
 							activeEditType={activeEditType}
 							icon={<EdgeOutlined />}
 						/>

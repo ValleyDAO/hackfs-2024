@@ -22,6 +22,7 @@
 		"react-dom": "^18",
 		"react-hot-toast": "^2.4.1",
 		"react-query": "^3.39.3",
+		"react-select": "^5.8.0",
 		"reactflow": "^11.11.3",
 		"thirdweb": "^5.22.1",
 		"wagmi": "^2.9.2"

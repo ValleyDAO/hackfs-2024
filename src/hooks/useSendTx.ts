@@ -1,36 +1,52 @@
 import { contributionContract } from "@/lib/constants";
-import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import { prepareContractCall } from "thirdweb";
+import { useEffect, useMemo, useState } from "react";
+import { prepareContractCall, prepareEvent } from "thirdweb";
 import { useContractEvents, useSendTransaction } from "thirdweb/react";
-import { useWatchContractEvent } from "wagmi";
 
 interface SendTxProps {
 	loading: boolean;
+	sendTx(tx: SendTx): void;
 }
 
-export function useSendTx(): SendTxProps {
+interface SendTxInputProps {
+	type: "RfpAdded";
+}
+
+type SendTx = typeof prepareContractCall;
+
+const event = prepareEvent({
+	signature:
+		"event NodeAdded(uint256 indexed nodeId, string title, uint256 points)",
+});
+
+const rfpEvent = prepareEvent({
+	signature: "event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash)",
+});
+
+export function useSendTx({ type }: SendTxInputProps): SendTxProps {
 	const { mutateAsync, isPending, isSuccess, isPaused } = useSendTransaction();
 	const [loading, setLoading] = useState(false);
-	/*	const [txHash, setTxHash] = useState<string>();
-	const contractEvents = useContractEvents({
+	const [txHash, setTxHash] = useState<string>();
+	const { data } = useContractEvents({
 		contract: contributionContract,
-		events: ["NodeAdded"],
-	});
-	const {} = useWatchContractEvent({
-		address: contributionContract.address,
-		abi: contributionContract.abi,
-		eventName: "NodeAdded",
+		events: [rfpEvent],
+		watch: true,
 	});
 
-	async function sendTx(tx: typeof prepareContractCall) {
-		const txHash = await mutateAsync(tx);
-		setTxHash(txHash);
-	}*/
+	useEffect(() => {
+		console.log(data);
+	}, [data]);
+
+	async function sendTx(tx: SendTx) {
+		// @ts-ignore
+		await mutateAsync(tx);
+		//setTxHash(txHash);
+	}
 
 	return useMemo(
 		() => ({
 			loading,
+			sendTx,
 		}),
 		[isPending, isSuccess, isPaused],
 	);

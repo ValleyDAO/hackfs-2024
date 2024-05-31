@@ -4,6 +4,7 @@ import { UnOrderedListOutlined } from "@/components/icons/UnOrderedListOutlined"
 import { HeadingOneOutlined } from "@/components/icons/HeadingOneOutlined";
 import { HeadingThreeOutlined } from "@/components/icons/HeadingThreeOutlined";
 import { HeadingTwoOutlined } from "@/components/icons/HeadingTwoOutlined";
+import { InputLabel } from "@/components/input/InputLabel";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import clsx from "clsx";
@@ -166,11 +167,7 @@ export function InputRichText({
 
 	return (
 		<>
-			{label && (
-				<label className="font-semibold mb-1.5 text-gray-600 text-sm block">
-					{label}
-				</label>
-			)}
+			{label && <InputLabel label={label} />}
 			<div
 				ref={textAreaRef}
 				onFocus={() => !isFocused && setIsFocused(true)}

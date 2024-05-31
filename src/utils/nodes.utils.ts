@@ -35,171 +35,6 @@ function transformEdgeDataToLayoutEdge(data: EdgeData): TechTreeLayoutEdge {
 	};
 }
 
-export const nodesData: NodeData[] = [
-	{
-		id: "33xkw",
-		title: "Synthetic Biology",
-	},
-	{
-		id: "ofxk0l",
-		title: "Foundational Knowledge",
-	},
-	{
-		id: "l1lwtv",
-		title: "Genetic Engineering",
-	},
-	{
-		id: "ah9ojp",
-		title: "Molecular Biology",
-	},
-	{
-		id: "22u5p7",
-		title: "Core Techniques",
-	},
-	{
-		id: "9dcbeg",
-		title: "DNA Assembly",
-	},
-	{
-		id: "gvomav",
-		title: "Protein Engineering",
-	},
-	{
-		id: "iz0ese",
-		title: "Enabling Technologies",
-	},
-	{
-		id: "g70yat",
-		title: "Bioinformatics",
-	},
-	{
-		id: "gthqe",
-		title: "Microfluidics",
-	},
-	{
-		id: "mp1z3o",
-		title: "Directed Evolution",
-	},
-	{
-		id: "lun1re",
-		title: "Rational Design",
-	},
-	{
-		id: "n2uv9i",
-		title: "Protein Folding",
-	},
-	{
-		id: "fwb3dl9",
-		title: "Protein Screening",
-	},
-	{
-		id: "9i7mjw",
-		title: "Chaperone Proteins",
-	},
-	{
-		id: "ku8zk8",
-		title: "Folding Pathways",
-	},
-	{
-		id: "szlku",
-		title: "Misfolding and Aggregation",
-	},
-];
-
-export const initialNodes: TechTreeLayoutNode[] = nodesData?.map(
-	transformTechTreeDataToNode,
-);
-
-export const initialEdges: EdgeData[] = [
-	// Layer 1
-	{
-		id: "e1",
-		source: initialNodes[0].id,
-		target: initialNodes[1].id,
-	},
-	{
-		id: "e2",
-		source: initialNodes[0].id,
-		target: initialNodes[4].id,
-	},
-	{
-		id: "e3",
-		source: initialNodes[0].id,
-		target: initialNodes[7].id,
-	},
-
-	// Layer 2
-	{
-		id: "e4",
-		source: initialNodes[1].id,
-		target: initialNodes[2].id,
-	},
-	{
-		id: "e5",
-		source: initialNodes[1].id,
-		target: initialNodes[3].id,
-	},
-	{
-		id: "e6",
-		source: initialNodes[4].id,
-		target: initialNodes[5].id,
-	},
-	{
-		id: "e7",
-		source: initialNodes[4].id,
-		target: initialNodes[6].id,
-	},
-	{
-		id: "e8",
-		source: initialNodes[7].id,
-		target: initialNodes[8].id,
-	},
-	{
-		id: "e9",
-		source: initialNodes[7].id,
-		target: initialNodes[9].id,
-	},
-
-	// New Layer for Protein Engineering
-	{
-		id: "e10",
-		source: initialNodes[6].id,
-		target: initialNodes[10].id,
-	},
-	{
-		id: "e11",
-		source: initialNodes[6].id,
-		target: initialNodes[11].id,
-	},
-
-	// Additional Layer for Directed Evolution
-	{
-		id: "e12",
-		source: initialNodes[10].id,
-		target: initialNodes[12].id,
-	},
-	{
-		id: "e13",
-		source: initialNodes[10].id,
-		target: initialNodes[13].id,
-	},
-	{
-		id: "e14",
-		source: initialNodes[12].id,
-		target: initialNodes[14].id,
-	},
-	{
-		id: "e15",
-		source: initialNodes[12].id,
-		target: initialNodes[15].id,
-	},
-	{
-		id: "e16",
-		source: initialNodes[12].id,
-		target: initialNodes[16].id,
-	},
-];
-
 export function getLayoutElements(
 	nodes: NodeData[] = [],
 	edges: EdgeData[] = [],
@@ -237,4 +72,42 @@ export function getLayoutElements(
 	});
 
 	return { nodes: initialNodes, edges: initialEdges };
+}
+
+export function areAllNodesConnected(
+	nodes: NodeData[],
+	edges: EdgeData[],
+): boolean {
+	if (nodes.length === 0) return true; // An empty graph is trivially connected
+
+	const adjList: { [key: string]: string[] } = {};
+
+	// Initialize adjacency list
+	nodes.forEach((node) => {
+		if (!node.id) return;
+		adjList[node.id] = [];
+	});
+
+	// Populate adjacency list
+	edges.forEach((edge) => {
+		adjList[edge.source].push(edge.target);
+		adjList[edge.target].push(edge.source); // Assuming undirected graph for bidirectional connection
+	});
+
+	// Function to perform DFS
+	const dfs = (nodeId: string, visited: Set<string>) => {
+		visited.add(nodeId);
+		adjList[nodeId].forEach((neighbor) => {
+			if (!visited.has(neighbor)) {
+				dfs(neighbor, visited);
+			}
+		});
+	};
+
+	// Perform DFS from the first node
+	const visited = new Set<string>();
+	if (nodes[0]?.id) dfs(nodes[0]?.id, visited);
+
+	// Check if all nodes were visited
+	return nodes.length === visited.size;
 }

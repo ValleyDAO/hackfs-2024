@@ -53,7 +53,7 @@ export function TechTreeMenu() {
 
 	return (
 		<div
-			className={clsx("transition-all flex flex-col absolute left-0", {
+			className={clsx("transition-all flex flex-col absolute left-0 z-50", {
 				"left-0 right-0 mx-auto w-full items-stretch text-center":
 					mode === "edit",
 				"left-0 items-start": mode === "move",

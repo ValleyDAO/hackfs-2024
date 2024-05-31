@@ -2,12 +2,16 @@ import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
 import { Modal } from "@/components/modal";
 import { InputRichText } from "@/components/richText/InputRichText";
+import { useSendTx } from "@/hooks/useSendTx";
 import React from "react";
 
 export function WriteRfp() {
 	const [writeRfp, setWriteRfp] = React.useState(false);
 	const [proposal, setProposal] = React.useState<string>();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+	const { loading, sendTx } = useSendTx({
+		type: "RfpAdded",
+	});
 	return (
 		<div className="mt-4">
 			{!writeRfp ? (
@@ -51,6 +55,7 @@ export function WriteRfp() {
 					</div>
 					<Modal open={isSubmitting} close={() => setIsSubmitting(false)}>
 						sdfsdf
+						<Button onClick={() => sendTx}></Button>
 					</Modal>
 				</>
 			)}
