@@ -14,10 +14,12 @@ import { useTechTreeData } from "@/providers/TechTreeDataProvider";
 import { NodeData } from "@/typings";
 import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
+import { useActiveAccount } from "thirdweb/react";
 
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
+	const account = useActiveAccount();
 	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
 		useTechTreeData();
 	const { mode, setActiveNode, activeEditType, setActiveEditType } =
@@ -78,8 +80,8 @@ export function TechTreeLayout() {
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 				onNodeClick={(evt, { id }) => setActiveNode(id)}
 			/>
+			{account?.address && <TechTreeMenu />}
 
-			<TechTreeMenu />
 			<Legend />
 		</div>
 	);

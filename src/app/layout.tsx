@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import {
-	Baskervville,
-	Libre_Baskerville,
-	Space_Grotesk,
-} from "next/font/google";
-import "../styles/globals.css";
+import { Space_Grotesk } from "next/font/google";
+import "../styles/globals.scss";
 import { Container } from "@/components/Container";
 import Providers from "@/providers";
 import clsx from "clsx";

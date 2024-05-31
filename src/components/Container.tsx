@@ -4,11 +4,7 @@ import DropDown from "@/components/DropDown";
 import { EthAvatar } from "@/components/EthAvatar";
 import { FullLogo } from "@/components/FullLogo";
 import { CaretDownOutlined } from "@/components/icons/CaretDownOutlined";
-import {
-	accountAbstraction,
-	thirdWebWallets,
-	web3Client,
-} from "@/lib/constants";
+import { thirdWebWallets, web3Client } from "@/lib/constants";
 import { getShortenedFormat } from "@/utils/string.utils";
 
 import { LoginButton } from "@/components/LoginButton";
@@ -16,7 +12,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import { AutoConnect, ConnectButton, useActiveAccount } from "thirdweb/react";
+import { AutoConnect, useActiveAccount } from "thirdweb/react";
 
 export function Header() {
 	const account = useActiveAccount();
@@ -45,7 +41,7 @@ export function Header() {
 					<DropDown
 						menu={[
 							{
-								href: "/app/logout",
+								href: "/logout",
 								label: "Logout",
 							},
 						]}
