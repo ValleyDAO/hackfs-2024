@@ -1,16 +1,17 @@
 import { Button } from "@/components/button";
 import { Modal } from "@/components/modal";
-import { FundingState } from "@/typings";
-import { formatNumber } from "@/utils/number.utils";
 
 import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
 import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { useTransaction } from "@/hooks/useTransaction";
+import { contributionContract } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
 
 interface DepositFundsProps {
 	close(): void;
@@ -18,19 +19,34 @@ interface DepositFundsProps {
 }
 
 function DepositFunds({ close, onSuccess }: DepositFundsProps) {
+	const { id } = useResearchPage();
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [value, setValue] = useState<number>(0);
-
-	const debounced = useDebouncedValue(value, 2500);
+	const { isSuccess, send, isError } = useTransaction();
 
 	useEffect(() => {
-		if (isSubmitting && debounced) {
+		if (isSuccess) {
 			setIsSubmitting(false);
-			toast.success("Funds deposited successfully");
 			onSuccess?.();
 			close();
+		} else if (isError) {
+			setIsSubmitting(false);
+			toast.error("Failed to deposit funds");
 		}
-	}, [debounced]);
+	}, [isSuccess, isError]);
+
+	async function handleDeposit() {
+		if (isNaN(Number(id))) return;
+
+		setIsSubmitting(true);
+		const transaction = prepareContractCall({
+			contract: contributionContract,
+			method: "addFunds",
+			params: [id as bigint],
+			value: toWei(`${value}`),
+		}) as PreparedTransaction;
+		await send(transaction);
+	}
 
 	return (
 		<Modal open close={close}>
@@ -55,7 +71,7 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 					className="!py-3"
 					loading={isSubmitting}
 					variant="primary"
-					onClick={() => setIsSubmitting(true)}
+					onClick={handleDeposit}
 				>
 					Deposit
 				</Button>
@@ -64,23 +80,24 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	);
 }
 
-export function RfpProposal() {
+export function RequestForFunding() {
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);
-	const { handleStatusChange, rfp } = useResearchPage();
+	const { rfp } = useResearchPage();
+	const router = useRouter();
 
-	const compensation = rfp?.compensation || 0;
+	const compensation = 0;
 	return (
 		<div className="flex items-start space-x-4 mt-4">
 			<div className="w-9/12 space-y-4">
 				<DocumentViewer
 					documents={[
 						{
-							name: "RFP",
+							name: "Request For Proposal",
 						},
 					]}
 				>
-					<RichText value={rfp?.content} />
+					<RichText value={rfp?.ipfsHash} />
 				</DocumentViewer>
 			</div>
 			<div className="w-4/12 py-4 px-6 bg-gray-50 rounded">
@@ -119,7 +136,7 @@ export function RfpProposal() {
 			</div>
 			{intentionToAddFunds && (
 				<DepositFunds
-					onSuccess={() => handleStatusChange?.("in-progress")}
+					onSuccess={() => router.refresh()}
 					close={() => setIntentionToAddFunds(false)}
 				/>
 			)}

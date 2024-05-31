@@ -8,17 +8,17 @@ import { formatDistance } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-type LogType = "creation" | "funded";
+type LogType = "creation" | "funded" | "rfp-written";
 
 interface BasicActivityLogProps {
 	contributor?: Contributor;
-	createdAt: string;
+	createdAt?: Date;
 	type: LogType;
 }
 
 function BasicActivityLog({
 	contributor,
-	createdAt,
+	createdAt = new Date(),
 	type,
 }: BasicActivityLogProps) {
 	function getTypeText(type: LogType) {
@@ -27,6 +27,8 @@ function BasicActivityLog({
 				return "created a new node";
 			case "funded":
 				return "funded the node";
+			case "rfp-written":
+				return "wrote an RFP";
 			default:
 				return "";
 		}
@@ -51,15 +53,7 @@ function BasicActivityLog({
 }
 
 export function ActivityLogs() {
-	const [loading, setLoading] = React.useState(true);
-	const { contributors } = useResearchPage();
-
-	React.useEffect(() => {
-		setLoading(true);
-		setTimeout(() => {
-			setLoading(false);
-		}, 1000);
-	}, []);
+	const { contributors, createdAt, creator, treasury, rfp } = useResearchPage();
 
 	return (
 		<>
@@ -76,25 +70,35 @@ export function ActivityLogs() {
 					exit="exit"
 				>
 					<div className="w-full px-2 pl-6 pr-1 text-xs relative h-full">
-						{loading ? (
-							<LoadingOutlined />
-						) : (
-							<>
-								<div className="text-sm font-semibold mb-4">Activities</div>
-								<div className="space-y-2">
-									<BasicActivityLog
-										contributor={contributors?.[0]}
-										createdAt="2023-09-25 18:09:30.03831+00"
-										type="creation"
-									/>
-									<BasicActivityLog
-										contributor={contributors?.[1]}
-										createdAt="2024-01-25 18:09:30.03831+00"
-										type="funded"
-									/>
-								</div>
-							</>
-						)}
+						<div className="text-sm font-semibold mb-4">Activities</div>
+						<div className="space-y-2">
+							{treasury?.funder !==
+								"0x0000000000000000000000000000000000000000" && (
+								<BasicActivityLog
+									contributor={contributors?.find(
+										(item) => item.address === treasury?.funder,
+									)}
+									createdAt={treasury?.fundedAt}
+									type="funded"
+								/>
+							)}
+							{rfp?.writer !== "0x0000000000000000000000000000000000000000" && (
+								<BasicActivityLog
+									contributor={contributors?.find(
+										(item) => item.address === rfp?.writer,
+									)}
+									createdAt={rfp?.createdAt}
+									type="rfp-written"
+								/>
+							)}
+							<BasicActivityLog
+								contributor={contributors?.find(
+									(item) => item.address === creator,
+								)}
+								createdAt={createdAt}
+								type="creation"
+							/>
+						</div>
 					</div>
 				</motion.div>
 			</AnimatePresence>

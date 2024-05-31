@@ -1,7 +1,5 @@
 "use client";
 
-import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
-import { StatusTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
@@ -53,8 +51,13 @@ export function ResearchPageProvider({
 			) : node && !isLoading ? (
 				children
 			) : (
-				<div className="pt-10 layout">
-					<h1 className="font-semibold text-2xl mb-6">Node not found</h1>
+				<div className="pt-20 layout">
+					<h1 className="font-bold text-3xl ">Node not found</h1>
+					<p className="text-gray-600 text-sm mb-6 w-6/12">
+						The node you are looking for does not exist or has been deleted.
+						Navigate back to the app to view all available research/development
+						projects.
+					</p>
 					<Link href="/app">
 						<Button variant="primary">Go Back</Button>
 					</Link>

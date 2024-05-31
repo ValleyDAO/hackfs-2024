@@ -12,7 +12,7 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0x9Af3eE02548b2F7B4153f8CD89d5559ec1586b54";
+	"0x4Ed80E735aa8bF2AFF8EB1445096EBf1DAcA8F16";
 
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
@@ -396,8 +396,13 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "uint256",
-							name: "creationTime",
+							name: "createdAt",
 							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "createdBy",
+							type: "address",
 						},
 						{
 							internalType: "bool",
@@ -416,6 +421,11 @@ export const contributionContract = getContract({
 									name: "amount",
 									type: "uint256",
 								},
+								{
+									internalType: "uint256",
+									name: "fundedAt",
+									type: "uint256",
+								},
 							],
 							internalType: "struct Contribution.Treasury",
 							name: "treasury",
@@ -425,8 +435,13 @@ export const contributionContract = getContract({
 							components: [
 								{
 									internalType: "address",
-									name: "rfp",
+									name: "writer",
 									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
 								},
 								{
 									internalType: "string",
@@ -482,8 +497,13 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "uint256",
-							name: "creationTime",
+							name: "createdAt",
 							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "createdBy",
+							type: "address",
 						},
 						{
 							internalType: "bool",
@@ -502,6 +522,11 @@ export const contributionContract = getContract({
 									name: "amount",
 									type: "uint256",
 								},
+								{
+									internalType: "uint256",
+									name: "fundedAt",
+									type: "uint256",
+								},
 							],
 							internalType: "struct Contribution.Treasury",
 							name: "treasury",
@@ -511,8 +536,13 @@ export const contributionContract = getContract({
 							components: [
 								{
 									internalType: "address",
-									name: "rfp",
+									name: "writer",
 									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
 								},
 								{
 									internalType: "string",
@@ -579,8 +609,13 @@ export const contributionContract = getContract({
 				},
 				{
 					internalType: "uint256",
-					name: "creationTime",
+					name: "createdAt",
 					type: "uint256",
+				},
+				{
+					internalType: "address",
+					name: "creator",
+					type: "address",
 				},
 				{
 					internalType: "bool",
@@ -599,6 +634,11 @@ export const contributionContract = getContract({
 							name: "amount",
 							type: "uint256",
 						},
+						{
+							internalType: "uint256",
+							name: "fundedAt",
+							type: "uint256",
+						},
 					],
 					internalType: "struct Contribution.Treasury",
 					name: "treasury",
@@ -608,8 +648,13 @@ export const contributionContract = getContract({
 					components: [
 						{
 							internalType: "address",
-							name: "rfp",
+							name: "writer",
 							type: "address",
+						},
+						{
+							internalType: "uint256",
+							name: "createdAt",
+							type: "uint256",
 						},
 						{
 							internalType: "string",

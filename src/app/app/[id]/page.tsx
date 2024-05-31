@@ -1,6 +1,6 @@
 "use client";
 
-import { RfpProposal } from "@/app/app/[id]/components/RfpProposal";
+import { RequestForFunding } from "@/app/app/[id]/components/RequestForFunding";
 import { ContributionAndTreasury } from "@/app/app/[id]/components/overview/ContributionAndTreasury";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 
@@ -21,7 +21,7 @@ export default function Page() {
 			{status === "idle" ? (
 				<WriteRfp />
 			) : status === "rfp" ? (
-				<RfpProposal />
+				<RequestForFunding />
 			) : status === "in-progress" ? (
 				<>
 					<ContributionAndTreasury />

@@ -18,19 +18,36 @@ export const NodeTypeValues: NodeType[] = [
 	"end-goal",
 ];
 
+export interface ResearchContribution {
+	contributor: string;
+	ipfsHash: string;
+}
+
+export interface RequestForProposal {
+	writer?: string;
+	createdAt: Date;
+	ipfsHash: string;
+}
+
+export interface ResearchTreasury {
+	amount: bigint;
+	funder: string;
+	fundedAt: Date;
+}
+
 export interface NodeData {
 	id?: bigint;
 	title?: string;
+	creator?: string;
+	createdAt?: Date;
 	origin?: NodeOrigin;
 	type: NodeType;
 	fundingState?: FundingState;
-	rfp?: {
-		compensation: number;
-		content: string;
-	};
-	content?: string;
+	rfp?: RequestForProposal;
+	contributions?: ResearchContribution[];
 	status?: NodeStatus;
 	contributors?: Contributor[];
+	treasury?: ResearchTreasury;
 }
 
 export interface EdgeData {

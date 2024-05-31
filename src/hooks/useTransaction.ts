@@ -9,17 +9,14 @@ type TxStatus = "loading" | "success" | "error" | "idle";
 interface SendTxProps {
 	loading: boolean;
 	isSuccess: boolean;
-	sendTx(tx: PreparedTransaction): Promise<void>;
+	isError?: boolean;
+	send(tx: PreparedTransaction): Promise<void>;
 	txHash?: string;
 	status: TxStatus;
 }
 
-interface SendTxInputProps {
-	type?: "RfpAdded";
-}
-
-export function useSendTx({ type }: SendTxInputProps): SendTxProps {
-	const { mutateAsync, isPending, isPaused } = useSendTransaction();
+export function useTransaction(): SendTxProps {
+	const { mutateAsync, isPending, isPaused, isError } = useSendTransaction();
 	const [status, setStatus] = useState<TxStatus>("idle");
 	const [txHash, setTxHash] = useState<string>();
 
@@ -33,9 +30,8 @@ export function useSendTx({ type }: SendTxInputProps): SendTxProps {
 		}
 	}, [events, txHash]);
 
-	async function sendTx(tx: PreparedTransaction) {
+	async function send(tx: PreparedTransaction) {
 		setStatus("loading");
-		// @ts-ignore
 		const response = await mutateAsync(tx);
 		setTxHash(response.transactionHash);
 	}
@@ -43,11 +39,12 @@ export function useSendTx({ type }: SendTxInputProps): SendTxProps {
 	return useMemo(
 		() => ({
 			loading: status === "loading",
-			sendTx,
+			send,
 			isSuccess: status === "success",
+			isError,
 			status,
 			txHash,
 		}),
-		[isPending, status, isPaused, txHash],
+		[isPending, status, isPaused, txHash, isError],
 	);
 }

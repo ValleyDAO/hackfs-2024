@@ -1,7 +1,7 @@
 "use client";
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
-import { useSendTx } from "@/hooks/useSendTx";
+import { useTransaction } from "@/hooks/useTransaction";
 import { contributionContract } from "@/lib/constants";
 import { EdgeData, NodeData } from "@/typings";
 import { areAllNodesConnected, generateId } from "@/utils/nodes.utils";
@@ -14,7 +14,7 @@ import React, {
 	useState,
 } from "react";
 import toast from "react-hot-toast";
-import { prepareContractCall } from "thirdweb";
+import { PreparedTransaction, prepareContractCall } from "thirdweb";
 
 type PublishMode = "reset" | "publish";
 
@@ -52,7 +52,7 @@ export const useTechTreeData = (): TechTreeDataContextProps => {
 
 export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
-	const { sendTx, loading: hasTxInTransit, isSuccess } = useSendTx({});
+	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([
 		/*{
 			id: BigInt(1),
@@ -180,10 +180,8 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 						target: edge.target,
 					})),
 				],
-			});
-
-			// @ts-ignore
-			await sendTx(transaction);
+			}) as PreparedTransaction;
+			await send(transaction);
 		} catch (error) {
 			console.log(error);
 		}

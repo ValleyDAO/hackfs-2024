@@ -3,11 +3,11 @@ import { LoginButton } from "@/components/LoginButton";
 import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
 import { InputRichText } from "@/components/richText/InputRichText";
-import { useSendTx } from "@/hooks/useSendTx";
+import { useTransaction } from "@/hooks/useTransaction";
 import { contributionContract } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { prepareContractCall } from "thirdweb";
+import { PreparedTransaction, prepareContractCall } from "thirdweb";
 import { useActiveAccount } from "thirdweb/react";
 
 export function WriteRfp() {
@@ -17,30 +17,29 @@ export function WriteRfp() {
 	const [writeRfp, setWriteRfp] = React.useState(false);
 	const [proposal, setProposal] = React.useState<string>();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-	const { loading, sendTx, isSuccess } = useSendTx({
-		type: "RfpAdded",
-	});
+	const { loading, send, isSuccess, isError } = useTransaction();
 
 	useEffect(() => {
 		if (isSuccess) {
 			setProposal("");
 			setWriteRfp(false);
 			router.refresh();
+		} else if (isError) {
+			setIsSubmitting(false);
 		}
 	}, [isSuccess]);
 
 	async function handlePublish() {
-		if (!proposal || !id) return;
-		await setIsSubmitting(true);
+		if (!proposal || isNaN(Number(id))) return;
+		setIsSubmitting(true);
 
+		console.log("mic check");
 		const transaction = prepareContractCall({
 			contract: contributionContract,
 			method: "addRfp",
-			params: [id, proposal],
-		});
-
-		// @ts-ignore
-		await sendTx(transaction);
+			params: [id as bigint, proposal],
+		}) as PreparedTransaction;
+		await send(transaction);
 	}
 
 	return (
