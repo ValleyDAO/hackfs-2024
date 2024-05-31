@@ -56,8 +56,60 @@ export const useTechTreeData = (): TechTreeDataContextProps => {
 export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
 
-	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
-	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
+	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([
+		/*		{
+			id: "1",
+			title: "Improve Basic Solar Cell Efficiency",
+			type: "research",
+		},
+		{
+			id: "2",
+			title: "Develop Multi-Junction Solar Cells",
+			type: "development",
+		},
+		{
+			id: "3",
+			title: "Research Perovskite Solar Cells",
+			type: "research",
+		},
+		{
+			id: "4",
+			title: "Combine Perovskite with Silicon",
+			type: "development",
+		},
+		{
+			id: "5",
+			title: "Develop Flexible and Lightweight Substrates",
+			type: "development",
+		},
+		{
+			id: "6",
+			title: "Integrate Advanced Energy Storage",
+			type: "optimisation",
+		},
+		{
+			id: "7",
+			title: "Omni Solar Panels",
+			type: "end-goal",
+		},*/
+	]);
+	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([
+		/*		{
+			id: "1",
+			source: "1",
+			target: "2",
+		},
+		{
+			id: "2",
+			source: "2",
+			target: "5",
+		},
+		{ id: "3", source: "1", target: "3" },
+		{ id: "4", source: "3", target: "4" },
+		{ id: "5", source: "4", target: "5" },
+		{ id: "6", source: "5", target: "6" },
+		{ id: "7", source: "6", target: "7" },*/
+	]);
 	const { mutate, isPending, isSuccess } = useSendTransaction();
 
 	useEffect(() => {
@@ -131,8 +183,7 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 				params: [
 					updatedNodes.map((node) => ({
 						title: node.title || "",
-						type: node.type?.toLowerCase(),
-						ipfsHash: "node.ipfsHash,",
+						nodeType: node.type?.toLowerCase(),
 					})),
 					updatedEdges.map((edge) => ({
 						source: edge.source,

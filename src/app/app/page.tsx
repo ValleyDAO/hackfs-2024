@@ -1,7 +1,5 @@
-"use client";
-
-import { SidePanel } from "@/app/app/SidePanel";
 import { TechTreeLayout } from "@/components/techTree";
+import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
 import { TechTreeContextProvider } from "@/providers/TechTreeContextProvider";
 import { TechTreeDataProvider } from "@/providers/TechTreeDataProvider";
 
@@ -12,7 +10,7 @@ export default function Home() {
 		<TechTreeDataProvider>
 			<TechTreeContextProvider>
 				<TechTreeLayout />
-				<SidePanel />
+				<TechTreeSidePanel />
 			</TechTreeContextProvider>
 		</TechTreeDataProvider>
 	);

@@ -1,7 +1,7 @@
 "use client";
 
 import { contributionContract } from "@/lib/constants";
-import { EdgeData, NodeData } from "@/typings";
+import { EdgeData, NodeData, NodeType } from "@/typings";
 import { useMemo } from "react";
 import { useReadContract } from "thirdweb/react";
 
@@ -26,6 +26,7 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 			onChainNodes?.map((node, idx) => ({
 				id: `${idx}`,
 				title: node.title,
+				type: node.nodeType as NodeType,
 				origin: "on-chain",
 			})) || [],
 		[onChainNodes],
@@ -35,8 +36,8 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 		() =>
 			onChainEdges?.map((edge, idx) => ({
 				id: `${idx}`,
-				source: edge.source,
-				target: edge.target,
+				source: `${Number(edge.source) - 1}`,
+				target: `${Number(edge.target) - 1}`,
 				origin: "on-chain",
 			})) || [],
 		[onChainEdges],

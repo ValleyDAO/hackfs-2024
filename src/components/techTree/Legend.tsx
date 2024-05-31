@@ -1,7 +1,7 @@
 import { NodeType } from "@/typings";
 import clsx from "clsx";
 
-function LegendItem({ color, label }: { color: string; label: string }) {
+function LegendItem({ color, label }: { color: string; label: NodeType }) {
 	return (
 		<div className="flex items-center space-x-1">
 			<div className={clsx("w-6 h-1.5 rounded-xl", color)} />
@@ -19,10 +19,10 @@ export function Legend() {
 		>
 			<div className="flex items-center space-x-5">
 				<div className="font-medium text-black">Type of nodes</div>
-				<LegendItem color="bg-blue-600" label={NodeType.RESEARCH} />
-				<LegendItem color="bg-yellow-600" label={NodeType.DEVELOPMENT} />
-				<LegendItem color="bg-red-600" label={NodeType.OPTIMISATION} />
-				<LegendItem color="bg-green-600" label={NodeType.END_GOAL} />
+				<LegendItem color="bg-blue-600" label="research" />
+				<LegendItem color="bg-yellow-600" label="development" />
+				<LegendItem color="bg-red-600" label="optimisation" />
+				<LegendItem color="bg-green-600" label="end-goal" />
 			</div>
 		</div>
 	);

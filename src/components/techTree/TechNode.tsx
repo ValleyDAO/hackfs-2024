@@ -26,13 +26,13 @@ export function TechNode({
 					"px-10 py-4 relative !text-xs duration-300 transition-all border rounded",
 					{
 						"bg-green-50 border-green-600 text-green-800":
-							data.type === NodeType.END_GOAL,
+							data.type === "end-goal",
 						"bg-blue-50 border-blue-600 text-blue-800":
-							data.type === NodeType.RESEARCH,
+							data.type === "research",
 						"bg-yellow-50 border-yellow-600 text-yellow-800":
-							data.type === NodeType.DEVELOPMENT,
+							data.type === "development",
 						"bg-red-50 border-red-600 text-red-800":
-							data.type === NodeType.OPTIMISATION,
+							data.type === "optimisation",
 					},
 					hasActiveNodeInMoveMode
 						? {

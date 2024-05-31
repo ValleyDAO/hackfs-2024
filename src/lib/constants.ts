@@ -12,7 +12,8 @@ if (!clientId) {
 }
 
 export const contributionContractAddress =
-	"0x8F9A6c5F2f41F0f71E28B21ae32C26C6B0330702";
+	"0xD457f401f9ed27dC23b65331dc03BAf73C47b7eD";
+
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
 export const chain = defineChain({
@@ -129,9 +130,9 @@ export const contributionContract = getContract({
 				},
 				{
 					indexed: false,
-					internalType: "uint256",
-					name: "points",
-					type: "uint256",
+					internalType: "string",
+					name: "nodeType",
+					type: "string",
 				},
 			],
 			name: "NodeAdded",
@@ -148,6 +149,25 @@ export const contributionContract = getContract({
 				},
 			],
 			name: "NodeFinished",
+			type: "event",
+		},
+		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "_ipfsHash",
+					type: "string",
+				},
+			],
+			name: "RfpAdded",
 			type: "event",
 		},
 		{
@@ -213,11 +233,29 @@ export const contributionContract = getContract({
 				},
 				{
 					internalType: "string",
-					name: "_ipfsHash",
+					name: "_nodeType",
 					type: "string",
 				},
 			],
 			name: "addNode",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "nodeIndex",
+					type: "uint256",
+				},
+				{
+					internalType: "string",
+					name: "_ipfsHash",
+					type: "string",
+				},
+			],
+			name: "addRfp",
 			outputs: [],
 			stateMutability: "nonpayable",
 			type: "function",
@@ -346,6 +384,11 @@ export const contributionContract = getContract({
 							type: "string",
 						},
 						{
+							internalType: "string",
+							name: "nodeType",
+							type: "string",
+						},
+						{
 							components: [
 								{
 									internalType: "address",
@@ -410,6 +453,11 @@ export const contributionContract = getContract({
 						{
 							internalType: "string",
 							name: "title",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "nodeType",
 							type: "string",
 						},
 						{
@@ -505,6 +553,11 @@ export const contributionContract = getContract({
 				{
 					internalType: "string",
 					name: "title",
+					type: "string",
+				},
+				{
+					internalType: "string",
+					name: "nodeType",
 					type: "string",
 				},
 				{
@@ -609,7 +662,7 @@ export const contributionContract = getContract({
 						},
 						{
 							internalType: "string",
-							name: "ipfsHash",
+							name: "nodeType",
 							type: "string",
 						},
 					],

@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 interface TagProps {
 	children?: ReactNode;
-	color?: "blue" | "green" | "gray" | "red";
+	color?: "blue" | "green" | "gray" | "red" | "yellow";
 	fontWeight?: "normal" | "medium" | "bold";
 	fontSize?: "xs" | "sm" | "md" | "lg";
 	className?: string;
@@ -23,6 +23,7 @@ export function Tag({
 				"bg-green-100 text-green-700": color === "green",
 				"bg-gray-100 text-gray-700": color === "gray",
 				"bg-red-100 text-red-700": color === "red",
+				"bg-yellow-100 text-yellow-700": color === "yellow",
 				"font-medium": fontWeight === "medium",
 				"font-bold": fontWeight === "bold",
 				"text-[10px]": fontSize === "xs",

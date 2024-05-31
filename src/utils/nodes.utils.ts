@@ -13,10 +13,10 @@ export const edgeType = "smoothstep";
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 225;
+const nodeWidth = 350;
 const nodeHeight = 50;
 
-function transformTechTreeDataToNode({
+export function transformTechTreeDataToNode({
 	id,
 	...data
 }: NodeData): TechTreeLayoutNode {
@@ -28,7 +28,9 @@ function transformTechTreeDataToNode({
 	};
 }
 
-function transformEdgeDataToLayoutEdge(data: EdgeData): TechTreeLayoutEdge {
+export function transformEdgeDataToLayoutEdge(
+	data: EdgeData,
+): TechTreeLayoutEdge {
 	return {
 		...data,
 		type: edgeType,

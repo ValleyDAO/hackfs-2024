@@ -1,9 +1,27 @@
 import { Tag } from "@/components/Tag";
-import { NodeStatus } from "@/typings";
+import { NodeStatus, NodeType } from "@/typings";
 import React from "react";
 
 interface StatusTagProps {
 	status?: NodeStatus;
+}
+
+export function NodeTypeTag({ type }: { type: NodeType }) {
+	return (
+		<Tag
+			color={
+				type === "optimisation"
+					? "red"
+					: type === "development"
+						? "yellow"
+						: type === "research"
+							? "blue"
+							: "green"
+			}
+		>
+			{type?.replace(/-/g, " ")?.toUpperCase()}
+		</Tag>
+	);
 }
 
 export function StatusTag({ status }: StatusTagProps) {

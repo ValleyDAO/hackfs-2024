@@ -20,6 +20,7 @@ contract Contribution {
 
     struct Node {
         string title;
+        string nodeType;
         ContributionDetail[] contributions;
         uint256 points;
         address fundingAddress;
@@ -41,6 +42,7 @@ contract Contribution {
 
     struct NodeLite {
         string title;
+        string nodeType;
         ContributionDetail[] contributions;
         uint256 points;
         address fundingAddress;
@@ -52,7 +54,7 @@ contract Contribution {
 
     struct NodeInput {
         string title;
-        string ipfsHash;
+        string nodeType;
     }
 
     struct EdgeInput {
@@ -64,16 +66,17 @@ contract Contribution {
     Edge[] public edges;
     mapping(address => mapping(uint256 => uint256)) public userNodePoints;
 
-    event NodeAdded(uint256 indexed nodeId, string title, uint256 points);
+    event NodeAdded(uint256 indexed nodeId, string title,  string nodeType);
     event EdgeAdded(uint256 indexed edgeId, string source, string target);
     event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash, uint256 points);
     event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash);
     event FundsAdded(uint256 indexed nodeIndex, uint256 amount);
     event NodeFinished(uint256 indexed nodeId);
 
-    function addNode(string memory _title) public {
+    function addNode(string memory _title, string memory _nodeType) public {
         Node storage newNode = nodes.push();
         newNode.title = _title;
+        newNode.nodeType = _nodeType;
         newNode.points = 10; // Fixed points for adding a node
         newNode.fundingPool = 0;
         newNode.creationTime = block.timestamp;
@@ -83,7 +86,7 @@ contract Contribution {
         uint256 nodeId = nodes.length - 1;
         newNode.lastDripBlock[msg.sender] = block.number;
 
-        emit NodeAdded(nodeId, _title, newNode.points);
+        emit NodeAdded(nodeId, _title, _nodeType);
     }
 
     function addRfp(uint256 nodeIndex, string memory _ipfsHash) public {
@@ -102,7 +105,6 @@ contract Contribution {
 
         newEdge.creationTime = block.timestamp;
         newEdge.creator = msg.sender;
-
         uint256 edgeId = edges.length - 1;
 
         emit EdgeAdded(edgeId, _source, _target);
@@ -110,7 +112,7 @@ contract Contribution {
 
     function updateTechTree(NodeInput[] memory _nodes, EdgeInput[] memory _edges) public {
         for (uint i = 0; i < _nodes.length; i++) {
-            addNode(_nodes[i].title, _nodes[i].ipfsHash);
+            addNode(_nodes[i].title, _nodes[i].nodeType);
         }
         for (uint i = 0; i < _edges.length; i++) {
             addEdge(_edges[i].source, _edges[i].target);
@@ -165,6 +167,7 @@ contract Contribution {
             Node storage node = nodes[i];
             nodesLite[i] = NodeLite({
                 title: node.title,
+                nodeType: node.nodeType,
                 contributions: node.contributions,
                 points: node.points,
                 fundingAddress: node.fundingAddress,
@@ -181,6 +184,7 @@ contract Contribution {
         Node storage node = nodes[nodeIndex];
         NodeLite memory nodeLite = NodeLite({
             title: node.title,
+            nodeType: node.nodeType,
             contributions: node.contributions,
             points: node.points,
             fundingAddress: node.fundingAddress,

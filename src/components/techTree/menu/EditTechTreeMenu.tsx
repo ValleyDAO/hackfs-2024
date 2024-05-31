@@ -63,7 +63,7 @@ export function EditTechTreeMenu() {
 		const newNode: NodeData = {
 			id: `${(nodes || []).length}`,
 			title: undefined,
-			type: NodeType.END_GOAL,
+			type: "end-goal",
 		};
 		setActiveEditType("node");
 		addNewNode(newNode);

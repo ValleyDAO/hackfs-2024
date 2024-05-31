@@ -1,4 +1,6 @@
-import React, { MouseEvent, useCallback, useEffect } from "react";
+"use client";
+
+import React, { MouseEvent, useEffect } from "react";
 import ReactFlow, { ConnectionLineType } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -9,7 +11,7 @@ import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { Legend } from "@/components/techTree/Legend";
 import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
 import { useTechTreeData } from "@/providers/TechTreeDataProvider";
-import { NodeData, NodeType } from "@/typings";
+import { NodeData } from "@/typings";
 import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
 
@@ -39,7 +41,7 @@ export function TechTreeLayout() {
 			const newNode: NodeData = {
 				id: `${(nodes || []).length}`,
 				title: "Placeholder",
-				type: NodeType.END_GOAL,
+				type: "end-goal",
 			};
 			addNewNode(newNode);
 		}
@@ -63,7 +65,7 @@ export function TechTreeLayout() {
 				connectionLineType={ConnectionLineType.SmoothStep}
 				fitView
 				defaultEdgeOptions={{ animated: true }}
-				maxZoom={1.1}
+				maxZoom={1.2}
 				nodeTypes={nodeTypes}
 				nodesDraggable={mode === "move"}
 				zoomOnPinch
@@ -75,10 +77,9 @@ export function TechTreeLayout() {
 				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 				onNodeClick={(evt, { id }) => setActiveNode(id)}
-			>
-				<TechTreeMenu />
-			</ReactFlow>
+			/>
 
+			<TechTreeMenu />
 			<Legend />
 		</div>
 	);

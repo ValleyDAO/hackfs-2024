@@ -10,7 +10,15 @@ export interface FundingState {
 export type NodeStatus = "finished" | "in-progress" | "rfp" | "idle";
 export type NodeOrigin = "on-chain" | "off-chain";
 
-export enum NodeType {
+export type NodeType = "optimisation" | "development" | "research" | "end-goal";
+export const NodeTypeValues: NodeType[] = [
+	"optimisation",
+	"development",
+	"research",
+	"end-goal",
+];
+
+export enum NodeType2 {
 	OPTIMISATION = "optimisation",
 	DEVELOPMENT = "development",
 	RESEARCH = "research",
