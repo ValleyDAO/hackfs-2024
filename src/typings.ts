@@ -10,9 +10,9 @@ export interface FundingState {
 export type NodeStatus = "finished" | "in-progress" | "rfp" | "idle";
 export type NodeOrigin = "on-chain" | "off-chain";
 
-export type NodeType = "optimisation" | "development" | "research" | "end-goal";
+export type NodeType = "optimization" | "development" | "research" | "end-goal";
 export const NodeTypeValues: NodeType[] = [
-	"optimisation",
+	"optimization",
 	"development",
 	"research",
 	"end-goal",

@@ -17,7 +17,7 @@ export function Legend() {
 				<div className="font-medium text-black">Type of nodes</div>
 				<LegendItem color="bg-blue-600" label="research" />
 				<LegendItem color="bg-yellow-600" label="development" />
-				<LegendItem color="bg-red-600" label="optimisation" />
+				<LegendItem color="bg-red-600" label="optimization" />
 				<LegendItem color="bg-green-600" label="end-goal" />
 			</div>
 		</div>

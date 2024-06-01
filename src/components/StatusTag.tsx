@@ -10,7 +10,7 @@ export function NodeTypeTag({ type }: { type: NodeType }) {
 	return (
 		<Tag
 			color={
-				type === "optimisation"
+				type === "optimization"
 					? "red"
 					: type === "development"
 						? "yellow"

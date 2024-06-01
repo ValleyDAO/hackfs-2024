@@ -35,7 +35,7 @@ export function TechNode({
 						"bg-yellow-50 border-yellow-600 text-yellow-800":
 							data.type === "development",
 						"bg-red-50 border-red-600 text-red-800":
-							data.type === "optimisation",
+							data.type === "optimization",
 					},
 					hasActiveNodeInMoveMode
 						? {

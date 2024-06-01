@@ -28,7 +28,7 @@ const points: Point[] = [
 	},
 	{
 		value: 5,
-		node: { id: BigInt(2), title: "Optimisations in Gluten", type: "research" },
+		node: { id: BigInt(2), title: "optimizations in Gluten", type: "research" },
 	},
 	{
 		value: 10,

@@ -24,6 +24,7 @@ type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
+	addNewNodes(data: NodeData[]): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
 	handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>): void;
@@ -38,6 +39,7 @@ export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
 	nodes: [],
 	edges: [],
 	addNewNode: () => {},
+	addNewNodes: () => {},
 	handleNodeUpdate: () => {},
 	handlePublish: () => {},
 	isPublishing: false,
@@ -88,7 +90,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		{
 			id: BigInt(6),
 			title: "Integrate Advanced Energy Storage",
-			type: "optimisation",
+			type: "optimization",
 		},
 		{
 			id: BigInt(7),
@@ -185,6 +187,8 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
+			addNewNodes: (nodes) =>
+				setUpdatedNodes((prev) => [...(prev || []), ...nodes]),
 			handleEdgeUpdate,
 			handleNodeUpdate,
 			hasUpdates:
