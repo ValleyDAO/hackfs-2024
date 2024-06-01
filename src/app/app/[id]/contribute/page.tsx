@@ -7,10 +7,13 @@ import { Modal } from "@/components/modal";
 import { InputRichText } from "@/components/richText/InputRichText";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useTransaction } from "@/hooks/useTransaction";
+import { contributionContract } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
+import { PreparedTransaction, prepareContractCall } from "thirdweb";
 
 interface UploadChangesProps {
 	research?: string;
@@ -64,42 +67,51 @@ function UploadChanges({ editedResearch, close }: UploadChangesProps) {
 }
 
 export default function Page() {
-	const { content, id } = useResearchPage();
+	const { contributions, id } = useResearchPage();
 	const [editedResearch, setEditedResearch] = React.useState<
 		string | undefined
-	>(content);
+	>(contributions?.[0]?.ipfsHash);
 	const router = useRouter();
+	const { isSuccess, isError, send, loading } = useTransaction();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
-	function handleUpdate() {
-		setIsSubmitting(false);
-		router.push(`/app/${id}`);
+	useEffect(() => {
+		if (isSuccess) {
+			setEditedResearch("");
+			router.refresh();
+		} else if (isError) {
+			setIsSubmitting(false);
+			toast.error("Transaction failed");
+		}
+	}, [isSuccess, isError]);
+
+	async function handleUpdate() {
+		if (!editedResearch) return;
+		setIsSubmitting(true);
+
+		const transaction = prepareContractCall({
+			contract: contributionContract,
+			method: "addContribution",
+			params: [id as bigint, editedResearch],
+		}) as PreparedTransaction;
+		await send(transaction);
 	}
 
 	return (
-		<>
-			<div className="w-full mt-8 space-y-2">
-				<div className="mt-4 flex justify-end space-x-2">
-					<Link href={`/app/${id}`}>
-						<Button>Cancel Changes</Button>
-					</Link>
-					<Button variant="primary" onClick={() => setIsSubmitting(true)}>
-						Submit Changes
-					</Button>
-				</div>
-				<InputRichText
-					minRows={10}
-					value={editedResearch}
-					onChange={(description) => setEditedResearch(description)}
-				/>
+		<div className="w-full mt-2 space-y-2">
+			<div className="mt-4 flex justify-end space-x-2">
+				<Link href={`/app/${id}`}>
+					<Button loading={loading}>Cancel Changes</Button>
+				</Link>
+				<Button loading={loading} variant="primary" onClick={handleUpdate}>
+					Submit Changes
+				</Button>
 			</div>
-			{isSubmitting && (
-				<UploadChanges
-					research={content}
-					editedResearch={editedResearch}
-					close={handleUpdate}
-				/>
-			)}
-		</>
+			<InputRichText
+				minRows={10}
+				value={editedResearch}
+				onChange={(description) => setEditedResearch(description)}
+			/>
+		</div>
 	);
 }

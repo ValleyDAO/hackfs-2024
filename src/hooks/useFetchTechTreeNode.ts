@@ -34,11 +34,13 @@ export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
 			},
 		];*/
 
-		const contributors: Contributor[] = [
-			{
-				address: (onChainNode as any).creator,
-			},
-		];
+		const arr = new Set([onChainNode.createdBy, onChainNode.rfp.writer]);
+		const contributors: Contributor[] = [];
+		arr.forEach((address) =>
+			contributors.push({
+				address,
+			}),
+		);
 
 		/*for (const contributor of contributors) {
 			const ensName = await resolveName({
@@ -78,9 +80,16 @@ export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
 				fundingRaised: 25750,
 				funders: 25,
 			},
+			createdBy: onChainNode.createdBy,
 			createdAt: parseOnChainDateToDateFormat(onChainNode.createdAt),
 			contributors,
-			contributions: onChainNode.contributions,
+			contributions: onChainNode.contributions?.map((contribution) => ({
+				contributor: contribution.contributor,
+				ipfsHash: contribution.ipfsHash,
+				createdAt: parseOnChainDateToDateFormat(
+					(contribution as any).createdAt,
+				),
+			})),
 			treasury: {
 				amount: onChainNode.treasury.amount,
 				funder: onChainNode.treasury.funder,

@@ -8,7 +8,7 @@ import { formatDistance } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-type LogType = "creation" | "funded" | "rfp-written";
+type LogType = "creation" | "funded" | "rfp-written" | "contribution";
 
 interface BasicActivityLogProps {
 	contributor?: Contributor;
@@ -21,29 +21,34 @@ function BasicActivityLog({
 	createdAt = new Date(),
 	type,
 }: BasicActivityLogProps) {
+	const { type: nodeType } = useResearchPage();
 	function getTypeText(type: LogType) {
 		switch (type) {
 			case "creation":
-				return "created a new node";
+				return `created a new ${nodeType} node`;
 			case "funded":
 				return "funded the node";
 			case "rfp-written":
-				return "wrote an RFP";
+				return "wrote the RFP";
+			case "contribution":
+				return "contributed to the node";
 			default:
 				return "";
 		}
 	}
 
 	return (
-		<div className="flex items-center space-x-0.5 text-gray-500 text-xs">
-			<div className="text-gray-400 text-[10px] leading-none mt-0.5 !mr-1.5">
-				○
+		<div className="pb-2 border-b border-gray-100 last:border-0">
+			<div className="flex items-center space-x-0.5 text-gray-600">
+				<div className="text-gray-400 text-[10px] leading-none mt-0.5 !mr-1.5">
+					○
+				</div>
+				<div className="font-medium text-gray-800 text-[11px]">
+					{contributor?.ensName || getShortenedFormat(contributor?.address)}
+				</div>
+				<div className="">{getTypeText(type)}</div>
 			</div>
-			<div className="font-medium">
-				{contributor?.ensName || getShortenedFormat(contributor?.address)}
-			</div>
-			<div className="">{getTypeText(type)}.</div>
-			<div className="!ml-2.5 text-xs text-gray-400">
+			<div className="ml-3.5 text-xs text-gray-400">
 				{formatDistance(new Date(createdAt), new Date(), {
 					addSuffix: true,
 				})}
@@ -53,7 +58,12 @@ function BasicActivityLog({
 }
 
 export function ActivityLogs() {
-	const { contributors, createdAt, creator, treasury, rfp } = useResearchPage();
+	const { contributors, createdAt, createdBy, treasury, contributions, rfp } =
+		useResearchPage();
+
+	function isNotDefaultAddress(address?: string) {
+		return address !== "0x0000000000000000000000000000000000000000";
+	}
 
 	return (
 		<>
@@ -71,9 +81,18 @@ export function ActivityLogs() {
 				>
 					<div className="w-full px-2 pl-6 pr-1 text-xs relative h-full">
 						<div className="text-sm font-semibold mb-4">Activities</div>
-						<div className="space-y-2">
-							{treasury?.funder !==
-								"0x0000000000000000000000000000000000000000" && (
+						<div className="space-y-2.5">
+							{contributions?.map((contribution) => (
+								<BasicActivityLog
+									key={contribution.ipfsHash}
+									contributor={contributors?.find(
+										(item) => item.address === contribution.contributor,
+									)}
+									createdAt={contribution.createdAt}
+									type="contribution"
+								/>
+							))}
+							{isNotDefaultAddress(treasury?.funder) && (
 								<BasicActivityLog
 									contributor={contributors?.find(
 										(item) => item.address === treasury?.funder,
@@ -82,7 +101,7 @@ export function ActivityLogs() {
 									type="funded"
 								/>
 							)}
-							{rfp?.writer !== "0x0000000000000000000000000000000000000000" && (
+							{isNotDefaultAddress(rfp?.writer) && (
 								<BasicActivityLog
 									contributor={contributors?.find(
 										(item) => item.address === rfp?.writer,
@@ -93,7 +112,7 @@ export function ActivityLogs() {
 							)}
 							<BasicActivityLog
 								contributor={contributors?.find(
-									(item) => item.address === creator,
+									(item) => item.address === createdBy,
 								)}
 								createdAt={createdAt}
 								type="creation"

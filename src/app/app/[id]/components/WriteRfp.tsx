@@ -33,7 +33,6 @@ export function WriteRfp() {
 		if (!proposal || isNaN(Number(id))) return;
 		setIsSubmitting(true);
 
-		console.log("mic check");
 		const transaction = prepareContractCall({
 			contract: contributionContract,
 			method: "addRfp",

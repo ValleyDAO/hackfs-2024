@@ -3,13 +3,15 @@ pragma solidity ^0.8.0;
 
 contract Contribution {
     struct RFP {
-        address rfp;
+        address writer;
+        uint256 createdAt;
         string ipfsHash;
     }
 
     struct Treasury {
         address funder;
         uint256 amount;
+        uint256 fundedAt;
     }
 
     struct ContributionDetail {
@@ -21,7 +23,8 @@ contract Contribution {
         string title;
         string nodeType;
         ContributionDetail[] contributions;
-        uint256 creationTime;
+        uint256 createdAt;
+        address creator;
         bool isFinished;
         Treasury treasury;
         RFP rfp;
@@ -39,7 +42,8 @@ contract Contribution {
         string title;
         string nodeType;
         ContributionDetail[] contributions;
-        uint256 creationTime;
+        uint256 createdAt;
+        address createdBy;
         bool isFinished;
         Treasury treasury;
         RFP rfp;
@@ -70,7 +74,8 @@ contract Contribution {
         Node storage newNode = nodes.push();
         newNode.title = _title;
         newNode.nodeType = _nodeType;
-        newNode.creationTime = block.timestamp;
+        newNode.createdAt = block.timestamp;
+        newNode.creator = msg.sender;
         newNode.isFinished = false;
 
         uint256 nodeId = nodes.length - 1;
@@ -85,7 +90,7 @@ contract Contribution {
         require(nodeIndex < nodes.length, "Node does not exist");
 
         Node storage node = nodes[nodeIndex];
-        node.rfp = RFP({rfp: msg.sender, ipfsHash: _ipfsHash});
+        node.rfp = RFP({ writer: msg.sender, ipfsHash: _ipfsHash, createdAt: block.timestamp });
 
         emit RfpAdded(nodeIndex, _ipfsHash);
     }
@@ -115,7 +120,10 @@ contract Contribution {
         require(nodeIndex < nodes.length, "Node does not exist");
 
         Node storage node = nodes[nodeIndex];
-        node.contributions.push(ContributionDetail({contributor: msg.sender, ipfsHash: _ipfsHash}));
+        node.contributions.push(ContributionDetail({
+            contributor: msg.sender,
+            ipfsHash: _ipfsHash
+        }));
 
         userNodePoints[msg.sender][nodeIndex] += 5;
         node.lastDripBlock[msg.sender] = block.number;
@@ -131,7 +139,7 @@ contract Contribution {
         require(node.treasury.funder == address(0) || node.treasury.funder == msg.sender, "Only the funder can add more funds");
 
         if (node.treasury.funder == address(0)) {
-            node.treasury = Treasury({ funder: msg.sender, amount: msg.value });
+            node.treasury = Treasury({ funder: msg.sender, amount: msg.value, fundedAt: block.timestamp });
         } else {
             require(node.treasury.funder == msg.sender, "Only the funder can add more funds");
             node.treasury.amount += msg.value;
@@ -158,7 +166,8 @@ contract Contribution {
                 title: node.title,
                 nodeType: node.nodeType,
                 contributions: node.contributions,
-                creationTime: node.creationTime,
+                createdAt: node.createdAt,
+                createdBy: node.creator,
                 isFinished: node.isFinished,
                 treasury: node.treasury,
                 rfp: node.rfp
@@ -173,7 +182,8 @@ contract Contribution {
             title: node.title,
             nodeType: node.nodeType,
             contributions: node.contributions,
-            creationTime: node.creationTime,
+            createdAt: node.createdAt,
+            createdBy: node.creator,
             isFinished: node.isFinished,
             rfp: node.rfp,
             treasury: node.treasury

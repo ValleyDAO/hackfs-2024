@@ -119,9 +119,9 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	function handleEdgeUpdate(source: string | null, target: string | null) {
 		if (!source || !target) return;
 		setUpdatedEdges([
-			...edgesWithUpdates,
+			...updatedEdges,
 			{
-				id: generateId(),
+				id: `${edgesWithUpdates?.length || 0}`,
 				source,
 				target,
 			},

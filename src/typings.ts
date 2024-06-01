@@ -20,6 +20,7 @@ export const NodeTypeValues: NodeType[] = [
 
 export interface ResearchContribution {
 	contributor: string;
+	createdAt: Date;
 	ipfsHash: string;
 }
 
@@ -38,7 +39,7 @@ export interface ResearchTreasury {
 export interface NodeData {
 	id?: bigint;
 	title?: string;
-	creator?: string;
+	createdBy?: string;
 	createdAt?: Date;
 	origin?: NodeOrigin;
 	type: NodeType;

@@ -42,10 +42,12 @@ export function DocumentViewer({
 					{actions?.map((action, idx) => (
 						<div
 							key={`docs-action-${idx}`}
-							className="text-gray-100 hover:text-white transition-colors cursor-pointer"
+							className="text-blue-700 flex items-center space-x-1 hover:underline transition-colors cursor-pointer"
 							onClick={action.onClick}
 						>
-							<EditOutlined className="leading-none text-lg" />
+							<EditOutlined className="leading-none text-sm" />
+
+							<span className="text-xs">{action?.label}</span>
 						</div>
 					))}
 				</div>

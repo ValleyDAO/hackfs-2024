@@ -81,15 +81,12 @@ export function areAllNodesConnected(
 	edges: EdgeData[],
 ): boolean {
 	if (nodes.length === 0) return true; // An empty graph is trivially connected
-
 	const adjList: { [key: string]: string[] } = {};
 
 	// Initialize adjacency list
 	nodes.forEach((node) => {
-		if (!node.id) return;
 		adjList[`${node.id}`] = [];
 	});
-
 	// Populate adjacency list
 	edges.forEach((edge) => {
 		adjList[edge.source].push(edge.target);
@@ -108,7 +105,7 @@ export function areAllNodesConnected(
 
 	// Perform DFS from the first node
 	const visited = new Set<string>();
-	if (nodes[0]?.id) dfs(`${nodes[0]?.id}`, visited);
+	if (nodes[0]) dfs(`${nodes[0]?.id}`, visited);
 
 	// Check if all nodes were visited
 	return nodes.length === visited.size;

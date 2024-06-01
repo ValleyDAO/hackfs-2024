@@ -18,6 +18,9 @@ export function TechNode({
 		<>
 			<Handle
 				type="target"
+				className={clsx(
+					(mode !== "edit" || activeEditType !== "edge") && "!bg-transparent",
+				)}
 				position={targetPosition}
 				isConnectable={isConnectable}
 			/>
@@ -50,6 +53,9 @@ export function TechNode({
 			</div>
 			<Handle
 				type="source"
+				className={clsx(
+					(mode !== "edit" || activeEditType !== "edge") && "!bg-transparent",
+				)}
 				position={sourcePosition}
 				isConnectable={mode === "edit" && activeEditType === "edge"}
 			/>

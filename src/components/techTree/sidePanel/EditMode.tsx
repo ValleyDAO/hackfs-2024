@@ -1,5 +1,6 @@
 "use client";
 
+import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { InputSelect } from "@/components/input/InputSelect";
@@ -35,13 +36,17 @@ export function EditMode() {
 		setActiveNode(undefined);
 	}
 
-	if (!activeNode?.id) return <></>;
-
 	return (
 		<div className="pr-2">
 			<div className="mb-6">
 				<div className="text-xs uppercase text-gray-500">Edit Mode</div>
 				<div className="text-lg font-bold">{activeNode?.title}</div>
+				<div className="mt-4">
+					<div className="text-xs text-gray-500">Node Type</div>
+					<div className="text-sm">
+						{activeNode?.type && <NodeTypeTag type={activeNode?.type} />}
+					</div>
+				</div>
 			</div>
 
 			{activeNode?.origin !== "on-chain" ? (
