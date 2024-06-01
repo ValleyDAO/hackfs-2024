@@ -1,15 +1,16 @@
 import { Navigation, NavigationItemProps } from "@/components/navigation";
 
+import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { NodeStatus } from "@/typings";
 import { usePathname } from "next/navigation";
 import React from "react";
 
 interface ProjectMenuProps {
-	id: string;
 	status?: NodeStatus;
 }
 
-export function ProjectMenu({ id, status }: ProjectMenuProps) {
+export function ProjectMenu({ status }: ProjectMenuProps) {
+	const { id } = useResearchPage();
 	const basePath = `/app/${id}`;
 	let menu: NavigationItemProps[] = [];
 	const pathname = usePathname();

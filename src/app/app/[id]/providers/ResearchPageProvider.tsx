@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/button";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
-import { useFetchTechTreeNode } from "@/hooks/useFetchTechTreeNode";
+import { useOnChainNode } from "@/hooks/useOnChainNode";
 import { NodeData, NodeStatus } from "@/typings";
 import Link from "next/link";
 import React, { ReactNode, createContext, useContext, useEffect } from "react";
@@ -27,7 +27,7 @@ export function ResearchPageProvider({
 	children,
 	id,
 }: { children: ReactNode; id: string }) {
-	const { node, isLoading } = useFetchTechTreeNode(BigInt(id));
+	const { node, isLoading } = useOnChainNode(BigInt(id));
 	const [localNode, setLocalNode] = React.useState<NodeData>();
 
 	useEffect(() => {}, []);

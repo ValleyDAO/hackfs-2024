@@ -49,7 +49,9 @@ export default function Page() {
 						]}
 					>
 						{contributions && contributions?.length > 0 ? (
-							<RichText value={contributions?.[0]?.ipfsHash} />
+							<RichText
+								value={contributions?.[contributions?.length - 1]?.ipfsHash}
+							/>
 						) : (
 							<div>
 								<div className=" p-2 text-sm flex items-center space-x-4 flex-wrap">
@@ -76,7 +78,25 @@ export default function Page() {
 					</DocumentViewer>
 				</>
 			) : status === "finished" ? (
-				<>Finished</>
+				<>
+					<div className="mt-8">
+						<h1 className="font-bold text-base ">Research concluded</h1>
+						<p className="text-sm text-gray-700 mb-4">
+							Thank you for your contribution. The research has been concluded.
+						</p>
+						<DocumentViewer
+							documents={[
+								{
+									name: "Research",
+								},
+							]}
+						>
+							<RichText
+								value={contributions?.[contributions?.length - 1]?.ipfsHash}
+							/>
+						</DocumentViewer>
+					</div>
+				</>
 			) : (
 				<div className="mt-10">
 					<LoadingOutlined />

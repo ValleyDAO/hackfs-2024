@@ -10,7 +10,7 @@ interface useFetchTechTreeNodeProps {
 	node?: NodeData;
 }
 
-export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
+export function useOnChainNode(id: bigint): useFetchTechTreeNodeProps {
 	const { data: onChainNode, isLoading } = useReadContract({
 		contract: contributionContract,
 		method: "getNode",
@@ -52,8 +52,9 @@ export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
 			}
 		}*/
 
-		const status: NodeStatus =
-			onChainNode.rfp.ipfsHash?.length === 0
+		const status: NodeStatus = onChainNode.isFinished
+			? "finished"
+			: onChainNode.rfp.ipfsHash?.length === 0
 				? "idle"
 				: onChainNode.rfp.ipfsHash?.length > 0 &&
 						onChainNode.treasury.amount === BigInt(0)
@@ -61,24 +62,18 @@ export function useFetchTechTreeNode(id: bigint): useFetchTechTreeNodeProps {
 					: onChainNode.treasury.amount > BigInt(0) &&
 							onChainNode.rfp.ipfsHash?.length > 0
 						? "in-progress"
-						: onChainNode.isFinished
-							? "finished"
-							: "idle";
+						: "idle";
 
 		return {
 			title: onChainNode.title,
 			id: BigInt(id),
 			type: onChainNode.nodeType as NodeType,
+			isFinished: onChainNode.isFinished,
+			status,
 			rfp: {
 				createdAt: parseOnChainDateToDateFormat(onChainNode.rfp.createdAt),
 				ipfsHash: onChainNode.rfp.ipfsHash,
 				writer: onChainNode.rfp.writer,
-			},
-			status,
-			fundingState: {
-				fundingRequest: 500000,
-				fundingRaised: 25750,
-				funders: 25,
 			},
 			createdBy: onChainNode.createdBy,
 			createdAt: parseOnChainDateToDateFormat(onChainNode.createdAt),

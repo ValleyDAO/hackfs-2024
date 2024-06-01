@@ -79,7 +79,7 @@ export function ActivityLogs() {
 					animate="visible"
 					exit="exit"
 				>
-					<div className="w-full px-2 pl-6 pr-1 text-xs relative h-full">
+					<div className="w-full px-4 text-xs relative h-full">
 						<div className="text-sm font-semibold mb-4">Activities</div>
 						<div className="space-y-2.5">
 							{contributions?.map((contribution) => (

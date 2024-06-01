@@ -49,6 +49,7 @@ export interface NodeData {
 	status?: NodeStatus;
 	contributors?: Contributor[];
 	treasury?: ResearchTreasury;
+	isFinished?: boolean;
 }
 
 export interface EdgeData {

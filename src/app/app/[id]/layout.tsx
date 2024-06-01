@@ -33,7 +33,7 @@ export default function RootLayout({
 				<div className="flex w-full h-full pt-10">
 					<div className="layout w-full">
 						<TopBar />
-						<ResearchHead id={params.id} />
+						<ResearchHead />
 						{children}
 					</div>
 					<ActivityLogs />
