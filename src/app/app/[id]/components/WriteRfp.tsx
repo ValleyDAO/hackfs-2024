@@ -4,7 +4,7 @@ import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
 import { InputRichText } from "@/components/richText/InputRichText";
 import { useTransaction } from "@/hooks/useTransaction";
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { PreparedTransaction, prepareContractCall } from "thirdweb";
@@ -34,7 +34,7 @@ export function WriteRfp() {
 		setIsSubmitting(true);
 
 		const transaction = prepareContractCall({
-			contract: contributionContract,
+			contract: techTreeContract,
 			method: "addRfp",
 			params: [id as bigint, proposal],
 		}) as PreparedTransaction;

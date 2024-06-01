@@ -17,6 +17,7 @@ contract Contribution {
     struct ContributionDetail {
         address contributor;
         string ipfsHash;
+        uint256 createdAt;
     }
 
     struct Node {
@@ -59,8 +60,14 @@ contract Contribution {
         string target;
     }
 
+    struct UserNodePoints {
+        uint256 points;
+        NodeLite node;
+    }
+
     Node[] public nodes;
     Edge[] public edges;
+
     mapping(address => mapping(uint256 => uint256)) public userNodePoints;
 
     event NodeAdded(uint256 indexed nodeId, string title,  string nodeType);
@@ -122,7 +129,8 @@ contract Contribution {
         Node storage node = nodes[nodeIndex];
         node.contributions.push(ContributionDetail({
             contributor: msg.sender,
-            ipfsHash: _ipfsHash
+            ipfsHash: _ipfsHash,
+            createdAt: block.timestamp
         }));
 
         userNodePoints[msg.sender][nodeIndex] += 5;
@@ -176,7 +184,7 @@ contract Contribution {
         return nodesLite;
     }
 
-    function getNode(uint256 nodeIndex) external view returns (NodeLite memory) {
+    function getNode(uint256 nodeIndex) public view returns (NodeLite memory) {
         Node storage node = nodes[nodeIndex];
         NodeLite memory nodeLite = NodeLite({
             title: node.title,
@@ -198,6 +206,44 @@ contract Contribution {
     function getUserNodePoints(address _user, uint256 nodeIndex) external view returns (uint256) {
         return userNodePoints[_user][nodeIndex];
     }
+
+    function getUserPointsAcrossAllNodes(address _user) external view returns (uint256) {
+        uint256 totalPoints = 0;
+        for (uint i = 0; i < nodes.length; i++) {
+            totalPoints += userNodePoints[_user][i];
+        }
+        return totalPoints;
+    }
+
+    function getUserParticipatedNodes(address _user) external view returns (UserNodePoints[] memory) {
+        UserNodePoints[] memory userParticipatedNodes = new UserNodePoints[](nodes.length);
+        for (uint i = 0; i < nodes.length; i++) {
+            if (userNodePoints[_user][i] > 0) {
+                NodeLite memory node = getNode(i);
+                userParticipatedNodes[i] = UserNodePoints({
+                    points: userNodePoints[_user][i],
+                    node: node
+                });
+            }
+        }
+        return userParticipatedNodes;
+    }
+
+    // Get all points related for a specific node by function (uint256 nodeIndex)
+    function getPointsRelatedToNode(uint256 nodeIndex) external view returns (UserNodePoints[] memory) {
+        UserNodePoints[] memory userParticipatedNodes = new UserNodePoints[](nodes.length);
+        for (uint i = 0; i < nodes.length; i++) {
+            if (userNodePoints[msg.sender][i] > 0) {
+                NodeLite memory node = getNode(i);
+                userParticipatedNodes[i] = UserNodePoints({
+                    points: userNodePoints[msg.sender][i],
+                    node: node
+                });
+            }
+        }
+        return userParticipatedNodes;
+    }
+
 
     function getLastDripBlock(address _user, uint256 nodeIndex) external view returns (uint256) {
         Node storage node = nodes[nodeIndex];

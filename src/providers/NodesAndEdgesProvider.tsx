@@ -2,9 +2,11 @@
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { useTransaction } from "@/hooks/useTransaction";
-import { contributionContract } from "@/lib/constants";
-import { EdgeData, NodeData } from "@/typings";
-import { areAllNodesConnected, generateId } from "@/utils/nodes.utils";
+import { techTreeContract } from "@/lib/constants";
+import { useTechTree } from "@/providers/TechTreeParentProvider";
+import { EdgeData, NodeData, TechTree } from "@/typings";
+import { areAllNodesConnected } from "@/utils/nodes.utils";
+import { isInvalidNumber } from "@/utils/number.utils";
 import deepEqual from "deep-equal";
 import React, {
 	ReactNode,
@@ -18,7 +20,7 @@ import { PreparedTransaction, prepareContractCall } from "thirdweb";
 
 type PublishMode = "reset" | "publish";
 
-type TechTreeDataContextProps = {
+type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
@@ -30,7 +32,7 @@ type TechTreeDataContextProps = {
 	isLoading: boolean;
 };
 
-export const TechTreeContext = createContext<TechTreeDataContextProps>({
+export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
 	handleEdgeUpdate: () => {},
 	hasUpdates: false,
 	nodes: [],
@@ -42,15 +44,19 @@ export const TechTreeContext = createContext<TechTreeDataContextProps>({
 	isLoading: false,
 });
 
-export const useTechTreeData = (): TechTreeDataContextProps => {
-	const context = useContext(TechTreeContext);
+export const useNodesAndEdges = (): NodesAndEdgesProps => {
+	const context = useContext(NodesAndEdgesContext);
 	if (!context) {
-		throw new Error("useTechTree must be used within a TechTreeProvider");
+		throw new Error(
+			"useNodesAndEdges must be used within a NodesAndEdgesProvider",
+		);
 	}
 	return context;
 };
 
-export function TechTreeDataProvider({ children }: { children: ReactNode }) {
+export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
+	const { activeTechTree } = useTechTree();
+
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
 	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([
@@ -128,22 +134,6 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		]);
 	}
 
-	/*	function removeNode(nodeId: bigint) {
-		// can't node if its a node with target nodes
-		const isMiddleNode =
-			(updatedEdges || []).filter((edge) => edge.source === nodeId)?.length > 0;
-
-		if (isMiddleNode) {
-			toast.error("Can't remove a node that has dependencies");
-			return;
-		}
-
-		const newNodes = updatedNodes.filter((node) => node.id !== nodeId);
-		const newEdges = updatedEdges.filter((edge) => edge.target !== nodeId);
-		setUpdatedNodes(newNodes);
-		setUpdatedEdges(newEdges);
-	}*/
-
 	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
 		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
@@ -166,11 +156,14 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
+		if (!activeTechTree || isInvalidNumber(activeTechTree?.id)) return;
+
 		try {
 			const transaction = prepareContractCall({
-				contract: contributionContract,
+				contract: techTreeContract,
 				method: "updateTechTree",
 				params: [
+					activeTechTree.id,
 					updatedNodes.map((node) => ({
 						title: node.title || "",
 						nodeType: node.type?.toLowerCase(),
@@ -187,7 +180,7 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	const value = useMemo<TechTreeDataContextProps>(
+	const value = useMemo<NodesAndEdgesProps>(
 		() => ({
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
@@ -205,8 +198,8 @@ export function TechTreeDataProvider({ children }: { children: ReactNode }) {
 	);
 
 	return (
-		<TechTreeContext.Provider value={value}>
+		<NodesAndEdgesContext.Provider value={value}>
 			{children}
-		</TechTreeContext.Provider>
+		</NodesAndEdgesContext.Provider>
 	);
 }

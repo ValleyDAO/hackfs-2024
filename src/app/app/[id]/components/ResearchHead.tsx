@@ -5,7 +5,7 @@ import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
 import { StatusTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { useTransaction } from "@/hooks/useTransaction";
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import { isInvalidNumber } from "@/utils/number.utils";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -31,7 +31,7 @@ export function ResearchHead() {
 	async function handleConcludeResearch() {
 		if (isInvalidNumber(id)) return;
 		const transaction = prepareContractCall({
-			contract: contributionContract,
+			contract: techTreeContract,
 			method: "finishNode",
 			params: [id as bigint],
 		}) as PreparedTransaction;

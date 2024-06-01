@@ -1,6 +1,7 @@
 "use client";
 
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
+import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, NodeType } from "@/typings";
 import { useMemo } from "react";
 import { useReadContract } from "thirdweb/react";
@@ -12,43 +13,39 @@ interface useOnChainTechTreeProps {
 }
 
 export function useOnChainTechTree(): useOnChainTechTreeProps {
-	const { data: onChainNodes, isLoading: isLoadingNodes } = useReadContract({
-		contract: contributionContract,
-		method: "getNodesLite",
-	});
-	const { data: onChainEdges, isLoading: isLoadingEdges } = useReadContract({
-		contract: contributionContract,
-		method: "getEdges",
+	const { activeTechTree } = useTechTree();
+	const { data, isLoading, refetch } = useReadContract({
+		contract: techTreeContract,
+		method: "getNodesAndEdgesFromTechTreeId",
+		params: [activeTechTree?.id as bigint],
+		queryOptions: {
+			enabled: !!activeTechTree,
+		},
 	});
 
-	const nodes = useMemo<NodeData[]>(
-		() =>
-			onChainNodes?.map((node, idx) => ({
+	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
+		return [
+			data?.[0]?.map((node, idx) => ({
 				id: BigInt(idx),
 				title: node.title,
 				type: node.nodeType as NodeType,
 				origin: "on-chain",
 			})) || [],
-		[onChainNodes],
-	);
-
-	const edges = useMemo<EdgeData[]>(
-		() =>
-			onChainEdges?.map((edge, idx) => ({
+			data?.[1]?.map((edge, idx) => ({
 				id: `${idx}`,
 				source: `${Number(edge.source) - 1}`,
 				target: `${Number(edge.target) - 1}`,
 				origin: "on-chain",
 			})) || [],
-		[onChainEdges],
-	);
+		];
+	}, [data]);
 
 	return useMemo(
 		() => ({
 			nodes,
 			edges,
-			isLoadingOnChain: isLoadingNodes || isLoadingEdges,
+			isLoadingOnChain: isLoading,
 		}),
-		[nodes, edges, isLoadingNodes, isLoadingEdges],
+		[nodes, edges, isLoading],
 	);
 }

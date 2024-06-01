@@ -11,9 +11,6 @@ if (!clientId) {
 	throw new Error("No client ID provided");
 }
 
-export const contributionContractAddress =
-	"0x4Ed80E735aa8bF2AFF8EB1445096EBf1DAcA8F16";
-
 export const fundingContractAddress =
 	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
 export const chain = defineChain({
@@ -33,8 +30,8 @@ export const thirdWebWallets = [
 	}),
 ];
 
-export const contributionContract = getContract({
-	address: contributionContractAddress,
+export const techTreeContract = getContract({
+	address: "0x9D45ABD5b29fEe30d37B1c93a557C50013A3090e",
 	chain: defineChain(314159),
 	client: web3Client,
 	abi: [
@@ -74,6 +71,12 @@ export const contributionContract = getContract({
 				},
 				{
 					indexed: false,
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
+					indexed: false,
 					internalType: "string",
 					name: "source",
 					type: "string",
@@ -95,6 +98,12 @@ export const contributionContract = getContract({
 					indexed: true,
 					internalType: "uint256",
 					name: "nodeId",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "uint256",
+					name: "techTreeId",
 					type: "uint256",
 				},
 				{
@@ -151,6 +160,25 @@ export const contributionContract = getContract({
 				{
 					indexed: true,
 					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
+					indexed: false,
+					internalType: "string",
+					name: "title",
+					type: "string",
+				},
+			],
+			name: "TechTreeAdded",
+			type: "event",
+		},
+		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
 				},
@@ -185,6 +213,11 @@ export const contributionContract = getContract({
 		{
 			inputs: [
 				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
 					internalType: "string",
 					name: "_source",
 					type: "string",
@@ -215,6 +248,11 @@ export const contributionContract = getContract({
 		},
 		{
 			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
 				{
 					internalType: "string",
 					name: "_title",
@@ -252,6 +290,19 @@ export const contributionContract = getContract({
 		{
 			inputs: [
 				{
+					internalType: "string",
+					name: "_title",
+					type: "string",
+				},
+			],
+			name: "addTechTree",
+			outputs: [],
+			stateMutability: "nonpayable",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
 					internalType: "uint256",
 					name: "",
 					type: "uint256",
@@ -268,6 +319,11 @@ export const contributionContract = getContract({
 					internalType: "string",
 					name: "target",
 					type: "string",
+				},
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
 				},
 				{
 					internalType: "address",
@@ -297,8 +353,14 @@ export const contributionContract = getContract({
 			type: "function",
 		},
 		{
-			inputs: [],
-			name: "getEdges",
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+			],
+			name: "getEdgesByTechTreeId",
 			outputs: [
 				{
 					components: [
@@ -311,6 +373,11 @@ export const contributionContract = getContract({
 							internalType: "string",
 							name: "target",
 							type: "string",
+						},
+						{
+							internalType: "uint256",
+							name: "techTreeId",
+							type: "uint256",
 						},
 						{
 							internalType: "address",
@@ -389,6 +456,11 @@ export const contributionContract = getContract({
 									name: "ipfsHash",
 									type: "string",
 								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
+								},
 							],
 							internalType: "struct Contribution.ContributionDetail[]",
 							name: "contributions",
@@ -408,6 +480,11 @@ export const contributionContract = getContract({
 							internalType: "bool",
 							name: "isFinished",
 							type: "bool",
+						},
+						{
+							internalType: "uint256",
+							name: "techTreeId",
+							type: "uint256",
 						},
 						{
 							components: [
@@ -463,8 +540,14 @@ export const contributionContract = getContract({
 			type: "function",
 		},
 		{
-			inputs: [],
-			name: "getNodesLite",
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+			],
+			name: "getNodesAndEdgesFromTechTreeId",
 			outputs: [
 				{
 					components: [
@@ -490,6 +573,11 @@ export const contributionContract = getContract({
 									name: "ipfsHash",
 									type: "string",
 								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
+								},
 							],
 							internalType: "struct Contribution.ContributionDetail[]",
 							name: "contributions",
@@ -509,6 +597,160 @@ export const contributionContract = getContract({
 							internalType: "bool",
 							name: "isFinished",
 							type: "bool",
+						},
+						{
+							internalType: "uint256",
+							name: "techTreeId",
+							type: "uint256",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "funder",
+									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "amount",
+									type: "uint256",
+								},
+								{
+									internalType: "uint256",
+									name: "fundedAt",
+									type: "uint256",
+								},
+							],
+							internalType: "struct Contribution.Treasury",
+							name: "treasury",
+							type: "tuple",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "writer",
+									type: "address",
+								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+							],
+							internalType: "struct Contribution.RFP",
+							name: "rfp",
+							type: "tuple",
+						},
+					],
+					internalType: "struct Contribution.NodeLite[]",
+					name: "",
+					type: "tuple[]",
+				},
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "source",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "target",
+							type: "string",
+						},
+						{
+							internalType: "uint256",
+							name: "techTreeId",
+							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "creator",
+							type: "address",
+						},
+						{
+							internalType: "uint256",
+							name: "creationTime",
+							type: "uint256",
+						},
+					],
+					internalType: "struct Contribution.Edge[]",
+					name: "",
+					type: "tuple[]",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+			],
+			name: "getNodesByTechTreeId",
+			outputs: [
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "title",
+							type: "string",
+						},
+						{
+							internalType: "string",
+							name: "nodeType",
+							type: "string",
+						},
+						{
+							components: [
+								{
+									internalType: "address",
+									name: "contributor",
+									type: "address",
+								},
+								{
+									internalType: "string",
+									name: "ipfsHash",
+									type: "string",
+								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
+								},
+							],
+							internalType: "struct Contribution.ContributionDetail[]",
+							name: "contributions",
+							type: "tuple[]",
+						},
+						{
+							internalType: "uint256",
+							name: "createdAt",
+							type: "uint256",
+						},
+						{
+							internalType: "address",
+							name: "createdBy",
+							type: "address",
+						},
+						{
+							internalType: "bool",
+							name: "isFinished",
+							type: "bool",
+						},
+						{
+							internalType: "uint256",
+							name: "techTreeId",
+							type: "uint256",
 						},
 						{
 							components: [
@@ -564,6 +806,31 @@ export const contributionContract = getContract({
 			type: "function",
 		},
 		{
+			inputs: [],
+			name: "getTechTrees",
+			outputs: [
+				{
+					components: [
+						{
+							internalType: "string",
+							name: "title",
+							type: "string",
+						},
+						{
+							internalType: "uint256",
+							name: "id",
+							type: "uint256",
+						},
+					],
+					internalType: "struct Contribution.TechTree[]",
+					name: "",
+					type: "tuple[]",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
 			inputs: [
 				{
 					internalType: "address",
@@ -577,6 +844,154 @@ export const contributionContract = getContract({
 				},
 			],
 			name: "getUserNodePoints",
+			outputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "_user",
+					type: "address",
+				},
+			],
+			name: "getUserParticipatedNodes",
+			outputs: [
+				{
+					components: [
+						{
+							internalType: "uint256",
+							name: "points",
+							type: "uint256",
+						},
+						{
+							components: [
+								{
+									internalType: "string",
+									name: "title",
+									type: "string",
+								},
+								{
+									internalType: "string",
+									name: "nodeType",
+									type: "string",
+								},
+								{
+									components: [
+										{
+											internalType: "address",
+											name: "contributor",
+											type: "address",
+										},
+										{
+											internalType: "string",
+											name: "ipfsHash",
+											type: "string",
+										},
+										{
+											internalType: "uint256",
+											name: "createdAt",
+											type: "uint256",
+										},
+									],
+									internalType: "struct Contribution.ContributionDetail[]",
+									name: "contributions",
+									type: "tuple[]",
+								},
+								{
+									internalType: "uint256",
+									name: "createdAt",
+									type: "uint256",
+								},
+								{
+									internalType: "address",
+									name: "createdBy",
+									type: "address",
+								},
+								{
+									internalType: "bool",
+									name: "isFinished",
+									type: "bool",
+								},
+								{
+									internalType: "uint256",
+									name: "techTreeId",
+									type: "uint256",
+								},
+								{
+									components: [
+										{
+											internalType: "address",
+											name: "funder",
+											type: "address",
+										},
+										{
+											internalType: "uint256",
+											name: "amount",
+											type: "uint256",
+										},
+										{
+											internalType: "uint256",
+											name: "fundedAt",
+											type: "uint256",
+										},
+									],
+									internalType: "struct Contribution.Treasury",
+									name: "treasury",
+									type: "tuple",
+								},
+								{
+									components: [
+										{
+											internalType: "address",
+											name: "writer",
+											type: "address",
+										},
+										{
+											internalType: "uint256",
+											name: "createdAt",
+											type: "uint256",
+										},
+										{
+											internalType: "string",
+											name: "ipfsHash",
+											type: "string",
+										},
+									],
+									internalType: "struct Contribution.RFP",
+									name: "rfp",
+									type: "tuple",
+								},
+							],
+							internalType: "struct Contribution.NodeLite",
+							name: "node",
+							type: "tuple",
+						},
+					],
+					internalType: "struct Contribution.UserNodePoints[]",
+					name: "",
+					type: "tuple[]",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
+					internalType: "address",
+					name: "_user",
+					type: "address",
+				},
+			],
+			name: "getUserPointsAcrossAllNodes",
 			outputs: [
 				{
 					internalType: "uint256",
@@ -645,6 +1060,11 @@ export const contributionContract = getContract({
 					type: "tuple",
 				},
 				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
 					components: [
 						{
 							internalType: "address",
@@ -673,6 +1093,30 @@ export const contributionContract = getContract({
 		{
 			inputs: [
 				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
+			],
+			name: "techTrees",
+			outputs: [
+				{
+					internalType: "string",
+					name: "title",
+					type: "string",
+				},
+				{
+					internalType: "uint256",
+					name: "id",
+					type: "uint256",
+				},
+			],
+			stateMutability: "view",
+			type: "function",
+		},
+		{
+			inputs: [
+				{
 					internalType: "address",
 					name: "_user",
 					type: "address",
@@ -690,6 +1134,11 @@ export const contributionContract = getContract({
 		},
 		{
 			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
 				{
 					components: [
 						{

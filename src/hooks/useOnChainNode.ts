@@ -1,6 +1,6 @@
 "use client";
 
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import { Contributor, NodeData, NodeStatus, NodeType } from "@/typings";
 import { useMemo } from "react";
 import { useReadContract } from "thirdweb/react";
@@ -12,7 +12,7 @@ interface useFetchTechTreeNodeProps {
 
 export function useOnChainNode(id: bigint): useFetchTechTreeNodeProps {
 	const { data: onChainNode, isLoading } = useReadContract({
-		contract: contributionContract,
+		contract: techTreeContract,
 		method: "getNode",
 		params: [id],
 	});

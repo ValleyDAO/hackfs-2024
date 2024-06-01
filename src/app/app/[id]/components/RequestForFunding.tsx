@@ -7,7 +7,7 @@ import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTransaction } from "@/hooks/useTransaction";
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -40,7 +40,7 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 
 		setIsSubmitting(true);
 		const transaction = prepareContractCall({
-			contract: contributionContract,
+			contract: techTreeContract,
 			method: "addFunds",
 			params: [id as bigint],
 			value: toWei(`${value}`),

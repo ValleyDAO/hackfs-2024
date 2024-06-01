@@ -36,6 +36,11 @@ export interface ResearchTreasury {
 	fundedAt: Date;
 }
 
+export interface TechTree {
+	title: string;
+	id: bigint;
+}
+
 export interface NodeData {
 	id?: bigint;
 	title?: string;

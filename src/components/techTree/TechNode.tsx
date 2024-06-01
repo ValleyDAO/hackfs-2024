@@ -1,4 +1,4 @@
-import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, NodeType } from "@/typings";
 import clsx from "clsx";
 import { Handle, NodeProps, Position } from "reactflow";

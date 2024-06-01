@@ -1,17 +1,20 @@
 import { TechTreeLayout } from "@/components/techTree";
 import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
-import { TechTreeContextProvider } from "@/providers/TechTreeContextProvider";
-import { TechTreeDataProvider } from "@/providers/TechTreeDataProvider";
+import { NodesAndEdgesProvider } from "@/providers/NodesAndEdgesProvider";
+import { TechTreeLayoutContextProvider } from "@/providers/TechTreeLayoutContextProvider";
 
+import { TechTreeProvider } from "@/providers/TechTreeParentProvider";
 import React from "react";
 
 export default function Home() {
 	return (
-		<TechTreeDataProvider>
-			<TechTreeContextProvider>
-				<TechTreeLayout />
-				<TechTreeSidePanel />
-			</TechTreeContextProvider>
-		</TechTreeDataProvider>
+		<TechTreeProvider>
+			<NodesAndEdgesProvider>
+				<TechTreeLayoutContextProvider>
+					<TechTreeLayout />
+					<TechTreeSidePanel />
+				</TechTreeLayoutContextProvider>
+			</NodesAndEdgesProvider>
+		</TechTreeProvider>
 	);
 }

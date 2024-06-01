@@ -8,7 +8,6 @@ import { ReactNode } from "react";
 type ModalProps = {
 	children: ReactNode;
 	close?(): void;
-	title?: string;
 	bodyClassName?: string;
 	wrapperWidth?:
 		| "max-w-lg"
@@ -18,16 +17,13 @@ type ModalProps = {
 		| "max-w-4xl"
 		| "max-w-5xl";
 	open: boolean;
-	withBackground?: boolean;
 	position?: "top" | "center" | "bottom" | "left" | "right";
 };
 
 export function Modal({
 	children,
 	close,
-	title,
 	open,
-	withBackground = true,
 	position = "bottom",
 	wrapperWidth = "max-w-lg",
 	bodyClassName,
@@ -37,9 +33,7 @@ export function Modal({
 	return (
 		<div
 			onClick={() => close?.()}
-			className={clsx("fixed inset-0 z-10 m-0 h-full p-0", {
-				"bg-black/25": withBackground,
-			})}
+			className="fixed bg-black/25 inset-0 z-10 m-0 h-full p-0"
 		>
 			<AnimatePresence>
 				<motion.div

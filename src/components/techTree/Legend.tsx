@@ -12,11 +12,7 @@ function LegendItem({ color, label }: { color: string; label: NodeType }) {
 
 export function Legend() {
 	return (
-		<div
-			className={clsx(
-				"transition-all flex flex-col absolute left-2 bottom-2 text-xs",
-			)}
-		>
+		<div className="transition-all flex flex-col absolute left-2 bottom-2 text-xs">
 			<div className="flex items-center space-x-5">
 				<div className="font-medium text-black">Type of nodes</div>
 				<LegendItem color="bg-blue-600" label="research" />

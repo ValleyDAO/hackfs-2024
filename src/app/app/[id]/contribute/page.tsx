@@ -8,7 +8,7 @@ import { InputRichText } from "@/components/richText/InputRichText";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTransaction } from "@/hooks/useTransaction";
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -90,7 +90,7 @@ export default function Page() {
 		setIsSubmitting(true);
 
 		const transaction = prepareContractCall({
-			contract: contributionContract,
+			contract: techTreeContract,
 			method: "addContribution",
 			params: [id as bigint, editedResearch],
 		}) as PreparedTransaction;

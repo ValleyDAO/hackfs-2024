@@ -1,7 +1,7 @@
 import { AddFilled } from "@/components/icons/AddFilled";
 import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EditTechTreeMenu } from "@/components/techTree/menu/EditTechTreeMenu";
-import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
+import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React from "react";

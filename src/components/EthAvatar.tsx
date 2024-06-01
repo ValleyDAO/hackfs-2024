@@ -29,7 +29,7 @@ export function EthAvatar({ address }: EthAvatarProps) {
 
 	return (
 		<div
-			className="w-7 h-7 rounded-full"
+			className="w-6 h-6 rounded-full"
 			style={{
 				borderRadius: "50%",
 				boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.1)",

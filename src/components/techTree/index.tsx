@@ -9,8 +9,10 @@ import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { Legend } from "@/components/techTree/Legend";
-import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
-import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { TechTreeSelector } from "@/components/techTree/techTreeSelector";
+import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
+import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
+import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { NodeData } from "@/typings";
 import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
@@ -19,9 +21,10 @@ import { useActiveAccount } from "thirdweb/react";
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
+	const { activeTechTree } = useTechTree();
 	const account = useActiveAccount();
 	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
-		useTechTreeData();
+		useNodesAndEdges();
 	const { mode, setActiveNode, activeEditType, setActiveEditType } =
 		useTechTreeContext();
 
@@ -56,32 +59,39 @@ export function TechTreeLayout() {
 				"flex-1 relative h-full bg-grid flex",
 			)}
 		>
-			{isLoading && (
-				<div className="absolute inset-0 z-10 horizontal justify-center">
-					<LoadingOutlined className="text-2xl text-gray-400" />
-				</div>
+			{activeTechTree && (
+				<>
+					{isLoading && (
+						<div className="absolute inset-0 z-10 horizontal justify-center">
+							<LoadingOutlined className="text-2xl text-gray-400" />
+						</div>
+					)}
+					<ReactFlow
+						nodes={layoutNodes}
+						edges={layoutEdges}
+						connectionLineType={ConnectionLineType.SmoothStep}
+						fitView
+						defaultEdgeOptions={{ animated: true }}
+						maxZoom={1.2}
+						nodeTypes={nodeTypes}
+						nodesDraggable={mode === "move"}
+						zoomOnPinch
+						zoomOnScroll
+						draggable={mode === "move"}
+						autoPanOnNodeDrag={mode === "move"}
+						onSelectionEnd={() => setActiveNode(undefined)}
+						onClick={onPossibleNodeAdd}
+						onConnect={(params) =>
+							handleEdgeUpdate(params.source, params.target)
+						}
+						edgesUpdatable={mode === "edit" && activeEditType === "edge"}
+						onNodeClick={(evt, { id }) => setActiveNode(BigInt(id))}
+					/>
+					{account?.address && <TechTreeMenu />}
+				</>
 			)}
-			<ReactFlow
-				nodes={layoutNodes}
-				edges={layoutEdges}
-				connectionLineType={ConnectionLineType.SmoothStep}
-				fitView
-				defaultEdgeOptions={{ animated: true }}
-				maxZoom={1.2}
-				nodeTypes={nodeTypes}
-				nodesDraggable={mode === "move"}
-				zoomOnPinch
-				zoomOnScroll
-				draggable={mode === "move"}
-				autoPanOnNodeDrag={mode === "move"}
-				onSelectionEnd={() => setActiveNode(undefined)}
-				onClick={onPossibleNodeAdd}
-				onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
-				edgesUpdatable={mode === "edit" && activeEditType === "edge"}
-				onNodeClick={(evt, { id }) => setActiveNode(BigInt(id))}
-			/>
-			{account?.address && <TechTreeMenu />}
 			<Legend />
+			<TechTreeSelector />
 		</div>
 	);
 }

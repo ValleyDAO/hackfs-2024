@@ -5,9 +5,11 @@ import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { InputSelect } from "@/components/input/InputSelect";
 import InputText from "@/components/input/InputText";
-import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
-import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
+import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
+import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, NodeType, SelectOptionItem } from "@/typings";
+import { isInvalidNumber } from "@/utils/number.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
 import { capitalize } from "@walletconnect/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,7 +17,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
-	const { handleNodeUpdate } = useTechTreeData();
+	const { handleNodeUpdate, nodes } = useNodesAndEdges();
 	const { activeNode, setActiveNode } = useTechTreeContext();
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
@@ -30,8 +32,7 @@ export function EditMode() {
 	}, [activeNode]);
 
 	function handleSave() {
-		if (!activeNode?.id) return;
-		handleNodeUpdate(activeNode.id, update);
+		handleNodeUpdate(activeNode?.id as bigint, update);
 		setUpdate({});
 		setActiveNode(undefined);
 	}
@@ -96,6 +97,7 @@ export function EditMode() {
 					Discord and ask us to amplify this feature!
 				</div>
 			)}
+			{activeNode?.type === "end-goal" && <EnhanceWithGaladriel />}
 		</div>
 	);
 }

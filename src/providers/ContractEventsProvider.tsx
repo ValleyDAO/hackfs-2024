@@ -1,9 +1,10 @@
 "use client";
 
-import { contributionContract } from "@/lib/constants";
+import { techTreeContract } from "@/lib/constants";
 import React, { ReactNode, createContext, useContext } from "react";
 import { prepareEvent } from "thirdweb";
 import { useContractEvents } from "thirdweb/react";
+import { decodeEventLog } from "viem";
 
 interface TxEvent {
 	address: string;
@@ -12,6 +13,8 @@ interface TxEvent {
 	eventName: string;
 	transactionHash: string;
 	transactionIndex: number;
+	data: `0x${string}`;
+	args: Record<string, any>;
 }
 
 type TxEventsContextProps = {
@@ -29,6 +32,19 @@ const nodeAdded = prepareEvent({
 const rfpEvent = prepareEvent({
 	signature: "event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash)",
 });
+const TechTreeAdded = prepareEvent({
+	signature: "event TechTreeAdded(uint256 indexed techTreeId, string title)",
+});
+const NodeFinished = prepareEvent({
+	signature: "event NodeFinished(uint256 indexed nodeId)",
+});
+const TreasuryAdded = prepareEvent({
+	signature: "event TreasuryAdded(uint256 indexed nodeIndex, uint256 amount)",
+});
+const ContributionAdded = prepareEvent({
+	signature:
+		"event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash)",
+});
 
 export const useTxEvents = (): TxEventsContextProps => {
 	const context = useContext(TxEventsContext);
@@ -40,10 +56,19 @@ export const useTxEvents = (): TxEventsContextProps => {
 
 export function ContractEventsProvider({ children }: { children: ReactNode }) {
 	const { data } = useContractEvents({
-		contract: contributionContract,
-		events: [nodeAdded, rfpEvent],
+		contract: techTreeContract,
+		events: [
+			nodeAdded,
+			rfpEvent,
+			TechTreeAdded,
+			NodeFinished,
+			TreasuryAdded,
+			ContributionAdded,
+		],
 		blockRange: 50,
 	});
+
+	console.log(data);
 
 	return (
 		<TxEventsContext.Provider value={{ events: (data || []) as TxEvent[] }}>

@@ -5,8 +5,8 @@ import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EdgeOutlined } from "@/components/icons/EdgeOutlined";
 import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { Modal } from "@/components/modal";
-import { useTechTreeContext } from "@/providers/TechTreeContextProvider";
-import { useTechTreeData } from "@/providers/TechTreeDataProvider";
+import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
+import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, NodeType, TechTreeAddType, TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
@@ -51,7 +51,7 @@ function AddObjectInEditModeItem({
 
 export function EditTechTreeMenu() {
 	const { hasUpdates, handlePublish, isPublishing, nodes, addNewNode } =
-		useTechTreeData();
+		useNodesAndEdges();
 	const { setMode, activeEditType, setActiveEditType } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
