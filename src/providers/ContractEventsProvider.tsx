@@ -68,8 +68,6 @@ export function ContractEventsProvider({ children }: { children: ReactNode }) {
 		blockRange: 50,
 	});
 
-	console.log(data);
-
 	return (
 		<TxEventsContext.Provider value={{ events: (data || []) as TxEvent[] }}>
 			{children}

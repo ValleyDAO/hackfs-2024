@@ -18,7 +18,8 @@ import React, { useEffect } from "react";
 
 export function EditMode() {
 	const { handleNodeUpdate, nodes } = useNodesAndEdges();
-	const { activeNode, setActiveNode } = useTechTreeContext();
+	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
+		useTechTreeContext();
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
 		type: activeNode?.type,
@@ -31,11 +32,24 @@ export function EditMode() {
 		});
 	}, [activeNode]);
 
-	function handleSave() {
+	async function handleSave() {
+		const id = BigInt(`${activeNode?.id}`);
 		handleNodeUpdate(activeNode?.id as bigint, update);
 		setUpdate({});
-		setActiveNode(undefined);
+		if (update?.type === "end-goal") {
+			setMode("move");
+			setActiveNodeRaw?.({
+				id,
+				title: update.title,
+				type: update.type,
+			} as NodeData);
+		} else {
+			setActiveNode(undefined);
+		}
 	}
+
+	const hasEndGoalInNodes =
+		nodes?.length > 0 && nodes.some((node) => node.type === "end-goal");
 
 	return (
 		<div className="pr-2">
@@ -61,7 +75,7 @@ export function EditMode() {
 					/>
 					<InputSelect
 						label="Type"
-						options={parseTypeToSearchFieldItems()}
+						options={parseTypeToSearchFieldItems(hasEndGoalInNodes)}
 						value={{
 							label: capitalize((update.type || "")?.toLowerCase()) || "-",
 							value: update.type || "-",
@@ -97,7 +111,6 @@ export function EditMode() {
 					Discord and ask us to amplify this feature!
 				</div>
 			)}
-			{activeNode?.type === "end-goal" && <EnhanceWithGaladriel />}
 		</div>
 	);
 }

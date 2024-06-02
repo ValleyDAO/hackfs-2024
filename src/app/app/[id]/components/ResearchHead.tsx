@@ -50,17 +50,19 @@ export function ResearchHead() {
 						</div>
 					</div>
 				</div>
-				{account?.address === createdBy && !isFinished && (
-					<div>
-						<Button
-							loading={loading}
-							onClick={handleConcludeResearch}
-							variant="primary"
-						>
-							Conclude the research
-						</Button>
-					</div>
-				)}
+				{account?.address === createdBy &&
+					!isFinished &&
+					status === "in-progress" && (
+						<div>
+							<Button
+								loading={loading}
+								onClick={handleConcludeResearch}
+								variant="primary"
+							>
+								Conclude the research
+							</Button>
+						</div>
+					)}
 			</div>
 			<ProjectMenu status={status} />
 		</>

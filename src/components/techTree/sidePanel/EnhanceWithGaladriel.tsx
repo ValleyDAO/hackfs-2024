@@ -3,35 +3,47 @@ import { GaladrielLogo } from "@/components/icons/GaladrielLogo";
 import useWebSocket from "@/hooks/useWebSocket";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { NodeData } from "@/typings";
+import { EdgeData, NodeData } from "@/typings";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export function EnhanceWithGaladriel() {
-	const { addNewNodes, nodes } = useNodesAndEdges();
+	const { updateFromGaladriel } = useNodesAndEdges();
 	const { activeNode } = useTechTreeContext();
 	const [isLoading, setIsLoading] = useState(false);
 	const { sendMessage } = useWebSocket("ws://54.87.241.21:8080");
 
 	async function handleEnhancement() {
-		setIsLoading(true);
-		const response = await sendMessage(activeNode?.title as string);
-		const newNodes = JSON.parse(response) as NodeData[];
-		const length = nodes?.length;
+		try {
+			setIsLoading(true);
+			const response = await sendMessage(activeNode?.title as string);
+			const techTree = JSON.parse(response) as {
+				nodes: NodeData[];
+				connections: EdgeData[];
+			};
 
-		addNewNodes(
-			newNodes
-				.filter((item) => item.type !== "end-goal")
-				.map((node, idx) => ({
-					id: BigInt(length + idx),
+			updateFromGaladriel(
+				techTree?.nodes.map((node, idx) => ({
+					id: BigInt(idx),
 					title: node.title,
 					type: node.type,
 				})),
-		);
-		setIsLoading(false);
+				techTree?.connections.map((edge, idx) => ({
+					id: `${idx}`,
+					source: `${Number(edge.source) - 1}`,
+					target: `${Number(edge.target) - 1}`,
+				})),
+			);
+		} catch (error) {
+			console.error("Error while enhancing", error);
+			toast.error("Error while enhancing. Try again later");
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
-		<div className="mt-14">
+		<div className="mt-10">
 			<div className="w-20">
 				<GaladrielLogo scaleWithParent />
 			</div>
@@ -41,11 +53,7 @@ export function EnhanceWithGaladriel() {
 				criteria.
 			</div>
 			<div className="mt-4">
-				<Button
-					variant="primary"
-					loading={isLoading}
-					onClick={handleEnhancement}
-				>
+				<Button variant="black" loading={isLoading} onClick={handleEnhancement}>
 					Enhance
 				</Button>
 			</div>

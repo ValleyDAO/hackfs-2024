@@ -15,6 +15,7 @@ type TechTreeContextProps = {
 	mode: TechTreeMode;
 	setMode: (mode: TechTreeMode) => void;
 	setActiveNode: (nodeId?: bigint) => void;
+	setActiveNodeRaw?: (node: NodeData) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
 	setActiveEditType: (type?: TechTreeAddType) => void;
@@ -41,7 +42,7 @@ export function TechTreeLayoutContextProvider({
 	const { activeTechTree } = useTechTree();
 	const { nodes, hasUpdates } = useNodesAndEdges();
 	const [mode, setMode] = React.useState<TechTreeMode>(
-		hasUpdates ? "edit" : "move",
+		hasUpdates || nodes?.length === 0 ? "edit" : "move",
 	);
 	const [activeEditType, setActiveEditType] = React.useState<
 		TechTreeAddType | undefined
@@ -54,6 +55,8 @@ export function TechTreeLayoutContextProvider({
 			setActiveNode(undefined);
 			setMode("move");
 			setActiveEditType(undefined);
+		} else if (activeTechTree && nodes?.length === 0) {
+			setMode("edit");
 		}
 	}, [activeTechTree, activeNode]);
 
@@ -77,6 +80,7 @@ export function TechTreeLayoutContextProvider({
 			activeNode,
 			activeEditType,
 			setActiveEditType,
+			setActiveNodeRaw: setActiveNode,
 		}),
 		[mode, activeNode, activeEditType, nodes],
 	);

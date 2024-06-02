@@ -24,7 +24,7 @@ type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
-	addNewNodes(data: NodeData[]): void;
+	updateFromGaladriel(data: NodeData[], edges: EdgeData[]): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
 	handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>): void;
@@ -35,11 +35,11 @@ type NodesAndEdgesProps = {
 
 export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
 	handleEdgeUpdate: () => {},
+	updateFromGaladriel: () => {},
 	hasUpdates: false,
 	nodes: [],
 	edges: [],
 	addNewNode: () => {},
-	addNewNodes: () => {},
 	handleNodeUpdate: () => {},
 	handlePublish: () => {},
 	isPublishing: false,
@@ -60,61 +60,10 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 	const { activeTechTree } = useTechTree();
 
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
+
 	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
-	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([
-		/*{
-			id: BigInt(1),
-			title: "Improve Basic Solar Cell Efficiency",
-			type: "research",
-		},
-		{
-			id: BigInt(2),
-			title: "Develop Multi-Junction Solar Cells",
-			type: "development",
-		},
-		{
-			id: BigInt(3),
-			title: "Research Perovskite Solar Cells",
-			type: "research",
-		},
-		{
-			id: BigInt(4),
-			title: "Combine Perovskite with Silicon",
-			type: "development",
-		},
-		{
-			id: BigInt(5),
-			title: "Develop Flexible and Lightweight Substrates",
-			type: "development",
-		},
-		{
-			id: BigInt(6),
-			title: "Integrate Advanced Energy Storage",
-			type: "optimization",
-		},
-		{
-			id: BigInt(7),
-			title: "Omni Solar Panels",
-			type: "end-goal",
-		},*/
-	]);
-	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([
-		/*{
-			id: "1",
-			source: "1",
-			target: "2",
-		},
-		{
-			id: "2",
-			source: "2",
-			target: "5",
-		},
-		{ id: "3", source: "1", target: "3" },
-		{ id: "4", source: "3", target: "4" },
-		{ id: "5", source: "4", target: "5" },
-		{ id: "6", source: "5", target: "6" },
-		{ id: "7", source: "6", target: "7" },*/
-	]);
+	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
+	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];
@@ -134,6 +83,13 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 				target,
 			},
 		]);
+	}
+
+	function updateFromGaladriel(nodes: NodeData[], edges: EdgeData[]) {
+		console.log(nodes);
+		console.log(edges);
+		setUpdatedNodes(nodes);
+		setUpdatedEdges(edges);
 	}
 
 	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
@@ -187,8 +143,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
-			addNewNodes: (nodes) =>
-				setUpdatedNodes((prev) => [...(prev || []), ...nodes]),
+			updateFromGaladriel,
 			handleEdgeUpdate,
 			handleNodeUpdate,
 			hasUpdates:

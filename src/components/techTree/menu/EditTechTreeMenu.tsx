@@ -1,16 +1,12 @@
 import { Button } from "@/components/button";
-import { AddFilled } from "@/components/icons/AddFilled";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
-import { CursorFilled } from "@/components/icons/CursorFilled";
 import { EdgeOutlined } from "@/components/icons/EdgeOutlined";
 import { NodeOutlined } from "@/components/icons/NodeOutlined";
-import { Modal } from "@/components/modal";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { NodeData, NodeType, TechTreeAddType, TechTreeMode } from "@/typings";
+import { NodeData, TechTreeAddType } from "@/typings";
 import clsx from "clsx";
-import React, { useEffect } from "react";
-import toast, { useToaster } from "react-hot-toast";
+import React from "react";
 
 function AddObjectInEditModeItem({
 	icon,
@@ -63,7 +59,7 @@ export function EditTechTreeMenu() {
 		const newNode: NodeData = {
 			id: BigInt((nodes || []).length),
 			title: undefined,
-			type: "end-goal",
+			type: nodes?.length === 0 ? "end-goal" : "development",
 		};
 		setActiveEditType("node");
 		addNewNode(newNode);

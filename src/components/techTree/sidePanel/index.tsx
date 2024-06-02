@@ -3,6 +3,7 @@
 import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
+import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
@@ -25,14 +26,15 @@ function SummaryMode() {
 					</div>
 				</div>
 			</div>
-			{activeNode?.type === "development" ||
-				(activeNode?.type === "research" && (
-					<Link href={`/app/${activeNode?.id}`} className="mt-10 block w-full">
-						<Button className="!py-3" fullSize variant="black">
-							Visit Details Page
-						</Button>
-					</Link>
-				))}
+			{activeNode?.type === "end-goal" && <EnhanceWithGaladriel />}
+			{(activeNode?.type === "development" ||
+				activeNode?.type === "research") && (
+				<Link href={`/app/${activeNode?.id}`} className="mt-10 block w-full">
+					<Button className="!py-3" fullSize variant="black">
+						Visit Details Page
+					</Button>
+				</Link>
+			)}
 		</>
 	);
 }

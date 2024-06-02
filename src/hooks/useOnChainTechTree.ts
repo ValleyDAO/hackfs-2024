@@ -19,18 +19,20 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 		method: "getNodesAndEdgesFromTechTreeId",
 		params: [activeTechTree?.id as bigint],
 		queryOptions: {
-			enabled: !!activeTechTree,
+			enabled: !!activeTechTree?.id,
 		},
 	});
 
 	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
 		return [
-			data?.[0]?.map((node, idx) => ({
-				id: BigInt(idx),
-				title: node.title,
-				type: node.nodeType as NodeType,
-				origin: "on-chain",
-			})) || [],
+			data?.[0]
+				?.filter((item) => item.createdAt !== BigInt(0))
+				.map((node, idx) => ({
+					id: BigInt(idx),
+					title: node.title,
+					type: node.nodeType as NodeType,
+					origin: "on-chain",
+				})) || [],
 			data?.[1]?.map((edge, idx) => ({
 				id: `${idx}`,
 				source: `${Number(edge.source) - 1}`,

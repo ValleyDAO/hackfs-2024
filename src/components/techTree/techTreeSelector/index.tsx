@@ -81,9 +81,26 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	);
 }
 
+function TechTreeItem({ techTree }: { techTree: TechTree }) {
+	const { setActiveTechTree } = useTechTree();
+	return (
+		<div
+			key={techTree.id}
+			onClick={() => setActiveTechTree(techTree)}
+			className={clsx(
+				"transition-all flex items-center cursor-pointer hover:bg-gray-100 mb-2 bg-gray-50 space-x-2 px-4 py-3 rounded",
+			)}
+		>
+			<TechTreeOutlined className="text-lg" />
+			<div className="text-sm">{techTree.title}</div>
+		</div>
+	);
+}
+
 function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
 	const account = useActiveAccount();
-	const { setActiveTechTree, techTrees, isLoading } = useTechTree();
+	const { techTrees, isLoading } = useTechTree();
+
 	return (
 		<>
 			<div>
@@ -95,18 +112,7 @@ function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
 					{isLoading ? (
 						<LoadingOutlined />
 					) : techTrees && techTrees?.length > 0 ? (
-						techTrees.map((techTree) => (
-							<div
-								key={techTree.id}
-								onClick={() => setActiveTechTree(techTree)}
-								className={clsx(
-									"transition-all flex items-center cursor-pointer hover:bg-gray-100 mb-2 bg-gray-50 space-x-2 px-4 py-3 rounded",
-								)}
-							>
-								<TechTreeOutlined className="text-lg" />
-								<div className="text-sm">{techTree.title}</div>
-							</div>
-						))
+						techTrees.map((techTree) => <TechTreeItem techTree={techTree} />)
 					) : (
 						<div>
 							<div className="text-gray-500">No tech trees found</div>
@@ -150,11 +156,11 @@ export function TechTreeSelector() {
 								{activeTechTree?.title}
 							</div>
 						</div>
-						<div className="px-4 py-3 aspect-square bg-gray-50 hover:bg-red-50 cursor-pointer transition-colors group">
-							<CloseCircleOutlined
-								onClick={() => setActiveTechTree(undefined)}
-								className="text-lg text-gray-400 group-hover:text-red-700"
-							/>
+						<div
+							onClick={() => setActiveTechTree(undefined)}
+							className="px-4 py-3 aspect-square bg-gray-50 hover:bg-red-50 cursor-pointer transition-colors group"
+						>
+							<CloseCircleOutlined className="text-lg text-gray-400 group-hover:text-red-700" />
 						</div>
 					</div>
 				) : (
