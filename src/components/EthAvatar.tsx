@@ -34,7 +34,7 @@ export function EthAvatar({ address, size = "md" }: EthAvatarProps) {
 		<div
 			className={clsx("rounded-full", {
 				"w-6 h-6": size === "md",
-				"w-20 h-20": size === "lg",
+				"w-16 h-16": size === "lg",
 			})}
 			style={{
 				borderRadius: "50%",

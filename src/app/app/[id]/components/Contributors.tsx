@@ -39,7 +39,7 @@ function ContributorItem({
 	}, [data]);
 
 	return (
-		<div className="bg-gray-50 flex flex-col items-center rounded w-full py-10">
+		<div className="bg-gray-50 flex flex-col items-center rounded w-full py-6">
 			<EthAvatar size="lg" address={contributor.address} />
 
 			<div className="text-sm mt-6 text-primary font-bold">
