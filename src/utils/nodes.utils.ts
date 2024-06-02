@@ -77,8 +77,8 @@ export function getLayoutElements(
 }
 
 export function areAllNodesConnected(
-	nodes: NodeData[],
-	edges: EdgeData[],
+	nodes: NodeData[] = [],
+	edges: EdgeData[] = [],
 ): boolean {
 	if (nodes.length === 0) return true; // An empty graph is trivially connected
 	const adjList: { [key: string]: string[] } = {};
@@ -87,7 +87,7 @@ export function areAllNodesConnected(
 	nodes.forEach((node) => {
 		adjList[`${node.id}`] = [];
 	});
-	// Populate adjacency list
+
 	edges.forEach((edge) => {
 		adjList[edge.source].push(edge.target);
 		adjList[edge.target].push(edge.source); // Assuming undirected graph for bidirectional connection

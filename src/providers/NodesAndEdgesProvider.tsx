@@ -86,10 +86,11 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 	}
 
 	function updateFromGaladriel(nodes: NodeData[], edges: EdgeData[]) {
-		console.log(nodes);
-		console.log(edges);
 		setUpdatedNodes(nodes);
-		setUpdatedEdges(edges);
+		setUpdatedEdges(
+			edges?.filter((item) => item.source !== "-1" && item.target !== "-1") ||
+				[],
+		);
 	}
 
 	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
@@ -106,11 +107,6 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		if (mode === "reset") {
 			setUpdatedNodes([]);
 			setUpdatedEdges([]);
-			return;
-		}
-
-		if (!areAllNodesConnected(nodesWithUpdates, edgesWithUpdates)) {
-			toast.error("All nodes need to be connected");
 			return;
 		}
 

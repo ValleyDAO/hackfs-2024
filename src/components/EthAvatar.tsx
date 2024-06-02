@@ -1,8 +1,11 @@
+import clsx from "clsx";
+
 interface EthAvatarProps {
 	address: string;
+	size?: "sm" | "md" | "lg";
 }
 
-export function EthAvatar({ address }: EthAvatarProps) {
+export function EthAvatar({ address, size = "md" }: EthAvatarProps) {
 	function getGradientColors() {
 		const seedArr = address.match(/.{1,7}/g)?.splice(0, 5);
 		const colors: string[] = [];
@@ -29,7 +32,10 @@ export function EthAvatar({ address }: EthAvatarProps) {
 
 	return (
 		<div
-			className="w-6 h-6 rounded-full"
+			className={clsx("rounded-full", {
+				"w-6 h-6": size === "md",
+				"w-20 h-20": size === "lg",
+			})}
 			style={{
 				borderRadius: "50%",
 				boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.1)",
