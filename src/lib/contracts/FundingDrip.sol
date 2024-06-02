@@ -18,7 +18,7 @@ contract FundingDrip {
     function calculateDrip(address _user, uint256 nodeIndex) public view returns (uint256) {
         Contribution.Node memory node = contributionContract.getNode(nodeIndex);
 
-        if (!node.isFinished && block.timestamp < node.creationTime + dripPeriod) {
+        if (!node.isFinished && block.timestamp < node.createdAt + dripPeriod) {
             return 0; // Drip is not available yet
         }
 
@@ -26,8 +26,8 @@ contract FundingDrip {
         uint256 blocksPassed = block.number - contributionContract.getLastDripBlock(_user, nodeIndex);
         uint256 dripAmount = blocksPassed * dripRatePerBlock * userNodePoints;
 
-        if (dripAmount > node.fundingPool) {
-            dripAmount = node.fundingPool; // Drip amount should not exceed the available funding pool
+        if (dripAmount > node.treasury.amount) {
+            dripAmount = node.treasury.amount;
         }
 
         return dripAmount;
@@ -42,7 +42,7 @@ contract FundingDrip {
         require(dripAmount > 0, "No balance to withdraw");
 
         Contribution.Node memory node = contributionContract.getNode(nodeIndex);
-        require(node.fundingPool >= dripAmount, "Insufficient node funds");
+        require(node.treasury.amount >= dripAmount, "Insufficient node funds");
 
         // Update last drip block for the user and reduce funding pool accordingly
         contributionContract.updateLastDripBlock(msg.sender, nodeIndex);
