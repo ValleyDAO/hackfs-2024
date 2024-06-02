@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Contribution {
+
     struct RFP {
         address writer;
         uint256 createdAt;
@@ -28,6 +29,7 @@ contract Contribution {
         address creator;
         bool isFinished;
         Treasury treasury;
+        uint256 techTreeId;
         RFP rfp;
         mapping(address => uint256) lastDripBlock;
     }
@@ -35,6 +37,7 @@ contract Contribution {
     struct Edge {
         string source;
         string target;
+        uint256 techTreeId;
         address creator;
         uint256 creationTime;
     }
@@ -46,6 +49,7 @@ contract Contribution {
         uint256 createdAt;
         address createdBy;
         bool isFinished;
+        uint256 techTreeId;
         Treasury treasury;
         RFP rfp;
     }
@@ -65,32 +69,48 @@ contract Contribution {
         NodeLite node;
     }
 
+    struct TechTree {
+        string title;
+        uint256 id;
+    }
+
     Node[] public nodes;
     Edge[] public edges;
+    TechTree[] public techTrees;
 
     mapping(address => mapping(uint256 => uint256)) public userNodePoints;
 
-    event NodeAdded(uint256 indexed nodeId, string title,  string nodeType);
-    event EdgeAdded(uint256 indexed edgeId, string source, string target);
+    event NodeAdded(uint256 indexed nodeId, uint256 techTreeId, string title, string nodeType);
+    event EdgeAdded(uint256 indexed edgeId, uint256 techTreeId, string source, string target);
     event ContributionAdded(address indexed user, uint256 nodeIndex, string ipfsHash);
     event RfpAdded(uint256 indexed nodeIndex, string _ipfsHash);
     event TreasuryAdded(uint256 indexed nodeIndex, uint256 amount);
     event NodeFinished(uint256 indexed nodeId);
+    event TechTreeAdded(uint256 indexed techTreeId, string title);
 
-    function addNode(string memory _title, string memory _nodeType) public {
+    function addTechTree(string memory _title) public {
+        TechTree memory newTechTree = TechTree({ title: _title, id: techTrees.length });
+        techTrees.push(newTechTree);
+        emit TechTreeAdded(newTechTree.id, _title);
+    }
+
+    function addNode(uint256 techTreeId, string memory _title, string memory _nodeType) public {
+        require(techTreeId < techTrees.length, "TechTree does not exist");
+
         Node storage newNode = nodes.push();
         newNode.title = _title;
         newNode.nodeType = _nodeType;
         newNode.createdAt = block.timestamp;
         newNode.creator = msg.sender;
         newNode.isFinished = false;
+        newNode.techTreeId = techTreeId;
 
         uint256 nodeId = nodes.length - 1;
 
         userNodePoints[msg.sender][nodeId] += 10;
         newNode.lastDripBlock[msg.sender] = block.number;
 
-        emit NodeAdded(nodeId, _title, _nodeType);
+        emit NodeAdded(nodeId, techTreeId, _title, _nodeType);
     }
 
     function addRfp(uint256 nodeIndex, string memory _ipfsHash) public {
@@ -102,24 +122,29 @@ contract Contribution {
         emit RfpAdded(nodeIndex, _ipfsHash);
     }
 
-    function addEdge(string memory _source, string memory _target) public {
+    function addEdge(uint256 techTreeId, string memory _source, string memory _target) public {
+        require(techTreeId < techTrees.length, "TechTree does not exist");
+
         Edge storage newEdge = edges.push();
         newEdge.source = _source;
         newEdge.target = _target;
+        newEdge.techTreeId = techTreeId;
 
         newEdge.creationTime = block.timestamp;
         newEdge.creator = msg.sender;
         uint256 edgeId = edges.length - 1;
 
-        emit EdgeAdded(edgeId, _source, _target);
+        emit EdgeAdded(edgeId, techTreeId, _source, _target);
     }
 
-    function updateTechTree(NodeInput[] memory _nodes, EdgeInput[] memory _edges) public {
+    function updateTechTree(uint256 techTreeId, NodeInput[] memory _nodes, EdgeInput[] memory _edges) public {
+        require(techTreeId < techTrees.length, "TechTree does not exist");
+
         for (uint i = 0; i < _nodes.length; i++) {
-            addNode(_nodes[i].title, _nodes[i].nodeType);
+            addNode(techTreeId, _nodes[i].title, _nodes[i].nodeType);
         }
         for (uint i = 0; i < _edges.length; i++) {
-            addEdge(_edges[i].source, _edges[i].target);
+            addEdge(techTreeId, _edges[i].source, _edges[i].target);
         }
     }
 
@@ -166,22 +191,52 @@ contract Contribution {
         emit NodeFinished(nodeIndex);
     }
 
-    function getNodesLite() external view returns (NodeLite[] memory) {
+    function getNodesByTechTreeId(uint256 techTreeId) public view returns (NodeLite[] memory) {
         NodeLite[] memory nodesLite = new NodeLite[](nodes.length);
         for (uint i = 0; i < nodes.length; i++) {
             Node storage node = nodes[i];
-            nodesLite[i] = NodeLite({
-                title: node.title,
-                nodeType: node.nodeType,
-                contributions: node.contributions,
-                createdAt: node.createdAt,
-                createdBy: node.creator,
-                isFinished: node.isFinished,
-                treasury: node.treasury,
-                rfp: node.rfp
-            });
+            if (node.techTreeId == techTreeId) {
+                nodesLite[i] = NodeLite({
+                    title: node.title,
+                    nodeType: node.nodeType,
+                    contributions: node.contributions,
+                    createdAt: node.createdAt,
+                    createdBy: node.creator,
+                    isFinished: node.isFinished,
+                    treasury: node.treasury,
+                    rfp: node.rfp,
+                    techTreeId: node.techTreeId
+                });
+            }
         }
         return nodesLite;
+    }
+
+    function getEdgesByTechTreeId(uint256 techTreeId) public view returns (Edge[] memory) {
+        Edge[] memory edgesByTechTreeId = new Edge[](edges.length);
+        for (uint i = 0; i < edges.length; i++) {
+            Edge storage edge = edges[i];
+            if (edge.techTreeId == techTreeId) {
+                edgesByTechTreeId[i] = Edge({
+                    source: edge.source,
+                    target: edge.target,
+                    techTreeId: edge.techTreeId,
+                    creator: edge.creator,
+                    creationTime: edge.creationTime
+                });
+            }
+        }
+        return edgesByTechTreeId;
+    }
+
+    function getNodesAndEdgesFromTechTreeId(uint256 techTreeId) external view returns (NodeLite[] memory, Edge[] memory) {
+        NodeLite[] memory nodesLite = getNodesByTechTreeId(techTreeId);
+        Edge[] memory edgesByTechTreeId = getEdgesByTechTreeId(techTreeId);
+        return (nodesLite, edgesByTechTreeId);
+    }
+
+    function getTechTrees() external view returns (TechTree[] memory) {
+        return techTrees;
     }
 
     function getNode(uint256 nodeIndex) public view returns (NodeLite memory) {
@@ -194,13 +249,10 @@ contract Contribution {
             createdBy: node.creator,
             isFinished: node.isFinished,
             rfp: node.rfp,
-            treasury: node.treasury
+            treasury: node.treasury,
+            techTreeId: node.techTreeId
         });
         return nodeLite;
-    }
-
-    function getEdges() external view returns (Edge[] memory) {
-        return edges;
     }
 
     function getUserNodePoints(address _user, uint256 nodeIndex) external view returns (uint256) {
@@ -228,22 +280,6 @@ contract Contribution {
         }
         return userParticipatedNodes;
     }
-
-    // Get all points related for a specific node by function (uint256 nodeIndex)
-    function getPointsRelatedToNode(uint256 nodeIndex) external view returns (UserNodePoints[] memory) {
-        UserNodePoints[] memory userParticipatedNodes = new UserNodePoints[](nodes.length);
-        for (uint i = 0; i < nodes.length; i++) {
-            if (userNodePoints[msg.sender][i] > 0) {
-                NodeLite memory node = getNode(i);
-                userParticipatedNodes[i] = UserNodePoints({
-                    points: userNodePoints[msg.sender][i],
-                    node: node
-                });
-            }
-        }
-        return userParticipatedNodes;
-    }
-
 
     function getLastDripBlock(address _user, uint256 nodeIndex) external view returns (uint256) {
         Node storage node = nodes[nodeIndex];
