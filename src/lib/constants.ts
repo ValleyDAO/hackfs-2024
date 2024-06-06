@@ -17,7 +17,6 @@ export const devnet = defineChain({
 
 export const testnet = defineChain({
 	id: 314159,
-	rpc: "https://rpc.ankr.com/filecoin_testnet",
 });
 
 export const web3Client = createThirdwebClient({
