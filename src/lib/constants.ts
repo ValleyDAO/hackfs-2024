@@ -39,7 +39,7 @@ export const techTreeContract = getContract({
 	address:
 		activeNetwork?.id === 1337
 			? "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-			: "0x9D45ABD5b29fEe30d37B1c93a557C50013A3090e",
+			: "0xEe7b3E7925f6E95528780B67D550152ff988bE7e",
 	chain: activeNetwork,
 	client: web3Client,
 	abi: [
