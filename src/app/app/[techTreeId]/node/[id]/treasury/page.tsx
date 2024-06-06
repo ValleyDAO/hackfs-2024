@@ -1,6 +1,6 @@
 "use client";
 
-import { ResearchTreasury } from "@/app/app/[id]/components/ResearchTreasury";
+import { ResearchTreasury } from "@/app/app/[techTreeId]/node/[id]/components/ResearchTreasury";
 import { Table, TableCell, TableRow } from "@/components/table";
 import React from "react";
 

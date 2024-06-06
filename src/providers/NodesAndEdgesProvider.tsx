@@ -60,12 +60,25 @@ export const useNodesAndEdges = (): NodesAndEdgesProps => {
 
 export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 	const { activeTechTree } = useTechTree();
+	const { events } = useTxEvents();
 
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
 
 	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
+
+	useEffect(() => {
+		const event = events.find(
+			(event) =>
+				event.eventName === "TechTreeUpdated" &&
+				event.args.techTreeId === activeTechTree?.id,
+		);
+		if (event) {
+			setUpdatedNodes([]);
+			setUpdatedEdges([]);
+		}
+	}, [events, activeTechTree?.id]);
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];

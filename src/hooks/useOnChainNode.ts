@@ -10,11 +10,14 @@ interface useFetchTechTreeNodeProps {
 	node?: NodeData;
 }
 
-export function useOnChainNode(id: bigint): useFetchTechTreeNodeProps {
+export function useOnChainNode(
+	techTreeId: bigint,
+	id: bigint,
+): useFetchTechTreeNodeProps {
 	const { data: onChainNode, isLoading } = useReadContract({
 		contract: techTreeContract,
 		method: "getNode",
-		params: [id],
+		params: [techTreeId, id],
 	});
 
 	function parseOnChainDateToDateFormat(date: unknown): Date | undefined {
@@ -64,6 +67,7 @@ export function useOnChainNode(id: bigint): useFetchTechTreeNodeProps {
 			id: BigInt(id),
 			type: onChainNode.nodeType as NodeType,
 			isFinished: onChainNode.isFinished,
+			techTreeId: onChainNode.techTreeId,
 			status,
 			rfp: {
 				createdAt: parseOnChainDateToDateFormat(onChainNode.rfp.createdAt),

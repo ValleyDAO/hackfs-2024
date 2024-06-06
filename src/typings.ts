@@ -55,6 +55,7 @@ export interface NodeData {
 	contributors?: Contributor[];
 	treasury?: ResearchTreasury;
 	isFinished?: boolean;
+	techTreeId?: bigint;
 }
 
 export interface EdgeData {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { Modal } from "@/components/modal";
@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { PreparedTransaction, prepareContractCall } from "thirdweb";
 
 export default function Page() {
-	const { contributions, id } = useResearchPage();
+	const { contributions, id, techTreeId } = useResearchPage();
 	const [editedResearch, setEditedResearch] = React.useState<
 		string | undefined
 	>(contributions?.[0]?.ipfsHash);
@@ -30,7 +30,7 @@ export default function Page() {
 			(event) => event.eventName === "ContributionAdded",
 		);
 		if (event) {
-			router.push(`/app/${id}`);
+			router.push(`/app/${techTreeId}/node/${id}`);
 		}
 	}, [events, id]);
 
@@ -40,7 +40,7 @@ export default function Page() {
 		const transaction = prepareContractCall({
 			contract: techTreeContract,
 			method: "addContribution",
-			params: [id as bigint, editedResearch],
+			params: [techTreeId as bigint, id as bigint, editedResearch],
 		}) as PreparedTransaction;
 		await send(transaction);
 	}
@@ -48,7 +48,7 @@ export default function Page() {
 	return (
 		<div className="w-full mt-2 space-y-2">
 			<div className="mt-4 flex justify-end space-x-2">
-				<Link href={`/app/${id}`}>
+				<Link href={`/app/${techTreeId}/nodes/${id}`}>
 					<Button disabled={loading}>Cancel Changes</Button>
 				</Link>
 				<Button loading={loading} variant="primary" onClick={handleUpdate}>

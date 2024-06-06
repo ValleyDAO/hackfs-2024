@@ -8,15 +8,15 @@ import InputText from "@/components/input/InputText";
 import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
+import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { NodeData, NodeType, SelectOptionItem } from "@/typings";
-import { isInvalidNumber } from "@/utils/number.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
 import { capitalize } from "@walletconnect/utils";
-import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
+	const { activeTechTree } = useTechTree();
 	const { handleNodeUpdate, nodes } = useNodesAndEdges();
 	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
 		useTechTreeContext();
@@ -114,7 +114,7 @@ export function EditMode() {
 					{(activeNode?.type === "development" ||
 						activeNode?.type === "research") && (
 						<Link
-							href={`/app/${activeNode?.id}`}
+							href={`/app/${activeTechTree?.id}/node/${activeNode?.id}`}
 							className="mt-10 block w-full"
 						>
 							<Button className="!py-3" fullSize variant="black">

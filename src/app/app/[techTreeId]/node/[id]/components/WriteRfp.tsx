@@ -1,4 +1,4 @@
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { LoginButton } from "@/components/LoginButton";
 import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
@@ -13,7 +13,7 @@ import { useActiveAccount } from "thirdweb/react";
 export function WriteRfp() {
 	const router = useRouter();
 	const account = useActiveAccount();
-	const { id } = useResearchPage();
+	const { id, techTreeId } = useResearchPage();
 	const [writeRfp, setWriteRfp] = React.useState(false);
 	const [proposal, setProposal] = React.useState<string>();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
@@ -36,7 +36,7 @@ export function WriteRfp() {
 		const transaction = prepareContractCall({
 			contract: techTreeContract,
 			method: "addRfp",
-			params: [id as bigint, proposal],
+			params: [techTreeId as bigint, id as bigint, proposal],
 		}) as PreparedTransaction;
 		await send(transaction);
 	}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
@@ -40,6 +41,7 @@ export function TechTreeLayoutContextProvider({
 	children,
 }: { children: ReactNode }) {
 	const { activeTechTree } = useTechTree();
+	const { events } = useTxEvents();
 	const { nodes, hasUpdates } = useNodesAndEdges();
 	const [mode, setMode] = React.useState<TechTreeMode>(
 		hasUpdates || nodes?.length === 0 ? "edit" : "move",
@@ -49,6 +51,19 @@ export function TechTreeLayoutContextProvider({
 	>();
 
 	const [activeNode, setActiveNode] = React.useState<NodeData>();
+
+	useEffect(() => {
+		const event = events.find(
+			(event) =>
+				event.eventName === "TechTreeUpdated" &&
+				event.args.techTreeId === activeTechTree?.id,
+		);
+		if (event) {
+			setActiveNode(undefined);
+			setMode("move");
+			setActiveEditType(undefined);
+		}
+	}, [events, activeTechTree?.id]);
 
 	useEffect(() => {
 		if (!activeTechTree && activeNode) {

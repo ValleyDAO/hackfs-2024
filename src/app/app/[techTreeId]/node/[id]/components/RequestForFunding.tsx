@@ -1,8 +1,8 @@
 import { Button } from "@/components/button";
 import { Modal } from "@/components/modal";
 
-import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/DocumentViewer";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -19,7 +19,7 @@ interface DepositFundsProps {
 }
 
 function DepositFunds({ close, onSuccess }: DepositFundsProps) {
-	const { id } = useResearchPage();
+	const { id, techTreeId } = useResearchPage();
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [value, setValue] = useState<number>(0);
 	const { isSuccess, send, isError } = useTransaction();
@@ -42,7 +42,7 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 		const transaction = prepareContractCall({
 			contract: techTreeContract,
 			method: "addFunds",
-			params: [id as bigint],
+			params: [techTreeId as bigint, id as bigint],
 			value: toWei(`${value}`),
 		}) as PreparedTransaction;
 		await send(transaction);

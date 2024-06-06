@@ -2,11 +2,12 @@
 
 import { getShortenedFormat } from "@/utils/string.utils";
 
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 
 import { EthAvatar } from "@/components/EthAvatar";
 import { techTreeContract } from "@/lib/constants";
 import { Contributor } from "@/typings";
+import { formatNumber } from "@/utils/number.utils";
 import React, { useEffect } from "react";
 import { useReadContract } from "thirdweb/react";
 
@@ -39,17 +40,17 @@ function ContributorItem({
 	}, [data]);
 
 	return (
-		<div className="bg-gray-50 flex flex-col items-center rounded w-full py-10">
+		<div className="bg-gray-50 flex flex-col items-center rounded w-full py-6">
 			<EthAvatar size="lg" address={contributor.address} />
 
-			<div className="text-sm mt-6 text-primary font-bold">
+			<div className="text-sm mt-3 text-primary font-bold">
 				{contributor?.ensName || getShortenedFormat(contributor.address)}
 			</div>
 			{!isLoading && (
 				<>
 					<div className="text-sm mt-2">
-						<span className="font-bold">
-							{(Number(data) / Number(totalPoints)) * 100}%
+						<span className="font-semibold">
+							{formatNumber((Number(data) / Number(totalPoints)) * 100)}%
 						</span>{" "}
 						of the work
 					</div>
@@ -60,7 +61,7 @@ function ContributorItem({
 	);
 }
 
-export default function Page() {
+export function Contributors() {
 	const { contributors } = useResearchPage();
 	const [contributorPoints, setContributorPoints] = React.useState<
 		{ address: string; points: bigint }[]
@@ -75,15 +76,13 @@ export default function Page() {
 		BigInt(0),
 	);
 
-	console.log(contributorPoints);
-
 	return (
-		<div className="mt-10 pb-3  space-x-2">
-			<h3 className="font-semibold text-base mb-6">
+		<div className="mt-10 pb-3">
+			<h3 className="font-semibold text-base">
 				{contributors?.length} Contributor
 				{contributors && contributors?.length > 1 ? "s" : ""}
 			</h3>
-			<div className="grid grid-cols-6 w-full space-x-10">
+			<div className="grid grid-cols-6 w-full gap-2 my-4">
 				{contributors?.map((item, idx) => (
 					<ContributorItem
 						key={`contributor-${idx}`}

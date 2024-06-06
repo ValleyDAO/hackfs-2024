@@ -26,8 +26,9 @@ export const useResearchPage = (): ResearchContextProps => {
 export function ResearchPageProvider({
 	children,
 	id,
-}: { children: ReactNode; id: string }) {
-	const { node, isLoading } = useOnChainNode(BigInt(id));
+	techTreeId,
+}: { children: ReactNode; id: string; techTreeId: string }) {
+	const { node, isLoading } = useOnChainNode(BigInt(techTreeId), BigInt(id));
 	const [localNode, setLocalNode] = React.useState<NodeData>();
 
 	useEffect(() => {}, []);

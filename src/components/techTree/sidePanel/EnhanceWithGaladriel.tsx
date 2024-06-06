@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 export function EnhanceWithGaladriel() {
 	const { updateFromGaladriel } = useNodesAndEdges();
-	const { activeNode } = useTechTreeContext();
+	const { activeNode, setMode } = useTechTreeContext();
 	const [isLoading, setIsLoading] = useState(false);
 	const { sendMessage } = useWebSocket("ws://54.87.241.21:8080");
 
@@ -34,6 +34,7 @@ export function EnhanceWithGaladriel() {
 					target: `${Number(edge.target) - 1}`,
 				})),
 			);
+			setMode("edit");
 		} catch (error) {
 			console.error("Error while enhancing", error);
 			toast.error("Error while enhancing. Try again later");

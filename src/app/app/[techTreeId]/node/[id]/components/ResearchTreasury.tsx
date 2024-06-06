@@ -1,9 +1,8 @@
 import { Button } from "@/components/button";
 import { Modal } from "@/components/modal";
-import { FundingState } from "@/typings";
 import { formatNumber } from "@/utils/number.utils";
 
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import React, { useEffect, useState } from "react";
@@ -64,7 +63,7 @@ function DepositFunds({ close }: DepositFundsProps) {
 	);
 }
 
-export function ContributionAndTreasury() {
+export function ResearchTreasury() {
 	const { fundingState } = useResearchPage();
 	const [intentionToAddFunds, setIntentionToAddFunds] =
 		useState<boolean>(false);

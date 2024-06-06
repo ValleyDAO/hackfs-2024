@@ -1,7 +1,7 @@
 "use client";
 
-import { ProjectMenu } from "@/app/app/[id]/components/ProjectMenu";
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { ProjectMenu } from "@/app/app/[techTreeId]/node/[id]/components/ProjectMenu";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { StatusTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { useTransaction } from "@/hooks/useTransaction";
@@ -15,7 +15,8 @@ import { useActiveAccount } from "thirdweb/react";
 
 export function ResearchHead() {
 	const account = useActiveAccount();
-	const { title, status, createdBy, id, isFinished } = useResearchPage();
+	const { title, status, techTreeId, createdBy, id, isFinished } =
+		useResearchPage();
 	const { isError, isSuccess, send, loading } = useTransaction();
 	const router = useRouter();
 
@@ -33,7 +34,7 @@ export function ResearchHead() {
 		const transaction = prepareContractCall({
 			contract: techTreeContract,
 			method: "finishNode",
-			params: [id as bigint],
+			params: [techTreeId as bigint, id as bigint],
 		}) as PreparedTransaction;
 		await send(transaction);
 	}

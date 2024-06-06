@@ -1,6 +1,6 @@
 import { Navigation, NavigationItemProps } from "@/components/navigation";
 
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { NodeStatus } from "@/typings";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -10,8 +10,8 @@ interface ProjectMenuProps {
 }
 
 export function ProjectMenu({ status }: ProjectMenuProps) {
-	const { id } = useResearchPage();
-	const basePath = `/app/${id}`;
+	const { id, techTreeId } = useResearchPage();
+	const basePath = `/app/${techTreeId}/node/${id}`;
 	let menu: NavigationItemProps[] = [];
 	const pathname = usePathname();
 

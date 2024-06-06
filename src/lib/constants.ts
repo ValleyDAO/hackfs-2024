@@ -1,6 +1,5 @@
 "use client";
 
-import { active } from "d3-transition";
 import { createThirdwebClient, defineChain, getContract } from "thirdweb";
 import { createWallet } from "thirdweb/wallets";
 import { inAppWallet } from "thirdweb/wallets/embedded";
@@ -34,7 +33,7 @@ export const thirdWebWallets = [
 	}),
 ];
 
-const activeNetwork = testnet;
+const activeNetwork = !!process.env.NEXT_PUBLIC_IS_LOCAL ? devnet : testnet;
 
 export const techTreeContract = getContract({
 	address:
@@ -218,6 +217,11 @@ export const techTreeContract = getContract({
 			inputs: [
 				{
 					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
+					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
 				},
@@ -259,6 +263,11 @@ export const techTreeContract = getContract({
 			inputs: [
 				{
 					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
+					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
 				},
@@ -295,6 +304,11 @@ export const techTreeContract = getContract({
 			inputs: [
 				{
 					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
+					internalType: "uint256",
 					name: "nodeIndex",
 					type: "uint256",
 				},
@@ -324,6 +338,11 @@ export const techTreeContract = getContract({
 		},
 		{
 			inputs: [
+				{
+					internalType: "uint256",
+					name: "",
+					type: "uint256",
+				},
 				{
 					internalType: "uint256",
 					name: "",
@@ -363,6 +382,11 @@ export const techTreeContract = getContract({
 		},
 		{
 			inputs: [
+				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
 				{
 					internalType: "uint256",
 					name: "nodeIndex",
@@ -423,29 +447,10 @@ export const techTreeContract = getContract({
 		{
 			inputs: [
 				{
-					internalType: "address",
-					name: "_user",
-					type: "address",
-				},
-				{
 					internalType: "uint256",
-					name: "nodeIndex",
+					name: "techTreeId",
 					type: "uint256",
 				},
-			],
-			name: "getLastDripBlock",
-			outputs: [
-				{
-					internalType: "uint256",
-					name: "",
-					type: "uint256",
-				},
-			],
-			stateMutability: "view",
-			type: "function",
-		},
-		{
-			inputs: [
 				{
 					internalType: "uint256",
 					name: "nodeIndex",
@@ -879,6 +884,11 @@ export const techTreeContract = getContract({
 		{
 			inputs: [
 				{
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+				{
 					internalType: "address",
 					name: "_user",
 					type: "address",
@@ -1008,24 +1018,10 @@ export const techTreeContract = getContract({
 		{
 			inputs: [
 				{
-					internalType: "address",
-					name: "_user",
-					type: "address",
-				},
-			],
-			name: "getUserPointsAcrossAllNodes",
-			outputs: [
-				{
 					internalType: "uint256",
 					name: "",
 					type: "uint256",
 				},
-			],
-			stateMutability: "view",
-			type: "function",
-		},
-		{
-			inputs: [
 				{
 					internalType: "uint256",
 					name: "",
@@ -1134,24 +1130,6 @@ export const techTreeContract = getContract({
 				},
 			],
 			stateMutability: "view",
-			type: "function",
-		},
-		{
-			inputs: [
-				{
-					internalType: "address",
-					name: "_user",
-					type: "address",
-				},
-				{
-					internalType: "uint256",
-					name: "nodeIndex",
-					type: "uint256",
-				},
-			],
-			name: "updateLastDripBlock",
-			outputs: [],
-			stateMutability: "nonpayable",
 			type: "function",
 		},
 		{

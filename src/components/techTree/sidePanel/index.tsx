@@ -5,13 +5,15 @@ import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
+import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import React from "react";
 import { EditMode } from "./EditMode";
 
 function SummaryMode() {
-	const { activeNode, setActiveNode } = useTechTreeContext();
+	const { activeTechTree } = useTechTree();
+	const { activeNode } = useTechTreeContext();
 	return (
 		<>
 			<div>
@@ -29,7 +31,10 @@ function SummaryMode() {
 			{activeNode?.type === "end-goal" && <EnhanceWithGaladriel />}
 			{(activeNode?.type === "development" ||
 				activeNode?.type === "research") && (
-				<Link href={`/app/${activeNode?.id}`} className="mt-10 block w-full">
+				<Link
+					href={`/app/${activeTechTree?.id}/node/${activeNode?.id}`}
+					className="mt-10 block w-full"
+				>
 					<Button className="!py-3" fullSize variant="black">
 						Visit Details Page
 					</Button>

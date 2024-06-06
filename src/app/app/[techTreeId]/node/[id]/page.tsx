@@ -1,13 +1,12 @@
 "use client";
 
-import { RequestForFunding } from "@/app/app/[id]/components/RequestForFunding";
-import { ContributionAndTreasury } from "@/app/app/[id]/components/overview/ContributionAndTreasury";
+import { RequestForFunding } from "@/app/app/[techTreeId]/node/[id]/components/RequestForFunding";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 
-import { Contributors } from "@/app/app/[id]/components/Contributors";
-import { DocumentViewer } from "@/app/app/[id]/components/DocumentViewer";
-import { WriteRfp } from "@/app/app/[id]/components/WriteRfp";
-import { useResearchPage } from "@/app/app/[id]/providers/ResearchPageProvider";
+import { Contributors } from "@/app/app/[techTreeId]/node/[id]/components/Contributors";
+import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/DocumentViewer";
+import { WriteRfp } from "@/app/app/[techTreeId]/node/[id]/components/WriteRfp";
+import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { LoginButton } from "@/components/LoginButton";
 import { Button } from "@/components/button";
 import { EditOutlined } from "@/components/icons/EditOutlined";
@@ -19,7 +18,7 @@ import React from "react";
 import { useActiveAccount } from "thirdweb/react";
 
 export default function Page() {
-	const { status, id, contributions } = useResearchPage();
+	const { status, id, contributions, techTreeId } = useResearchPage();
 	const router = useRouter();
 	const account = useActiveAccount();
 	return (
@@ -30,7 +29,6 @@ export default function Page() {
 				<RequestForFunding />
 			) : status === "in-progress" ? (
 				<>
-					<ContributionAndTreasury />
 					<Contributors />
 					<DocumentViewer
 						documents={[
@@ -43,7 +41,7 @@ export default function Page() {
 								icon: <EditOutlined />,
 								label: "Contribute",
 								onClick: () => {
-									router.push(`/app/${id}/contribute`);
+									router.push(`/app/${techTreeId}/node/${id}/contribute`);
 								},
 							},
 						]}
@@ -66,7 +64,7 @@ export default function Page() {
 								</div>
 								<div className="mt-4">
 									{account?.address ? (
-										<Link href={`/app/${id}/contribute`}>
+										<Link href={`/app/${techTreeId}/node/${id}/contribute`}>
 											<Button variant="primary">Contribute</Button>
 										</Link>
 									) : (
@@ -79,11 +77,20 @@ export default function Page() {
 				</>
 			) : status === "finished" ? (
 				<>
-					<div className="mt-8">
-						<h1 className="font-bold text-base ">Research concluded</h1>
-						<p className="text-sm text-gray-700 mb-4">
-							Thank you for your contribution. The research has been concluded.
-						</p>
+					<div className="mt-4">
+						<div className="p-2 bg-yellow-50/75 border flex items-center justify-start space-x-6 rounded border-yellow-300 ">
+							<div className="horizontal justify-center w-14 text-xl aspect-square rounded bg-orange-100">
+								🎉
+							</div>
+							<div className="w-9/12">
+								<h1 className="font-bold text-sm">Research concluded</h1>
+								<p className="text-xs text-gray-700 ">
+									Thank you for your contribution. The research has been
+									concluded.
+								</p>
+							</div>
+						</div>
+						<Contributors />
 						<DocumentViewer
 							documents={[
 								{

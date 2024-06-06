@@ -27,7 +27,10 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 				event.eventName === "TechTreeAdded" && event.transactionHash === txHash,
 		);
 		if (event) {
-			setActiveTechTree(event.args as TechTree);
+			setActiveTechTree({
+				id: event.args.techTreeId,
+				title: event.args.title,
+			} as TechTree);
 		}
 	}, [events, txHash]);
 
