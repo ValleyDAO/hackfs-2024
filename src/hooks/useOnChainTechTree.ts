@@ -1,9 +1,10 @@
 "use client";
 
 import { techTreeContract } from "@/lib/constants";
+import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { EdgeData, NodeData, NodeType } from "@/typings";
-import { useMemo } from "react";
+import { EdgeData, NodeData, NodeType, TechTree } from "@/typings";
+import { useEffect, useMemo } from "react";
 import { useReadContract } from "thirdweb/react";
 
 interface useOnChainTechTreeProps {
@@ -14,6 +15,7 @@ interface useOnChainTechTreeProps {
 
 export function useOnChainTechTree(): useOnChainTechTreeProps {
 	const { activeTechTree } = useTechTree();
+	const { events } = useTxEvents();
 	const { data, isLoading, refetch } = useReadContract({
 		contract: techTreeContract,
 		method: "getNodesAndEdgesFromTechTreeId",
@@ -22,6 +24,17 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 			enabled: !!activeTechTree?.id,
 		},
 	});
+
+	useEffect(() => {
+		const event = events.find(
+			(event) =>
+				event.eventName === "TechTreeUpdated" &&
+				event.args.techTreeId === activeTechTree?.id,
+		);
+		if (event) {
+			refetch();
+		}
+	}, [events, activeTechTree?.id]);
 
 	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
 		return [
@@ -35,8 +48,8 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 				})) || [],
 			data?.[1]?.map((edge, idx) => ({
 				id: `${idx}`,
-				source: `${Number(edge.source) - 1}`,
-				target: `${Number(edge.target) - 1}`,
+				source: `${Number(edge.source)}`,
+				target: `${Number(edge.target)}`,
 				origin: "on-chain",
 			})) || [],
 		];

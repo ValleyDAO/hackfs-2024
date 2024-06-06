@@ -3,6 +3,7 @@
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { useTransaction } from "@/hooks/useTransaction";
 import { techTreeContract } from "@/lib/constants";
+import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, TechTree } from "@/typings";
 import { areAllNodesConnected } from "@/utils/nodes.utils";
@@ -14,6 +15,7 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
+	useEffect,
 } from "react";
 import toast from "react-hot-toast";
 import { PreparedTransaction, prepareContractCall } from "thirdweb";

@@ -106,10 +106,23 @@ export function EditMode() {
 					</div>
 				</div>
 			) : (
-				<div className="text-xs px-6 py-4 bg-yellow-50 rounded leading-relaxed text-yellow-700">
-					This node is already on-chain and currently cannot be edited. Join our
-					Discord and ask us to amplify this feature!
-				</div>
+				<>
+					<div className="text-xs px-6 py-4 bg-yellow-50 rounded leading-relaxed text-yellow-700">
+						This node is already on-chain and currently cannot be edited. Join
+						our Discord and ask us to amplify this feature!
+					</div>
+					{(activeNode?.type === "development" ||
+						activeNode?.type === "research") && (
+						<Link
+							href={`/app/${activeNode?.id}`}
+							className="mt-10 block w-full"
+						>
+							<Button className="!py-3" fullSize variant="black">
+								Visit Details Page
+							</Button>
+						</Link>
+					)}
+				</>
 			)}
 		</div>
 	);

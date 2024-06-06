@@ -1,8 +1,8 @@
 "use client";
 
+import { active } from "d3-transition";
 import { createThirdwebClient, defineChain, getContract } from "thirdweb";
-import { baseSepolia } from "thirdweb/chains";
-import { SmartWalletOptions, createWallet } from "thirdweb/wallets";
+import { createWallet } from "thirdweb/wallets";
 import { inAppWallet } from "thirdweb/wallets/embedded";
 
 const clientId = process.env.NEXT_PUBLIC_THIRD_WEB_KEY || "";
@@ -11,10 +11,14 @@ if (!clientId) {
 	throw new Error("No client ID provided");
 }
 
-export const fundingContractAddress =
-	"0x53e588884d661fafc97bf1491ec7fedefae5ee50";
-export const chain = defineChain({
+export const devnet = defineChain({
+	id: 1337,
+	rpc: "http://localhost:8545",
+});
+
+export const testnet = defineChain({
 	id: 314159,
+	rpc: "https://rpc.ankr.com/filecoin_testnet",
 });
 
 export const web3Client = createThirdwebClient({
@@ -30,9 +34,14 @@ export const thirdWebWallets = [
 	}),
 ];
 
+const activeNetwork = testnet;
+
 export const techTreeContract = getContract({
-	address: "0x9D45ABD5b29fEe30d37B1c93a557C50013A3090e",
-	chain: defineChain(314159),
+	address:
+		activeNetwork?.id === 1337
+			? "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+			: "0x9D45ABD5b29fEe30d37B1c93a557C50013A3090e",
+	chain: activeNetwork,
 	client: web3Client,
 	abi: [
 		{
@@ -171,6 +180,19 @@ export const techTreeContract = getContract({
 				},
 			],
 			name: "TechTreeAdded",
+			type: "event",
+		},
+		{
+			anonymous: false,
+			inputs: [
+				{
+					indexed: true,
+					internalType: "uint256",
+					name: "techTreeId",
+					type: "uint256",
+				},
+			],
+			name: "TechTreeUpdated",
 			type: "event",
 		},
 		{
@@ -1205,8 +1227,3 @@ export const techTreeContract = getContract({
 		},
 	],
 });
-
-export const accountAbstraction: SmartWalletOptions = {
-	chain,
-	sponsorGas: false,
-};

@@ -25,16 +25,11 @@ export function useOnChainNode(id: bigint): useFetchTechTreeNodeProps {
 	const node = useMemo(() => {
 		if (!onChainNode) return undefined;
 
-		/*const contributors: Contributor[] = [
-			{
-				address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-			},
-			{
-				address: "0xFc1575e15F8763A917111A63364E95A0f4f444E2",
-			},
-		];*/
-
-		const arr = new Set([onChainNode.createdBy, onChainNode.rfp.writer]);
+		const arr = new Set([
+			onChainNode.createdBy,
+			onChainNode.rfp.writer,
+			...(onChainNode.contributions || []).map((c) => c.contributor),
+		]);
 		const contributors: Contributor[] = [];
 		arr.forEach((address) =>
 			contributors.push({

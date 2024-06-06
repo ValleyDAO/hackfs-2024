@@ -16,7 +16,8 @@ interface SendTxProps {
 }
 
 export function useTransaction(): SendTxProps {
-	const { mutateAsync, isPending, isPaused, isError } = useSendTransaction();
+	const { mutateAsync, isPending, isPaused, isError, error } =
+		useSendTransaction();
 	const [status, setStatus] = useState<TxStatus>("idle");
 	const [txHash, setTxHash] = useState<string>();
 
@@ -36,6 +37,8 @@ export function useTransaction(): SendTxProps {
 		setTxHash(response.transactionHash);
 	}
 
+	console.log(error);
+
 	return useMemo(
 		() => ({
 			loading: status === "loading",
@@ -44,7 +47,8 @@ export function useTransaction(): SendTxProps {
 			isError,
 			status,
 			txHash,
+			error,
 		}),
-		[isPending, status, isPaused, txHash, isError],
+		[isPending, status, isPaused, txHash, isError, error],
 	);
 }

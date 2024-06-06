@@ -13,7 +13,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import { AutoConnect, useActiveAccount } from "thirdweb/react";
+import { AutoConnect, useActiveAccount, useActiveWallet } from "thirdweb/react";
 
 export function Header() {
 	const account = useActiveAccount();
@@ -68,13 +68,18 @@ export function Header() {
 export function Container({ children }: { children: React.ReactNode }) {
 	const router = useRouter();
 	const pathname = usePathname();
+
+	async function handleCreate() {
+		if (!pathname.startsWith("/app")) router.push("/app");
+	}
+
 	return (
 		<div className="w-full h-screen">
 			<Header />
 			<AutoConnect
 				client={web3Client}
 				wallets={thirdWebWallets}
-				onConnect={() => !pathname.startsWith("/app") && router.push("/app")}
+				onConnect={handleCreate}
 			/>
 			<Toaster containerClassName="text-sm" position="top-center" />
 			<div className="h-[calc(100%-4rem)] w-full p-4 pt-0">

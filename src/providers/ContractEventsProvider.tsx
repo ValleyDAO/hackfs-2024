@@ -35,6 +35,9 @@ const rfpEvent = prepareEvent({
 const TechTreeAdded = prepareEvent({
 	signature: "event TechTreeAdded(uint256 indexed techTreeId, string title)",
 });
+const TechTreeUpdated = prepareEvent({
+	signature: "event TechTreeUpdated(uint256 indexed techTreeId)",
+});
 const NodeFinished = prepareEvent({
 	signature: "event NodeFinished(uint256 indexed nodeId)",
 });
@@ -64,8 +67,8 @@ export function ContractEventsProvider({ children }: { children: ReactNode }) {
 			NodeFinished,
 			TreasuryAdded,
 			ContributionAdded,
+			TechTreeUpdated,
 		],
-		blockRange: 50,
 	});
 
 	return (
