@@ -37,8 +37,6 @@ export function useTransaction(): SendTxProps {
 		setTxHash(response.transactionHash);
 	}
 
-	console.log(error);
-
 	return useMemo(
 		() => ({
 			loading: status === "loading",

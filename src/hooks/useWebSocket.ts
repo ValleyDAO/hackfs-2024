@@ -1,29 +1,50 @@
 // src/hooks/useWebSocket.ts
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const useWebSocket = (url: string) => {
 	const socketRef = useRef<WebSocket | null>(null);
+	const [isConnected, setIsConnected] = useState(false);
 
 	useEffect(() => {
-		socketRef.current = new WebSocket(url);
+		const onOpen = () => {
+			console.log("Connected to WebSocket");
+			setIsConnected(true);
+		};
+		const onClose = () => {
+			console.log("Disconnected from WebSocket");
+			setIsConnected(false);
+		};
+		const onError = (error: Event) => {
+			console.error("WebSocket error:", error);
+			setIsConnected(false);
+		};
 
-		const onOpen = () => console.log("Connected to WebSocket");
-		const onClose = () => console.log("Disconnected from WebSocket");
-
-		socketRef.current.addEventListener("open", onOpen);
-		socketRef.current.addEventListener("close", onClose);
+		try {
+			socketRef.current = new WebSocket(url);
+			socketRef.current.addEventListener("open", onOpen);
+			socketRef.current.addEventListener("close", onClose);
+			socketRef.current.addEventListener("error", onError);
+		} catch (error) {
+			console.error("Failed to connect to WebSocket:", error);
+		}
 
 		return () => {
-			socketRef.current?.removeEventListener("open", onOpen);
-			socketRef.current?.removeEventListener("close", onClose);
-			socketRef.current?.close();
+			if (socketRef.current) {
+				socketRef.current.removeEventListener("open", onOpen);
+				socketRef.current.removeEventListener("close", onClose);
+				socketRef.current.removeEventListener("error", onError);
+				socketRef.current.close();
+			}
 		};
 	}, [url]);
 
 	const sendMessage = (message: string): Promise<string> => {
 		return new Promise((resolve, reject) => {
-			if (!socketRef.current) {
-				reject("WebSocket not connected");
+			if (
+				!socketRef.current ||
+				socketRef.current.readyState !== WebSocket.OPEN
+			) {
+				reject("WebSocket not connected or not open");
 				return;
 			}
 
@@ -33,11 +54,16 @@ const useWebSocket = (url: string) => {
 
 			socketRef.current.addEventListener("message", onMessage, { once: true });
 
-			socketRef.current.send(message);
+			try {
+				socketRef.current.send(message);
+			} catch (error) {
+				socketRef.current.removeEventListener("message", onMessage);
+				reject("Failed to send message via WebSocket");
+			}
 		});
 	};
 
-	return { sendMessage };
+	return { sendMessage, isConnected };
 };
 
 export default useWebSocket;

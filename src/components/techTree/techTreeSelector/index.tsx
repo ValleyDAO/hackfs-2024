@@ -115,7 +115,9 @@ function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
 					{isLoading ? (
 						<LoadingOutlined />
 					) : techTrees && techTrees?.length > 0 ? (
-						techTrees.map((techTree) => <TechTreeItem techTree={techTree} />)
+						techTrees.map((techTree, idx) => (
+							<TechTreeItem key={`node-${idx}`} techTree={techTree} />
+						))
 					) : (
 						<div>
 							<div className="text-gray-500">No tech trees found</div>
