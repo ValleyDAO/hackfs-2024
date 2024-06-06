@@ -3,7 +3,8 @@
 import { techTreeContract } from "@/lib/constants";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { EdgeData, NodeData, NodeType, TechTree } from "@/typings";
+import { EdgeData, NodeData, NodeType } from "@/typings";
+import { isInvalidNumber } from "@/utils/number.utils";
 import { useEffect, useMemo } from "react";
 import { useReadContract } from "thirdweb/react";
 
@@ -15,13 +16,14 @@ interface useOnChainTechTreeProps {
 
 export function useOnChainTechTree(): useOnChainTechTreeProps {
 	const { activeTechTree } = useTechTree();
+	console.log(activeTechTree);
 	const { events } = useTxEvents();
 	const { data, isLoading, refetch } = useReadContract({
 		contract: techTreeContract,
 		method: "getNodesAndEdgesFromTechTreeId",
 		params: [activeTechTree?.id as bigint],
 		queryOptions: {
-			enabled: !!activeTechTree?.id,
+			enabled: !isInvalidNumber(activeTechTree?.id),
 		},
 	});
 
