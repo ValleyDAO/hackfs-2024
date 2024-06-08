@@ -26,7 +26,7 @@ export function Tag({
 				"bg-yellow-100 text-yellow-700": color === "yellow",
 				"font-medium": fontWeight === "medium",
 				"font-bold": fontWeight === "bold",
-				"text-[10px]": fontSize === "xs",
+				"text-[12px]": fontSize === "xs",
 				"text-xs": fontSize === "sm",
 				"text-md": fontSize === "md",
 				"text-base": fontSize === "lg",

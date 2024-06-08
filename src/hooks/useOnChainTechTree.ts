@@ -16,7 +16,6 @@ interface useOnChainTechTreeProps {
 
 export function useOnChainTechTree(): useOnChainTechTreeProps {
 	const { activeTechTree } = useTechTree();
-	console.log(activeTechTree);
 	const { events } = useTxEvents();
 	const { data, isLoading, refetch } = useReadContract({
 		contract: techTreeContract,

@@ -91,7 +91,7 @@ function TechTreeItem({ techTree }: { techTree: TechTree }) {
 			key={techTree.id}
 			onClick={() => setActiveTechTree(techTree)}
 			className={clsx(
-				"transition-all flex items-center cursor-pointer hover:bg-gray-100 mb-2 bg-gray-50 space-x-2 px-4 py-3 rounded",
+				"transition-all flex items-center cursor-pointer hover:bg-gray-100 border-b last:border-0 border-gray-100 space-x-2 px-4 py-3 rounded",
 			)}
 		>
 			<TechTreeOutlined className="text-lg" />
@@ -146,7 +146,7 @@ export function TechTreeSelector() {
 			className={clsx(
 				"transition-all flex flex-col absolute right-0 bottom-0 z-10",
 				{
-					"top-2 w-[450px]": !activeTechTree,
+					"top-0 w-[450px]": !activeTechTree,
 				},
 			)}
 		>

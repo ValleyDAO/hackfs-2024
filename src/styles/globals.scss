@@ -66,7 +66,7 @@ html {
 
 .tiptap {
 
-    @apply text-[.8em] leading-relaxed outline-none text-gray-800;
+    @apply text-xs leading-7 outline-none text-gray-800;
 
     p {
         @apply inline;

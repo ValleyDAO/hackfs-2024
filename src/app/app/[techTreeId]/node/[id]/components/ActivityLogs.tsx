@@ -39,10 +39,10 @@ function BasicActivityLog({
 	return (
 		<div className="pb-2 border-b border-gray-100 last:border-0">
 			<div className="flex items-center space-x-0.5 text-gray-600">
-				<div className="text-gray-400 text-[10px] leading-none mt-0.5 !mr-1.5">
+				<div className="text-gray-400 text-xs leading-none mt-0.5 !mr-1.5">
 					○
 				</div>
-				<div className="font-medium text-gray-800 text-[11px]">
+				<div className="font-medium text-gray-800 text-xs">
 					{contributor?.ensName || getShortenedFormat(contributor?.address)}
 				</div>
 				<div className="">{getTypeText(type)}</div>

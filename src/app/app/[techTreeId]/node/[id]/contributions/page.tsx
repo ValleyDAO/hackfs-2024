@@ -75,8 +75,6 @@ export default function Page() {
 		BigInt(0),
 	);
 
-	console.log(contributorPoints);
-
 	return (
 		<div className="mt-10 pb-3  space-x-2">
 			<h3 className="font-semibold text-base mb-6">

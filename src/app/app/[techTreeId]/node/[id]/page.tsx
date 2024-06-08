@@ -22,7 +22,7 @@ export default function Page() {
 	const router = useRouter();
 	const account = useActiveAccount();
 	return (
-		<>
+		<div className="!pb-10">
 			{status === "idle" ? (
 				<WriteRfp />
 			) : status === "rfp" ? (
@@ -109,6 +109,6 @@ export default function Page() {
 					<LoadingOutlined />
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

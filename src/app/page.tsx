@@ -47,13 +47,9 @@ export default function Home() {
 						hackathon.
 					</p>
 					<div className="mt-6 mx-auto">
-						{account?.address ? (
-							<Link href="/app">
-								<Button variant="black">Go To App</Button>
-							</Link>
-						) : (
-							<LoginButton variant="black" />
-						)}
+						<Link href="/app">
+							<Button variant="black">Go To App</Button>
+						</Link>
 					</div>
 				</div>
 				<div className="w-8/12 mx-auto">
