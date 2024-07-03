@@ -8,17 +8,28 @@ import { getShortenedFormat } from "@/utils/string.utils";
 import { AccountModal } from "@/components/AccountModal";
 import { Button } from "@/components/button";
 import { useAuth } from "@/providers/AuthProvider";
+import { useWallets } from "@privy-io/react-auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
+import Select from "react-select";
+import { filecoinCalibration, hardhat } from "viem/chains";
+
+const options = [
+	{ value: `${filecoinCalibration.id}`, label: "Calibration" },
+	{ value: `eip155:31337`, label: "Devnet" },
+];
 
 export function Header() {
 	const { account, login } = useAuth();
+	const { wallets } = useWallets();
+	const wallet = wallets[0]; // Replace this with your desired wallet
+	const chainId = wallet?.chainId;
 	const [showAccountDetails, setShowAccountDetails] = React.useState(false);
 	return (
 		<>
-			<header className="w-full px-4 h-16 flex items-center text-gray-800 justify-between">
+			<header className="w-full px-4 h-16 z-20 flex items-center text-gray-800 justify-between">
 				<div className="flex items-center space-x-3">
 					<Link
 						href={account?.address ? "/app" : "/"}
@@ -29,20 +40,29 @@ export function Header() {
 					<span className="text-xs text-gray-400">|</span>
 					<div className="text-sm">HackFS</div>
 				</div>
-				{account ? (
-					<div
-						onClick={() => setShowAccountDetails(true)}
-						className="h-full rounded cursor-pointer transition-colors pl-2 pr-4 py-1.5 hover:bg-blue-50 flex items-center space-x-2"
-					>
-						<EthAvatar address={account.address} />
-						<div className=" text-xs">
-							{getShortenedFormat(account.address)}
-						</div>
-						<CaretDownOutlined className="text-[9px]" />
+				<div className="horizontal space-x-6">
+					<div>
+						<Select
+							options={options}
+							value={options?.find((a) => a.value === chainId)}
+							className="!text-xs z-20"
+						/>
 					</div>
-				) : (
-					<Button onClick={login}>Login</Button>
-				)}
+					{account ? (
+						<div
+							onClick={() => setShowAccountDetails(true)}
+							className="h-full rounded cursor-pointer transition-colors pl-2 pr-4 py-1.5 hover:bg-blue-50 flex items-center space-x-2"
+						>
+							<EthAvatar address={account.address} />
+							<div className=" text-xs">
+								{getShortenedFormat(account.address)}
+							</div>
+							<CaretDownOutlined className="text-[9px]" />
+						</div>
+					) : (
+						<Button onClick={login}>Login</Button>
+					)}
+				</div>
 			</header>
 			{showAccountDetails && (
 				<AccountModal close={() => setShowAccountDetails(false)} />

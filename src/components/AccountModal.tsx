@@ -3,11 +3,9 @@ import { LogoutOutlined } from "@/components/icons/LogoutOutlined";
 import { Modal } from "@/components/modal";
 import { useAuth } from "@/providers/AuthProvider";
 import { NodeData } from "@/typings";
-import { formatNumber } from "@/utils/number.utils";
 import { getShortenedFormat } from "@/utils/string.utils";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useActiveAccount } from "thirdweb/react";
 
 interface AccountModalProps {
 	close(): void;

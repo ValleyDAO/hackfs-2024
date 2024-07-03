@@ -1,5 +1,3 @@
-import { useEscapeKeydown } from "@radix-ui/react-use-escape-keydown";
-
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
@@ -33,7 +31,7 @@ export function Modal({
 	return (
 		<div
 			onClick={() => close?.()}
-			className="fixed bg-black/25 inset-0 z-10 m-0 h-full p-0"
+			className="fixed bg-black/25 inset-0 z-50 m-0 h-full p-0"
 		>
 			<AnimatePresence>
 				<motion.div

@@ -1,5 +1,6 @@
 "use client";
 
+import { chainOptions } from "@/lib/constants";
 import AuthProvider from "@/providers/AuthProvider";
 import { ContractEventsProvider } from "@/providers/ContractEventsProvider";
 import { PrivyProvider } from "@privy-io/react-auth";
@@ -17,6 +18,7 @@ const queryClient = new QueryClient();
 
 export const config = createConfig({
 	chains: [filecoinCalibration, hardhat],
+
 	transports: {
 		[filecoinCalibration.id]: http(),
 		[hardhat.id]: http(),
@@ -32,6 +34,8 @@ const Providers = ({ children }: ProviderType) => {
 				embeddedWallets: {
 					createOnLogin: "users-without-wallets",
 				},
+				supportedChains: chainOptions,
+				defaultChain: hardhat,
 			}}
 		>
 			<QueryClientProvider client={queryClient}>

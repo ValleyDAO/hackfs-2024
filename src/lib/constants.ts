@@ -1,5 +1,7 @@
 "use client";
 
+import { Chain, filecoinCalibration, hardhat } from "viem/chains";
+
 export const contributionAbi = [
 	{
 		anonymous: false,
@@ -1168,3 +1170,5 @@ export const contributionContractAddress =
 	activeNetwork?.id === 1337
 		? "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 		: "0xEe7b3E7925f6E95528780B67D550152ff988bE7e";*/
+
+export const chainOptions = [hardhat, filecoinCalibration];

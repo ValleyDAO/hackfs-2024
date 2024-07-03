@@ -5,6 +5,7 @@ import { getShortenedFormat } from "@/utils/string.utils";
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 
 import { EthAvatar } from "@/components/EthAvatar";
+import { useContributionContract } from "@/hooks/useContributionContract";
 import { techTreeContract } from "@/lib/constants";
 import { Contributor } from "@/typings";
 import React, { useEffect } from "react";
@@ -24,10 +25,9 @@ function ContributorItem({
 	setContributorPoints,
 }: ContributorItemProps) {
 	const { id } = useResearchPage();
-	const { data, isLoading } = useReadContract({
-		contract: techTreeContract,
-		method: "getUserNodePoints",
-		params: [contributor.address, id as bigint],
+	const { data, isLoading } = useContributionContract({
+		functionName: "getUserNodePoints",
+		args: [contributor.address, id as bigint],
 	});
 
 	useEffect(() => {

@@ -32,7 +32,7 @@ type AuthProviderProps = {
 };
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-	const { authenticated, user, login } = usePrivy();
+	const { authenticated, user, login, ready } = usePrivy();
 
 	const value = useMemo(
 		() => ({
@@ -40,7 +40,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 			isAuthenticated: authenticated,
 			login,
 		}),
-		[user],
+		[user, ready],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

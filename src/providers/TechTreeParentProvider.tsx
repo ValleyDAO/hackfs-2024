@@ -1,7 +1,6 @@
 "use client";
 
-import { techTreeContract } from "@/lib/constants";
-import { useTxEvents } from "@/providers/ContractEventsProvider";
+import { useContributionContract } from "@/hooks/useContributionContract";
 import { TechTree } from "@/typings";
 import React, {
 	ReactNode,
@@ -10,7 +9,6 @@ import React, {
 	useMemo,
 	useState,
 } from "react";
-import { useReadContract } from "wagmi";
 
 type TechTreeProps = {
 	activeTechTree?: TechTree;
@@ -36,23 +34,15 @@ export const useTechTree = (): TechTreeProps => {
 
 export function TechTreeProvider({ children }: { children: ReactNode }) {
 	const [activeTechTree, setActiveTechTree] = useState<TechTree | undefined>();
-	const { data, isLoading } = useReadContract({
-		contract: techTreeContract,
-		method: "getTechTrees",
+	const { data, isLoading } = useContributionContract<TechTree[]>({
+		functionName: "getTechTrees",
 	});
 
 	const value = useMemo<TechTreeProps>(
 		() => ({
 			activeTechTree,
 			isLoading,
-			techTrees:
-				data?.map(
-					(techTree) =>
-						({
-							id: techTree.id,
-							title: techTree.title,
-						}) as TechTree,
-				) || [],
+			techTrees: data,
 			setActiveTechTree,
 		}),
 		[activeTechTree, data, isLoading],

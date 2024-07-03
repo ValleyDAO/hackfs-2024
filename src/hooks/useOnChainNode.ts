@@ -1,25 +1,24 @@
 "use client";
 
-import { techTreeContract } from "@/lib/constants";
-import { Contributor, NodeData, NodeStatus, NodeType } from "@/typings";
+import { useContributionContract } from "@/hooks/useContributionContract";
+
+import { Contributor, NodeData } from "@/typings";
 import { useMemo } from "react";
-import { useReadContract } from "wagmi";
 
 interface useFetchTechTreeNodeProps {
 	isLoading: boolean;
 	node?: NodeData;
 }
 
-const document = JSON.stringify();
+const document = JSON.stringify({});
 
 export function useOnChainNode(
 	techTreeId: bigint,
 	id: bigint,
 ): useFetchTechTreeNodeProps {
-	const { data: onChainNode } = useReadContract({
-		contract: techTreeContract,
-		method: "getNode",
-		params: [techTreeId, id],
+	const { data: onChainNode, isLoading } = useContributionContract({
+		functionName: "getNode",
+		args: [techTreeId, id],
 	});
 
 	function parseOnChainDateToDateFormat(date: unknown): Date | undefined {

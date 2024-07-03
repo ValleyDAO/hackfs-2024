@@ -18,6 +18,7 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	const { setActiveTechTree } = useTechTree();
 	const { events } = useTxEvents();
 	const [title, setTitle] = React.useState("");
+
 	const {
 		data: hash,
 		writeContract,
@@ -29,7 +30,7 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	useEffect(() => {
 		const event = events.find(
 			(event) =>
-				event.eventName === "TechTreeAdded" && event.transactionHash === txHash,
+				event.eventName === "TechTreeAdded" && event.transactionHash === hash,
 		);
 		if (event) {
 			setActiveTechTree({
@@ -37,7 +38,7 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 				title: event.args.title,
 			} as TechTree);
 		}
-	}, [events, txHash]);
+	}, [events, hash]);
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -77,7 +78,7 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 					<Button
 						disabled={!title || title?.length < 2}
 						fullSize
-						loading={loading}
+						loading={isPending}
 						onClick={() => handleCreateTechTree(title)}
 						variant="primary"
 					>
@@ -107,6 +108,8 @@ function TechTreeItem({ techTree }: { techTree: TechTree }) {
 
 function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
 	const { techTrees, isLoading } = useTechTree();
+
+	console.log(techTrees);
 
 	return (
 		<>
