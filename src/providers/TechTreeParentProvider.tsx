@@ -10,7 +10,7 @@ import React, {
 	useMemo,
 	useState,
 } from "react";
-import { useReadContract } from "thirdweb/react";
+import { useReadContract } from "wagmi";
 
 type TechTreeProps = {
 	activeTechTree?: TechTree;
@@ -35,7 +35,7 @@ export const useTechTree = (): TechTreeProps => {
 };
 
 export function TechTreeProvider({ children }: { children: ReactNode }) {
-	const [activeTechTree, setActiveTechTree] = useState<TechTree>();
+	const [activeTechTree, setActiveTechTree] = useState<TechTree | undefined>();
 	const { data, isLoading } = useReadContract({
 		contract: techTreeContract,
 		method: "getTechTrees",

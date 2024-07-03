@@ -10,18 +10,15 @@ export const generateId = () => Math.random().toString(36).substring(2, 9);
 export const defaultPosition = { x: 0, y: 0 };
 export const edgeType = "smoothstep";
 
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
-const nodeWidth = 350;
-const nodeHeight = 50;
+export const nodeWidth = 350;
+const nodeHeight = 75;
 
 export function transformTechTreeDataToNode({
 	id,
 	...data
 }: NodeData): TechTreeLayoutNode {
 	return {
-		id: `${id}` || "",
+		id,
 		type: "tech-tree",
 		data: data,
 		position: defaultPosition,
@@ -44,6 +41,8 @@ export function getLayoutElements(
 	const initialNodes = nodes.map(transformTechTreeDataToNode);
 	const initialEdges = edges.map(transformEdgeDataToLayoutEdge);
 
+	const dagreGraph = new dagre.graphlib.Graph();
+	dagreGraph.setDefaultEdgeLabel(() => ({}));
 	dagreGraph.setGraph({ rankdir: "LR" });
 
 	initialNodes.forEach((node) => {
@@ -73,7 +72,16 @@ export function getLayoutElements(
 		return node;
 	});
 
-	return { nodes: initialNodes, edges: initialEdges };
+	const uniqueNodes = new Map(initialNodes.map((node) => [node.id, node]));
+	const uniqueEdges = new Map(initialEdges.map((edge) => [edge.id, edge]));
+
+	initialNodes.forEach((node) => uniqueNodes.set(node.id, node));
+	initialEdges.forEach((edge) => uniqueEdges.set(edge.id, edge));
+
+	return {
+		nodes: Array.from(uniqueNodes.values()),
+		edges: Array.from(uniqueEdges.values()),
+	};
 }
 
 export function areAllNodesConnected(

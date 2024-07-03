@@ -8,7 +8,7 @@ import { EthAvatar } from "@/components/EthAvatar";
 import { techTreeContract } from "@/lib/constants";
 import { Contributor } from "@/typings";
 import React, { useEffect } from "react";
-import { useReadContract } from "thirdweb/react";
+import { useReadContract } from "wagmi";
 
 interface ContributorItemProps {
 	length: number;

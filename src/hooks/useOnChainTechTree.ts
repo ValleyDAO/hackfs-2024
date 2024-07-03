@@ -6,7 +6,7 @@ import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, NodeType } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import { useEffect, useMemo } from "react";
-import { useReadContract } from "thirdweb/react";
+import { useReadContract } from "wagmi";
 
 interface useOnChainTechTreeProps {
 	isLoadingOnChain: boolean;
@@ -42,13 +42,13 @@ export function useOnChainTechTree(): useOnChainTechTreeProps {
 			data?.[0]
 				?.filter((item) => item.createdAt !== BigInt(0))
 				.map((node, idx) => ({
-					id: BigInt(idx),
+					id: (node as any)?.id,
 					title: node.title,
 					type: node.nodeType as NodeType,
 					origin: "on-chain",
 				})) || [],
 			data?.[1]?.map((edge, idx) => ({
-				id: `${idx}`,
+				id: (edge as any)?.id,
 				source: `${Number(edge.source)}`,
 				target: `${Number(edge.target)}`,
 				origin: "on-chain",

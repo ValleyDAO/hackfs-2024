@@ -7,20 +7,20 @@ import { Contributors } from "@/app/app/[techTreeId]/node/[id]/components/Contri
 import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/DocumentViewer";
 import { WriteRfp } from "@/app/app/[techTreeId]/node/[id]/components/WriteRfp";
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
-import { LoginButton } from "@/components/LoginButton";
+
 import { Button } from "@/components/button";
 import { EditOutlined } from "@/components/icons/EditOutlined";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
 import { RichText } from "@/components/richText/RichText";
+import { useAuth } from "@/providers/AuthProvider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useActiveAccount } from "thirdweb/react";
 
 export default function Page() {
 	const { status, id, contributions, techTreeId } = useResearchPage();
 	const router = useRouter();
-	const account = useActiveAccount();
+	const { account, login } = useAuth();
 	return (
 		<div className="!pb-10">
 			{status === "idle" ? (
@@ -68,7 +68,7 @@ export default function Page() {
 											<Button variant="primary">Contribute</Button>
 										</Link>
 									) : (
-										<LoginButton label="Login" />
+										<Button onClick={login}>Login</Button>
 									)}
 								</div>
 							</div>

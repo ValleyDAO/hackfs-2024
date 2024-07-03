@@ -42,8 +42,9 @@ export interface TechTree {
 }
 
 export interface NodeData {
-	id?: bigint;
+	id: string;
 	title?: string;
+	description?: string;
 	createdBy?: string;
 	createdAt?: Date;
 	origin?: NodeOrigin;
@@ -65,7 +66,7 @@ export interface EdgeData {
 	origin?: NodeOrigin;
 }
 
-export type TechTreeLayoutNode = Node<NodeData> & {
+export type TechTreeLayoutNode = Node<Omit<NodeData, "id">> & {
 	targetPosition?: Position;
 	sourcePosition?: Position;
 };
@@ -79,7 +80,7 @@ export interface Contributor {
 	ensName?: string;
 }
 
-export type TechTreeMode = "move" | "edit";
+export type TechTreeMode = "move" | "edit" | "enhance";
 export type TechTreeAddType = "node" | "edge";
 
 export interface SelectOptionItem {

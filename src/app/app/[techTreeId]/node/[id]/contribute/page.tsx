@@ -2,19 +2,13 @@
 
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { Button } from "@/components/button";
-import { CloseOutlined } from "@/components/icons/CloseOutlined";
-import { Modal } from "@/components/modal";
 import { InputRichText } from "@/components/richText/InputRichText";
-import { RichText } from "@/components/richText/RichText";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
+import { useWriteContract } from "wagmi";
 
 export default function Page() {
 	const { contributions, id, techTreeId } = useResearchPage();
@@ -23,7 +17,7 @@ export default function Page() {
 	>(contributions?.[0]?.ipfsHash);
 	const router = useRouter();
 	const { events } = useTxEvents();
-	const { send, loading } = useTransaction();
+	const { writeContract, isPending } = useWriteContract();
 
 	useEffect(() => {
 		const event = events.find(
@@ -37,21 +31,23 @@ export default function Page() {
 	async function handleUpdate() {
 		if (!editedResearch) return;
 
-		const transaction = prepareContractCall({
-			contract: techTreeContract,
-			method: "addContribution",
-			params: [techTreeId as bigint, id as bigint, editedResearch],
-		}) as PreparedTransaction;
-		await send(transaction);
+		writeContract({
+			abi: contributionAbi,
+			address: contributionContractAddress,
+			functionName: "addFunds",
+			args: [techTreeId as bigint, id as bigint, editedResearch],
+		});
 	}
+
+	console.log(editedResearch);
 
 	return (
 		<div className="w-full mt-2 space-y-2">
 			<div className="mt-4 flex justify-end space-x-2">
 				<Link href={`/app/${techTreeId}/nodes/${id}`}>
-					<Button disabled={loading}>Cancel Changes</Button>
+					<Button disabled={isPending}>Cancel Changes</Button>
 				</Link>
-				<Button loading={loading} variant="primary" onClick={handleUpdate}>
+				<Button loading={isPending} variant="primary" onClick={handleUpdate}>
 					Submit Changes
 				</Button>
 			</div>

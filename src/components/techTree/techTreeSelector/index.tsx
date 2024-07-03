@@ -1,25 +1,30 @@
 import { Button } from "@/components/button";
+import { ButtonWithAuthentication } from "@/components/button/ButtonWithAuthentication";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { CloseCircleOutlined } from "@/components/icons/CloseCircleOutlined";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { TechTreeOutlined } from "@/components/icons/TechTreeOutlined";
 import InputText from "@/components/input/InputText";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { TechTree } from "@/typings";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
-import { useActiveAccount } from "thirdweb/react";
+import { useWriteContract } from "wagmi";
 
 function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	const { setActiveTechTree } = useTechTree();
 	const { events } = useTxEvents();
 	const [title, setTitle] = React.useState("");
-	const { send, loading, isError, isSuccess, txHash } = useTransaction();
+	const {
+		data: hash,
+		writeContract,
+		isSuccess,
+		isError,
+		isPending,
+	} = useWriteContract();
 
 	useEffect(() => {
 		const event = events.find(
@@ -43,12 +48,12 @@ function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	}, [isSuccess, isError]);
 
 	async function handleCreateTechTree(title: string) {
-		const transaction = prepareContractCall({
-			contract: techTreeContract,
-			method: "addTechTree",
-			params: [title],
-		}) as PreparedTransaction;
-		await send(transaction);
+		writeContract({
+			address: contributionContractAddress,
+			abi: contributionAbi,
+			functionName: "addTechTree",
+			args: [title],
+		});
 	}
 
 	return (
@@ -101,13 +106,12 @@ function TechTreeItem({ techTree }: { techTree: TechTree }) {
 }
 
 function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
-	const account = useActiveAccount();
 	const { techTrees, isLoading } = useTechTree();
 
 	return (
 		<>
 			<div>
-				<span className="mb-6 font-medium text-gray-500 text-xs">
+				<span className="mb-6 font-medium text-gray-400 text-xs">
 					GET STARTED
 				</span>
 				<h1 className="mb-6 font-bold text-lg">Select a Technology Tree</h1>
@@ -119,19 +123,23 @@ function TechTreeList({ handleCreate }: { handleCreate: () => void }) {
 							<TechTreeItem key={`node-${idx}`} techTree={techTree} />
 						))
 					) : (
-						<div>
-							<div className="text-gray-500">No tech trees found</div>
+						<div className="flex flex-col h-full pt-48 space-y-4 w-10/12 mx-auto items-center">
+							<TechTreeOutlined className="text-gray-300 text-4xl" />
+							<span className="text-gray-400 text-xs text-center">
+								Seems that you don't have any technology trees yet. Let's get
+								started by creating one.
+							</span>
 						</div>
 					)}
 				</div>
 			</div>
-			{account?.address && (
-				<div className="">
-					<Button fullSize variant="primary" onClick={handleCreate}>
-						Create New Technology Tree
-					</Button>
-				</div>
-			)}
+			<ButtonWithAuthentication
+				variant="primary"
+				fullSize
+				onClick={handleCreate}
+			>
+				Create New Technology Tree
+			</ButtonWithAuthentication>
 		</>
 	);
 }

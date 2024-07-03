@@ -3,7 +3,9 @@
 import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
+import { Enhance } from "@/components/techTree/sidePanel/Enhance";
 import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
+import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,14 +14,15 @@ import React from "react";
 import { EditMode } from "./EditMode";
 
 function SummaryMode() {
-	const { activeTechTree } = useTechTree();
 	const { activeNode } = useTechTreeContext();
+
 	return (
 		<>
 			<div>
 				<div className="mb-6">
 					<div className="text-xs uppercase text-gray-500">Active Node</div>
 					<div className="text-lg font-bold">{activeNode?.title}</div>
+					<div className="text-sm">{activeNode?.description}</div>
 				</div>
 				<div>
 					<div className="text-xs text-gray-500">Node Type</div>
@@ -28,18 +31,7 @@ function SummaryMode() {
 					</div>
 				</div>
 			</div>
-			{activeNode?.type === "end-goal" && <EnhanceWithGaladriel />}
-			{(activeNode?.type === "development" ||
-				activeNode?.type === "research") && (
-				<Link
-					href={`/app/${activeTechTree?.id}/node/${activeNode?.id}`}
-					className="mt-10 block w-full"
-				>
-					<Button className="!py-3" fullSize variant="black">
-						Visit Details Page
-					</Button>
-				</Link>
-			)}
+			<Enhance />
 		</>
 	);
 }

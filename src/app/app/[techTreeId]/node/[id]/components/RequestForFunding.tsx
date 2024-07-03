@@ -5,13 +5,11 @@ import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/Docu
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
+import { useWriteContract } from "wagmi";
 
 interface DepositFundsProps {
 	close(): void;
@@ -22,7 +20,13 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 	const { id, techTreeId } = useResearchPage();
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [value, setValue] = useState<number>(0);
-	const { isSuccess, send, isError } = useTransaction();
+	const {
+		data: hash,
+		writeContract,
+		isSuccess,
+		isError,
+		isPending,
+	} = useWriteContract();
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -39,13 +43,13 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 		if (isNaN(Number(id))) return;
 
 		setIsSubmitting(true);
-		const transaction = prepareContractCall({
-			contract: techTreeContract,
-			method: "addFunds",
-			params: [techTreeId as bigint, id as bigint],
+		writeContract({
+			abi: contributionAbi,
+			address: contributionContractAddress,
+			functionName: "addFunds",
+			args: [techTreeId as bigint, id as bigint],
 			value: toWei(`${value}`),
-		}) as PreparedTransaction;
-		await send(transaction);
+		});
 	}
 
 	return (

@@ -4,21 +4,25 @@ import { ProjectMenu } from "@/app/app/[techTreeId]/node/[id]/components/Project
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
 import { StatusTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
-import { isInvalidNumber } from "@/utils/number.utils";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
+import { useAuth } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
-import { useActiveAccount } from "thirdweb/react";
+import { useWriteContract } from "wagmi";
 
 export function ResearchHead() {
-	const account = useActiveAccount();
+	const { account } = useAuth();
 	const { title, status, techTreeId, createdBy, id, isFinished } =
 		useResearchPage();
-	const { isError, isSuccess, send, loading } = useTransaction();
 	const router = useRouter();
+	const {
+		data: hash,
+		writeContract,
+		isSuccess,
+		isError,
+		isPending,
+	} = useWriteContract();
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -30,13 +34,13 @@ export function ResearchHead() {
 	}, [isSuccess, isError]);
 
 	async function handleConcludeResearch() {
-		if (isInvalidNumber(id)) return;
-		const transaction = prepareContractCall({
-			contract: techTreeContract,
-			method: "finishNode",
-			params: [techTreeId as bigint, id as bigint],
-		}) as PreparedTransaction;
-		await send(transaction);
+		if (!id) return;
+		writeContract({
+			abi: contributionAbi,
+			address: contributionContractAddress,
+			functionName: "finishNode",
+			args: [techTreeId as bigint, id],
+		});
 	}
 
 	return (
@@ -56,7 +60,7 @@ export function ResearchHead() {
 					status === "in-progress" && (
 						<div>
 							<Button
-								loading={loading}
+								loading={isPending}
 								onClick={handleConcludeResearch}
 								variant="primary"
 							>

@@ -1,23 +1,28 @@
 import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
-import { LoginButton } from "@/components/LoginButton";
+
 import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
 import { InputRichText } from "@/components/richText/InputRichText";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
+import { useAuth } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
-import { useActiveAccount } from "thirdweb/react";
+import { useWriteContract } from "wagmi";
 
 export function WriteRfp() {
 	const router = useRouter();
-	const account = useActiveAccount();
+	const { account, login } = useAuth();
 	const { id, techTreeId } = useResearchPage();
 	const [writeRfp, setWriteRfp] = React.useState(false);
 	const [proposal, setProposal] = React.useState<string>();
 	const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-	const { loading, send, isSuccess, isError } = useTransaction();
+	const {
+		data: hash,
+		writeContract,
+		isSuccess,
+		isError,
+		isPending,
+	} = useWriteContract();
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -30,15 +35,14 @@ export function WriteRfp() {
 	}, [isSuccess]);
 
 	async function handlePublish() {
-		if (!proposal || isNaN(Number(id))) return;
+		if (!proposal || !id || isNaN(Number(id))) return;
 		setIsSubmitting(true);
-
-		const transaction = prepareContractCall({
-			contract: techTreeContract,
-			method: "addRfp",
-			params: [techTreeId as bigint, id as bigint, proposal],
-		}) as PreparedTransaction;
-		await send(transaction);
+		writeContract({
+			abi: contributionAbi,
+			address: contributionContractAddress,
+			functionName: "addRfp",
+			args: [techTreeId as bigint, BigInt(id) as bigint, proposal],
+		});
 	}
 
 	return (
@@ -65,7 +69,7 @@ export function WriteRfp() {
 								Write & Upload an RFP
 							</Button>
 						) : (
-							<LoginButton label="Login" />
+							<Button onClick={login}>Login</Button>
 						)}
 					</div>
 				</>
@@ -81,7 +85,7 @@ export function WriteRfp() {
 						<div className="mt-4 flex justify-end">
 							<Button
 								className="!py-2 !px-6"
-								loading={isSubmitting || loading}
+								loading={isSubmitting || isPending}
 								disabled={!proposal || proposal?.length < 2}
 								variant="primary"
 								onClick={() => handlePublish()}

@@ -5,6 +5,7 @@ import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, TechTreeAddType } from "@/typings";
+import { generateId } from "@/utils/nodes.utils";
 import clsx from "clsx";
 import React from "react";
 
@@ -57,7 +58,7 @@ export function EditTechTreeMenu() {
 
 	function handleAddNewNode() {
 		const newNode: NodeData = {
-			id: BigInt((nodes || []).length),
+			id: generateId(),
 			title: undefined,
 			type: nodes?.length === 0 ? "end-goal" : "development",
 		};

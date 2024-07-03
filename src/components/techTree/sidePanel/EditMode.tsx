@@ -9,17 +9,18 @@ import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWit
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { NodeData, NodeType, SelectOptionItem } from "@/typings";
+import { EdgeData, NodeData, NodeType, SelectOptionItem } from "@/typings";
+import { fetchWrapper } from "@/utils/query.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
-import { capitalize } from "@walletconnect/utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
 	const { activeTechTree } = useTechTree();
-	const { handleNodeUpdate, nodes } = useNodesAndEdges();
+	const { handleNodeUpdate, nodes, updateAll } = useNodesAndEdges();
 	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
 		useTechTreeContext();
+	const [isHandlingSave, setIsHandlingSave] = React.useState(false);
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
 		type: activeNode?.type,
@@ -33,19 +34,43 @@ export function EditMode() {
 	}, [activeNode]);
 
 	async function handleSave() {
-		const id = BigInt(`${activeNode?.id}`);
-		handleNodeUpdate(activeNode?.id as bigint, update);
+		if (!activeNode?.id) return;
+		handleNodeUpdate(activeNode?.id, update);
 		setUpdate({});
 		if (update?.type === "end-goal") {
-			setMode("move");
+			setIsHandlingSave(true);
 			setActiveNodeRaw?.({
-				id,
+				id: activeNode?.id,
 				title: update.title,
 				type: update.type,
 			} as NodeData);
+			await create(update.title);
+			setIsHandlingSave(false);
+			setMode("move");
 		} else {
 			setActiveNode(undefined);
 		}
+	}
+
+	async function create(title?: string) {
+		const response = await fetchWrapper<{
+			nodes: NodeData[];
+			edges: EdgeData[];
+		}>("/generate-tech-tree?title=" + title);
+
+		updateAll(
+			response?.nodes.map((node) => ({
+				id: node.id,
+				title: node.title,
+				description: node.description,
+				type: node.type,
+			})),
+			response?.edges.map((edge, idx) => ({
+				id: edge.id,
+				source: edge.source,
+				target: edge.target,
+			})),
+		);
 	}
 
 	const hasEndGoalInNodes =
@@ -77,7 +102,7 @@ export function EditMode() {
 						label="Type"
 						options={parseTypeToSearchFieldItems(hasEndGoalInNodes)}
 						value={{
-							label: capitalize((update.type || "")?.toLowerCase()) || "-",
+							label: (update.type || "")?.toLowerCase() || "-",
 							value: update.type || "-",
 						}}
 						onChange={(item: SelectOptionItem) =>
@@ -93,6 +118,7 @@ export function EditMode() {
 							disabled={
 								!update?.title || update?.title?.length < 2 || !update.type
 							}
+							loading={isHandlingSave}
 							fullSize
 							onClick={handleSave}
 							variant="primary"

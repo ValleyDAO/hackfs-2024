@@ -3,7 +3,8 @@
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
+import { EdgeData, NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
+import { fetchWrapper } from "@/utils/query.utils";
 import React, {
 	ReactNode,
 	createContext,
@@ -15,7 +16,7 @@ import React, {
 type TechTreeContextProps = {
 	mode: TechTreeMode;
 	setMode: (mode: TechTreeMode) => void;
-	setActiveNode: (nodeId?: bigint) => void;
+	setActiveNode: (nodeId?: string) => void;
 	setActiveNodeRaw?: (node: NodeData) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
@@ -82,7 +83,7 @@ export function TechTreeLayoutContextProvider({
 		setMode(mode);
 	}
 
-	function handleSetActiveNode(nodeId?: bigint) {
+	function handleSetActiveNode(nodeId?: string) {
 		const node = nodes.find((n) => n.id === nodeId);
 		setActiveNode(node);
 	}

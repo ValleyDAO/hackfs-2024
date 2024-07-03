@@ -1,14 +1,12 @@
-import { AddFilled } from "@/components/icons/AddFilled";
-import { CursorFilled } from "@/components/icons/CursorFilled";
-import { EnhanceOutlined } from "@/components/icons/EnhanceOutlined";
-import { EditTechTreeMenu } from "@/components/techTree/menu/EditTechTreeMenu";
+import { Button } from "@/components/button";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { EdgeData, NodeData, TechTreeMode } from "@/typings";
+import { EdgeData, NodeData } from "@/typings";
 import { fetchWrapper } from "@/utils/query.utils";
-import clsx from "clsx";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
+const MAX_ITERATIONS = 10;
 
 interface RelatedNodesAndEdges {
 	parents?: NodeData[];
@@ -17,15 +15,7 @@ interface RelatedNodesAndEdges {
 	children?: NodeData[];
 }
 
-const MAX_ITERATIONS = 20;
-
-function ModeSelectionItem({
-	icon,
-	mode,
-	label,
-}: { icon: React.ReactNode; mode: TechTreeMode; label: string }) {
-	const { mode: activeMode, setMode } = useTechTreeContext();
-	const isActive = activeMode === mode;
+export function Enhance() {
 	const { updateAll, nodes, edges } = useNodesAndEdges();
 	const { activeNode } = useTechTreeContext();
 	const [isEnhancing, setIsEnhancing] = useState(true);
@@ -107,10 +97,9 @@ function ModeSelectionItem({
 	const enhanceNextInQueue = useCallback(async () => {
 		if (enhancementQueue.length === 0 || iterationCount >= MAX_ITERATIONS) {
 			setIsEnhancing(false);
-			if (iterationCount !== 0)
-				toast.success(
-					`Tree enhancement completed after ${iterationCount} operations.`,
-				);
+			toast.success(
+				`Tree enhancement completed after ${iterationCount} operations.`,
+			);
 			return;
 		}
 
@@ -157,77 +146,29 @@ function ModeSelectionItem({
 	}, [isEnhancing, enhanceNextInQueue, enhancementQueue]);
 
 	const startEnhancement = useCallback(async () => {
+		if (!activeNode) {
+			toast.error("No active node selected");
+			return;
+		}
+
 		setIsEnhancing(true);
 		setIterationCount(0);
 
-		setEnhancementQueue([nodes?.[0].id]);
+		setEnhancementQueue([activeNode.id]);
 	}, [activeNode]);
 
-	function handleClick(newMode: TechTreeMode) {
-		if (newMode !== "enhance") {
-			setMode(newMode);
-		} else {
-			startEnhancement();
-		}
-	}
-
 	return (
-		<div
-			onClick={() => handleClick(mode)}
-			className={clsx(
-				"h-12 vertical justify-center space-y-1.5 items-center aspect-square cursor-pointer group hover:bg-blue-50 transition-colors rounded",
-				{
-					"bg-blue-50 text-blue-700": isActive,
-					"bg-white text-black": !isActive,
-				},
-			)}
-		>
-			<div className="transition-colors group-hover:text-blue-700 leading-none text-base">
-				{icon}
+		<div className="mt-10">
+			<div className="mt-4 flex flex-col space-y-2">
+				<Button
+					variant="black"
+					loading={isEnhancing}
+					onClick={startEnhancement}
+					disabled={isEnhancing}
+				>
+					{isEnhancing ? `Enhancing (${iterationCount})...` : "Enhance"}
+				</Button>
 			</div>
-			<span
-				className={clsx("text-[9px] leading-none font-medium uppercase", {
-					"text-blue-700": isActive,
-					"text-gray-800": !isActive,
-				})}
-			>
-				{label}
-			</span>
-		</div>
-	);
-}
-
-function BaseMenuBar() {
-	return (
-		<>
-			<ModeSelectionItem label="move" mode="move" icon={<CursorFilled />} />
-			<ModeSelectionItem label="edit" mode="edit" icon={<AddFilled />} />
-			<ModeSelectionItem
-				label="enhance"
-				mode="enhance"
-				icon={<EnhanceOutlined />}
-			/>
-		</>
-	);
-}
-
-export function TechTreeMenu() {
-	const { mode } = useTechTreeContext();
-
-	return (
-		<div
-			className={clsx("transition-all flex flex-col absolute left-0", {
-				"left-0 right-0 mx-auto w-full items-stretch text-center":
-					mode === "edit",
-				"left-0 items-start": mode === "move",
-			})}
-		>
-			<div className="p-1 flex items-center bg-white border-gray-100 border rounded space-x-1 drop-shadow-sm">
-				{mode === "move" ? <BaseMenuBar /> : <EditTechTreeMenu />}
-			</div>
-			{/*<div className="mt-4 mr-auto">
-				<div className="text-gray-500 text-xs">* Technology trees</div>
-			</div>*/}
 		</div>
 	);
 }

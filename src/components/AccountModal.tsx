@@ -1,6 +1,7 @@
 import { EthAvatar } from "@/components/EthAvatar";
 import { LogoutOutlined } from "@/components/icons/LogoutOutlined";
 import { Modal } from "@/components/modal";
+import { useAuth } from "@/providers/AuthProvider";
 import { NodeData } from "@/typings";
 import { formatNumber } from "@/utils/number.utils";
 import { getShortenedFormat } from "@/utils/string.utils";
@@ -21,23 +22,23 @@ const points: Point[] = [
 	{
 		value: 25,
 		node: {
-			id: BigInt(1),
+			id: "1",
 			title: "Develop Multi-Junction Solar Cells",
 			type: "development",
 		},
 	},
 	{
 		value: 5,
-		node: { id: BigInt(2), title: "optimizations in Gluten", type: "research" },
+		node: { id: "2", title: "optimizations in Gluten", type: "research" },
 	},
 	{
 		value: 10,
-		node: { id: BigInt(3), title: "CRISP prototypes", type: "development" },
+		node: { id: "3", title: "CRISP prototypes", type: "development" },
 	},
 ];
 
 export function AccountModal({ close }: AccountModalProps) {
-	const account = useActiveAccount();
+	const { account } = useAuth();
 	const router = useRouter();
 
 	function handleLogout() {

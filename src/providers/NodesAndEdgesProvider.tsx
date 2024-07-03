@@ -1,12 +1,10 @@
 "use client";
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { EdgeData, NodeData, TechTree } from "@/typings";
-import { areAllNodesConnected } from "@/utils/nodes.utils";
+import { EdgeData, NodeData } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import deepEqual from "deep-equal";
 import React, {
@@ -17,8 +15,7 @@ import React, {
 	useState,
 	useEffect,
 } from "react";
-import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
+import { useWriteContract } from "wagmi";
 
 type PublishMode = "reset" | "publish";
 
@@ -26,10 +23,10 @@ type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
-	updateFromGaladriel(data: NodeData[], edges: EdgeData[]): void;
+	updateAll(data: NodeData[], edges: EdgeData[]): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
-	handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>): void;
+	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
 	handlePublish(mode: PublishMode): void;
 	isPublishing: boolean;
 	isLoading: boolean;
@@ -37,7 +34,7 @@ type NodesAndEdgesProps = {
 
 export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
 	handleEdgeUpdate: () => {},
-	updateFromGaladriel: () => {},
+	updateAll: () => {},
 	hasUpdates: false,
 	nodes: [],
 	edges: [],
@@ -64,7 +61,180 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 
 	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
 
-	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
+	/*const isLoadingOnChain = false;
+	const nodes: NodeData[] = [
+		{
+			id: "lfg3m2s",
+			title: "Biochemistry Fundamentals",
+			description:
+				"Basic understanding of chemical processes in living organisms",
+			type: "research",
+		},
+		{
+			id: "k9p7x1r",
+			title: "Microbial Fermentation",
+			description: "Study of microorganisms for fermentation processes",
+			type: "research",
+		},
+		{
+			id: "h2j6n8t",
+			title: "Biomass Feedstock Analysis",
+			description:
+				"Evaluation of various plant materials for biofuel production",
+			type: "research",
+		},
+		{
+			id: "w5f1c9q",
+			title: "Enzymatic Hydrolysis",
+			description: "Breakdown of complex carbohydrates into simple sugars",
+			type: "development",
+		},
+		{
+			id: "y7m3b6v",
+			title: "Algae Cultivation Techniques",
+			description: "Methods for growing algae for biofuel production",
+			type: "development",
+		},
+		{
+			id: "z4d8g1l",
+			title: "Cellulosic Ethanol Production",
+			description: "Converting cellulose-based biomass into ethanol",
+			type: "development",
+		},
+		{
+			id: "u6s2n9f",
+			title: "Biodiesel Synthesis",
+			description: "Production of biodiesel from vegetable oils or animal fats",
+			type: "development",
+		},
+		{
+			id: "a1x7p3e",
+			title: "Biogas Generation",
+			description: "Anaerobic digestion for biogas production",
+			type: "development",
+		},
+		{
+			id: "b9t5r7m",
+			title: "Biofuel Refining Processes",
+			description: "Techniques for purifying and upgrading biofuels",
+			type: "optimization",
+		},
+		{
+			id: "c3v8k2d",
+			title: "Biofuel Engine Compatibility",
+			description: "Adapting engines for efficient use of biofuels",
+			type: "optimization",
+		},
+		{
+			id: "e5j1h9g",
+			title: "Sustainable Feedstock Management",
+			description:
+				"Practices for environmentally responsible biomass production",
+			type: "optimization",
+		},
+		{
+			id: "f7q4w2n",
+			title: "Green Biofuels",
+			description: "Environmentally friendly biofuels from sustainable sources",
+			type: "end-goal",
+		},
+	];
+
+	const edges: EdgeData[] = [
+		{
+			id: "lfg3m2s-k9p7x1r",
+			source: "lfg3m2s",
+			target: "k9p7x1r",
+		},
+		{
+			id: "lfg3m2s-h2j6n8t",
+			source: "lfg3m2s",
+			target: "h2j6n8t",
+		},
+		{
+			id: "k9p7x1r-w5f1c9q",
+			source: "k9p7x1r",
+			target: "w5f1c9q",
+		},
+		{
+			id: "k9p7x1r-y7m3b6v",
+			source: "k9p7x1r",
+			target: "y7m3b6v",
+		},
+		{
+			id: "h2j6n8t-w5f1c9q",
+			source: "h2j6n8t",
+			target: "w5f1c9q",
+		},
+		{
+			id: "h2j6n8t-z4d8g1l",
+			source: "h2j6n8t",
+			target: "z4d8g1l",
+		},
+		{
+			id: "w5f1c9q-z4d8g1l",
+			source: "w5f1c9q",
+			target: "z4d8g1l",
+		},
+		{
+			id: "w5f1c9q-u6s2n9f",
+			source: "y7m3b6v",
+			target: "u6s2n9f",
+		},
+		{
+			id: "y7m3b6v-a1x7p3e",
+			source: "z4d8g1l",
+			target: "b9t5r7m",
+		},
+		{
+			id: "z4d8g1l-b9t5r7m",
+			source: "u6s2n9f",
+			target: "b9t5r7m",
+		},
+		{
+			id: "u6s2n9f-a1x7p3e",
+			source: "a1x7p3e",
+			target: "b9t5r7m",
+		},
+		{
+			id: "a1x7p3e-f7q4w2n",
+			source: "b9t5r7m",
+			target: "c3v8k2d",
+		},
+		{
+			id: "b9t5r7m-f7q4w2n",
+			source: "h2j6n8t",
+			target: "e5j1h9g",
+		},
+		{
+			id: "c3v8k2d-f7q4w2n",
+			source: "y7m3b6v",
+			target: "e5j1h9g",
+		},
+		{
+			id: "e5j1h9g-f7q4w2n",
+			source: "b9t5r7m",
+			target: "f7q4w2n",
+		},
+		{
+			id: "f7q4w2n-f7q4w2n",
+			source: "c3v8k2d",
+			target: "f7q4w2n",
+		},
+		{
+			id: "f7q4w2n-f7q4w2n",
+			source: "e5j1h9g",
+			target: "f7q4w2n",
+		},
+	];*/
+
+	const {
+		data: hash,
+		writeContract,
+		isSuccess,
+		isError,
+		isPending,
+	} = useWriteContract();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
 
@@ -100,15 +270,18 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		]);
 	}
 
-	function updateFromGaladriel(nodes: NodeData[], edges: EdgeData[]) {
-		setUpdatedNodes(nodes);
-		setUpdatedEdges(
-			edges?.filter((item) => item.source !== "-1" && item.target !== "-1") ||
-				[],
-		);
+	function updateFromGaladriel(newNodes: NodeData[], newEdges: EdgeData[]) {
+		const uniqueNodes = new Map(newNodes.map((node) => [node.id, node]));
+		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
+
+		updatedNodes.forEach((node) => uniqueNodes.set(node.id, node));
+		updatedEdges.forEach((edge) => uniqueEdges.set(edge.id, edge));
+
+		setUpdatedNodes(Array.from(uniqueNodes.values()));
+		setUpdatedEdges(Array.from(uniqueEdges.values()));
 	}
 
-	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
+	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
 		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
 
@@ -128,10 +301,11 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		if (!activeTechTree || isInvalidNumber(activeTechTree?.id)) return;
 
 		try {
-			const transaction = prepareContractCall({
-				contract: techTreeContract,
-				method: "updateTechTree",
-				params: [
+			writeContract({
+				abi: contributionAbi,
+				address: contributionContractAddress,
+				functionName: "updateTechTree",
+				args: [
 					activeTechTree.id,
 					updatedNodes.map((node) => ({
 						title: node.title || "",
@@ -142,8 +316,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 						target: edge.target,
 					})),
 				],
-			}) as PreparedTransaction;
-			await send(transaction);
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -154,17 +327,17 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
-			updateFromGaladriel,
+			updateAll: updateFromGaladriel,
 			handleEdgeUpdate,
 			handleNodeUpdate,
 			hasUpdates:
 				!deepEqual(nodes, nodesWithUpdates) ||
 				!deepEqual(edges, edgesWithUpdates),
 			handlePublish,
-			isPublishing: hasTxInTransit,
+			isPublishing: isPending,
 			isLoading: isLoadingOnChain,
 		}),
-		[nodesWithUpdates, edgesWithUpdates, hasTxInTransit, isLoadingOnChain],
+		[nodesWithUpdates, edgesWithUpdates, isPending, isLoadingOnChain],
 	);
 
 	return (

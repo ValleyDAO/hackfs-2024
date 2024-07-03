@@ -3,18 +3,20 @@
 import { techTreeContract } from "@/lib/constants";
 import { Contributor, NodeData, NodeStatus, NodeType } from "@/typings";
 import { useMemo } from "react";
-import { useReadContract } from "thirdweb/react";
+import { useReadContract } from "wagmi";
 
 interface useFetchTechTreeNodeProps {
 	isLoading: boolean;
 	node?: NodeData;
 }
 
+const document = JSON.stringify();
+
 export function useOnChainNode(
 	techTreeId: bigint,
 	id: bigint,
 ): useFetchTechTreeNodeProps {
-	const { data: onChainNode, isLoading } = useReadContract({
+	const { data: onChainNode } = useReadContract({
 		contract: techTreeContract,
 		method: "getNode",
 		params: [techTreeId, id],
@@ -26,12 +28,12 @@ export function useOnChainNode(
 	}
 
 	const node = useMemo(() => {
-		if (!onChainNode) return undefined;
+		// if (!onChainNode) return undefined;
 
 		const arr = new Set([
-			onChainNode.createdBy,
-			onChainNode.rfp.writer,
-			...(onChainNode.contributions || []).map((c) => c.contributor),
+			"0xFc1575e15F8763A917111A63364E95A0f4f444E2",
+			"0x902DF7C35FE969eAD2f2d444F979991bc43Be711",
+			"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
 		]);
 		const contributors: Contributor[] = [];
 		arr.forEach((address) =>
@@ -50,7 +52,7 @@ export function useOnChainNode(
 			}
 		}*/
 
-		const status: NodeStatus = onChainNode.isFinished
+		/*		const status: NodeStatus = onChainNode.isFinished
 			? "finished"
 			: onChainNode.rfp.ipfsHash?.length === 0
 				? "idle"
@@ -60,11 +62,40 @@ export function useOnChainNode(
 					: onChainNode.treasury.amount > BigInt(0) &&
 							onChainNode.rfp.ipfsHash?.length > 0
 						? "in-progress"
-						: "idle";
+						: "idle";*/
+
+		return {
+			title: "Cellulosic Ethanol Production",
+			id: "2342",
+			type: "development",
+			isFinished: true,
+			techTreeId: BigInt(1),
+			status: "finished",
+			createdBy: "0x902DF7C35FE969eAD2f2d444F979991bc43Be711",
+			createdAt: new Date("2024-06-20T00:00:00Z"),
+			contributors,
+			contributions: [
+				{
+					contributor: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+					ipfsHash: document,
+					createdAt: new Date("2024-06-21T00:00:00Z"),
+				},
+			],
+			rfp: {
+				createdAt: new Date("2024-06-20T00:00:00Z"),
+				ipfsHash: "rfp.ipfsHash",
+				writer: "0xFc1575e15F8763A917111A63364E95A0f4f444E2",
+			},
+			treasury: {
+				amount: BigInt(32423421312312),
+				funder: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+				fundedAt: new Date("2024-06-21T00:00:00Z"),
+			},
+		} as NodeData; /*
 
 		return {
 			title: onChainNode.title,
-			id: BigInt(id),
+			id,
 			type: onChainNode.nodeType as NodeType,
 			isFinished: onChainNode.isFinished,
 			techTreeId: onChainNode.techTreeId,
@@ -89,11 +120,11 @@ export function useOnChainNode(
 				funder: onChainNode.treasury.funder,
 				fundedAt: parseOnChainDateToDateFormat(onChainNode.treasury.fundedAt),
 			},
-		} as NodeData;
+		} as NodeData;*/
 	}, [onChainNode]);
 
 	return {
 		node,
-		isLoading,
+		isLoading: false,
 	};
 }

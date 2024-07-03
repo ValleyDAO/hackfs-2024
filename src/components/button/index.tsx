@@ -68,8 +68,10 @@ export function Button({
 							variant === "secondary" && ghost,
 						"text-secondary-500 group-hover:text-secondary":
 							variant === "default",
-						"text-white": variant === "black" || variant === "danger",
-						"text-black": variant === "secondary",
+						"text-white":
+							variant === "danger" || (variant === "black" && !ghost),
+						"text-black":
+							variant === "secondary" || (variant === "black" && ghost),
 					},
 				)}
 			>
