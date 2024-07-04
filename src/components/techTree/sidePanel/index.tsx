@@ -4,12 +4,8 @@ import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { Enhance } from "@/components/techTree/sidePanel/Enhance";
-import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
-import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import React from "react";
 import { EditMode } from "./EditMode";
 

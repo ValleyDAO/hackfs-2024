@@ -3,7 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 
 const anthropic = new Anthropic({
-	apiKey: process.env["NEXT_PUBLIC_ANTHROPIC_API_KEY"], // This is the default and can be omitted
+	apiKey: process.env["ANTHROPIC_API_KEY"], // This is the default and can be omitted
 });
 
 interface RelatedNodesAndEdges {
