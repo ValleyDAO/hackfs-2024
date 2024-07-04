@@ -1,8 +1,8 @@
-import { ActivityLogs } from "@/app/app/[techTreeId]/node/[id]/components/ActivityLogs";
-import { ResearchPageProvider } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { ActivityLogs } from "@/app/node/[id]/components/ActivityLogs";
+import { ResearchPageProvider } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 
-import { ResearchHead } from "@/app/app/[techTreeId]/node/[id]/components/ResearchHead";
+import { ResearchHead } from "@/app/node/[id]/components/ResearchHead";
 import Link from "next/link";
 import React from "react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { Button } from "@/components/button";
 import { Table, TableCell, TableRow } from "@/components/table";
 import { getShortenedFormat } from "@/utils/string.utils";

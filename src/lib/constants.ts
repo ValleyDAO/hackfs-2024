@@ -1,6 +1,6 @@
 "use client";
 
-import { Chain, filecoinCalibration, hardhat } from "viem/chains";
+import { filecoinCalibration, hardhat } from "viem/chains";
 
 export const contributionAbi = [
 	{
@@ -14,9 +14,9 @@ export const contributionAbi = [
 			},
 			{
 				indexed: false,
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 			{
 				indexed: false,
@@ -31,12 +31,6 @@ export const contributionAbi = [
 	{
 		anonymous: false,
 		inputs: [
-			{
-				indexed: true,
-				internalType: "uint256",
-				name: "edgeId",
-				type: "uint256",
-			},
 			{
 				indexed: false,
 				internalType: "uint256",
@@ -63,10 +57,10 @@ export const contributionAbi = [
 		anonymous: false,
 		inputs: [
 			{
-				indexed: true,
-				internalType: "uint256",
+				indexed: false,
+				internalType: "string",
 				name: "nodeId",
-				type: "uint256",
+				type: "string",
 			},
 			{
 				indexed: false,
@@ -94,10 +88,10 @@ export const contributionAbi = [
 		anonymous: false,
 		inputs: [
 			{
-				indexed: true,
-				internalType: "uint256",
+				indexed: false,
+				internalType: "string",
 				name: "nodeId",
-				type: "uint256",
+				type: "string",
 			},
 		],
 		name: "NodeFinished",
@@ -107,10 +101,10 @@ export const contributionAbi = [
 		anonymous: false,
 		inputs: [
 			{
-				indexed: true,
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				indexed: false,
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 			{
 				indexed: false,
@@ -158,10 +152,10 @@ export const contributionAbi = [
 		anonymous: false,
 		inputs: [
 			{
-				indexed: true,
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				indexed: false,
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 			{
 				indexed: false,
@@ -181,9 +175,9 @@ export const contributionAbi = [
 				type: "uint256",
 			},
 			{
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 			{
 				internalType: "string",
@@ -227,9 +221,9 @@ export const contributionAbi = [
 				type: "uint256",
 			},
 			{
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 		],
 		name: "addFunds",
@@ -243,6 +237,11 @@ export const contributionAbi = [
 				internalType: "uint256",
 				name: "techTreeId",
 				type: "uint256",
+			},
+			{
+				internalType: "string",
+				name: "_id",
+				type: "string",
 			},
 			{
 				internalType: "string",
@@ -268,9 +267,9 @@ export const contributionAbi = [
 				type: "uint256",
 			},
 			{
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "_id",
+				type: "string",
 			},
 			{
 				internalType: "string",
@@ -348,9 +347,9 @@ export const contributionAbi = [
 				type: "uint256",
 			},
 			{
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 		],
 		name: "finishNode",
@@ -407,20 +406,20 @@ export const contributionAbi = [
 	{
 		inputs: [
 			{
-				internalType: "uint256",
-				name: "techTreeId",
-				type: "uint256",
-			},
-			{
-				internalType: "uint256",
-				name: "nodeIndex",
-				type: "uint256",
+				internalType: "string",
+				name: "nodeId",
+				type: "string",
 			},
 		],
 		name: "getNode",
 		outputs: [
 			{
 				components: [
+					{
+						internalType: "string",
+						name: "id",
+						type: "string",
+					},
 					{
 						internalType: "string",
 						name: "title",
@@ -538,6 +537,11 @@ export const contributionAbi = [
 		outputs: [
 			{
 				components: [
+					{
+						internalType: "string",
+						name: "id",
+						type: "string",
+					},
 					{
 						internalType: "string",
 						name: "title",
@@ -687,6 +691,11 @@ export const contributionAbi = [
 		outputs: [
 			{
 				components: [
+					{
+						internalType: "string",
+						name: "id",
+						type: "string",
+					},
 					{
 						internalType: "string",
 						name: "title",
@@ -845,151 +854,17 @@ export const contributionAbi = [
 		inputs: [
 			{
 				internalType: "uint256",
-				name: "techTreeId",
-				type: "uint256",
-			},
-			{
-				internalType: "address",
-				name: "_user",
-				type: "address",
-			},
-		],
-		name: "getUserParticipatedNodes",
-		outputs: [
-			{
-				components: [
-					{
-						internalType: "uint256",
-						name: "points",
-						type: "uint256",
-					},
-					{
-						components: [
-							{
-								internalType: "string",
-								name: "title",
-								type: "string",
-							},
-							{
-								internalType: "string",
-								name: "nodeType",
-								type: "string",
-							},
-							{
-								components: [
-									{
-										internalType: "address",
-										name: "contributor",
-										type: "address",
-									},
-									{
-										internalType: "string",
-										name: "ipfsHash",
-										type: "string",
-									},
-									{
-										internalType: "uint256",
-										name: "createdAt",
-										type: "uint256",
-									},
-								],
-								internalType: "struct Contribution.ContributionDetail[]",
-								name: "contributions",
-								type: "tuple[]",
-							},
-							{
-								internalType: "uint256",
-								name: "createdAt",
-								type: "uint256",
-							},
-							{
-								internalType: "address",
-								name: "createdBy",
-								type: "address",
-							},
-							{
-								internalType: "bool",
-								name: "isFinished",
-								type: "bool",
-							},
-							{
-								internalType: "uint256",
-								name: "techTreeId",
-								type: "uint256",
-							},
-							{
-								components: [
-									{
-										internalType: "address",
-										name: "funder",
-										type: "address",
-									},
-									{
-										internalType: "uint256",
-										name: "amount",
-										type: "uint256",
-									},
-									{
-										internalType: "uint256",
-										name: "fundedAt",
-										type: "uint256",
-									},
-								],
-								internalType: "struct Contribution.Treasury",
-								name: "treasury",
-								type: "tuple",
-							},
-							{
-								components: [
-									{
-										internalType: "address",
-										name: "writer",
-										type: "address",
-									},
-									{
-										internalType: "uint256",
-										name: "createdAt",
-										type: "uint256",
-									},
-									{
-										internalType: "string",
-										name: "ipfsHash",
-										type: "string",
-									},
-								],
-								internalType: "struct Contribution.RFP",
-								name: "rfp",
-								type: "tuple",
-							},
-						],
-						internalType: "struct Contribution.NodeLite",
-						name: "node",
-						type: "tuple",
-					},
-				],
-				internalType: "struct Contribution.UserNodePoints[]",
-				name: "",
-				type: "tuple[]",
-			},
-		],
-		stateMutability: "view",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "uint256",
-				name: "",
-				type: "uint256",
-			},
-			{
-				internalType: "uint256",
 				name: "",
 				type: "uint256",
 			},
 		],
 		name: "nodes",
 		outputs: [
+			{
+				internalType: "string",
+				name: "id",
+				type: "string",
+			},
 			{
 				internalType: "string",
 				name: "title",
@@ -1103,6 +978,11 @@ export const contributionAbi = [
 				components: [
 					{
 						internalType: "string",
+						name: "id",
+						type: "string",
+					},
+					{
+						internalType: "string",
 						name: "title",
 						type: "string",
 					},
@@ -1118,6 +998,11 @@ export const contributionAbi = [
 			},
 			{
 				components: [
+					{
+						internalType: "string",
+						name: "id",
+						type: "string",
+					},
 					{
 						internalType: "string",
 						name: "source",

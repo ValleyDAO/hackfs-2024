@@ -11,12 +11,14 @@ export interface AuthContextProps {
 	account?: Account;
 	isAuthenticated: boolean;
 	login: () => void;
+	logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
 	account: undefined,
 	isAuthenticated: false,
 	login: () => {},
+	logout: () => {},
 });
 
 export const useAuth = (): AuthContextProps => {
@@ -32,13 +34,14 @@ type AuthProviderProps = {
 };
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-	const { authenticated, user, login, ready } = usePrivy();
+	const { authenticated, user, login, ready, logout } = usePrivy();
 
 	const value = useMemo(
 		() => ({
 			account: user?.id ? { address: user.id } : undefined,
 			isAuthenticated: authenticated,
 			login,
+			logout,
 		}),
 		[user, ready],
 	);

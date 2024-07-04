@@ -1,4 +1,4 @@
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 
 import { Button } from "@/components/button";
 import { WarningOutlined } from "@/components/icons/WarningOutlined";
@@ -35,13 +35,13 @@ export function WriteRfp() {
 	}, [isSuccess]);
 
 	async function handlePublish() {
-		if (!proposal || !id || isNaN(Number(id))) return;
+		if (!proposal || !id) return;
 		setIsSubmitting(true);
 		writeContract({
 			abi: contributionAbi,
 			address: contributionContractAddress,
 			functionName: "addRfp",
-			args: [techTreeId as bigint, BigInt(id) as bigint, proposal],
+			args: [techTreeId as bigint, id, proposal],
 		});
 	}
 

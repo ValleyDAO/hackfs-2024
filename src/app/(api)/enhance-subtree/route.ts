@@ -35,8 +35,6 @@ export async function POST(req: NextRequest) {
 			],
 			model: "claude-3-5-sonnet-20240620",
 		});
-
-		console.log(message.content);
 		const data =
 			message.content?.map((item) => JSON.parse((item as any)?.text))?.[0] ||
 			{};

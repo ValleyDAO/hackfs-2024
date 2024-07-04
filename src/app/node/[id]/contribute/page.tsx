@@ -1,6 +1,6 @@
 "use client";
 
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { Button } from "@/components/button";
 import { InputRichText } from "@/components/richText/InputRichText";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
@@ -35,7 +35,7 @@ export default function Page() {
 			abi: contributionAbi,
 			address: contributionContractAddress,
 			functionName: "addFunds",
-			args: [techTreeId as bigint, id as bigint, editedResearch],
+			args: [techTreeId as bigint, id, editedResearch],
 		});
 	}
 

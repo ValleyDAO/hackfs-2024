@@ -1,6 +1,6 @@
 "use client";
 
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { Contributor } from "@/typings";
 import { getShortenedFormat } from "@/utils/string.utils";
 import { formatDistance } from "date-fns";

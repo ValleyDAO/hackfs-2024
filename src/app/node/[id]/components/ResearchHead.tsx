@@ -1,7 +1,7 @@
 "use client";
 
-import { ProjectMenu } from "@/app/app/[techTreeId]/node/[id]/components/ProjectMenu";
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { ProjectMenu } from "@/app/node/[id]/components/ProjectMenu";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { StatusTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";

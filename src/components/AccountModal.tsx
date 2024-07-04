@@ -36,11 +36,10 @@ const points: Point[] = [
 ];
 
 export function AccountModal({ close }: AccountModalProps) {
-	const { account } = useAuth();
-	const router = useRouter();
+	const { account, logout } = useAuth();
 
 	function handleLogout() {
-		router.push("/logout");
+		logout();
 		close();
 	}
 
@@ -57,14 +56,14 @@ export function AccountModal({ close }: AccountModalProps) {
 								{getShortenedFormat(account.address, 6)}
 							</p>
 						</div>
-						<div onClick={close} className="horizontal space-x-4">
+						{/*<div onClick={close} className="horizontal space-x-4">
 							<div
 								onClick={handleLogout}
 								className="bg-transition cursor-pointer rounded bg-gray-100 px-2 pb-1.5 pt-0.5 hover:bg-gray-200"
 							>
 								<LogoutOutlined className="text-lg text-gray-900" />
 							</div>
-						</div>
+						</div>*/}
 					</div>
 					<div className="border-b border-gray-100 pb-2.5 mb-2.5">
 						<div className="text-sm font-bold">Total: {totalPoints} Points</div>

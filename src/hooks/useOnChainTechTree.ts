@@ -2,7 +2,6 @@
 
 import { useContributionContract } from "@/hooks/useContributionContract";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, NodeType } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import { useEffect, useMemo } from "react";
@@ -13,27 +12,31 @@ interface useOnChainTechTreeProps {
 	edges: EdgeData[];
 }
 
-export function useOnChainTechTree(): useOnChainTechTreeProps {
-	const { activeTechTree } = useTechTree();
+interface useOnChainTechTreeArgs {
+	techTreeId: bigint;
+}
+
+export function useOnChainTechTree({
+	techTreeId,
+}: useOnChainTechTreeArgs): useOnChainTechTreeProps {
 	const { events } = useTxEvents();
 	const { data, isLoading, refetch } = useContributionContract<
 		[NodeData[], EdgeData[]]
 	>({
 		functionName: "getNodesAndEdgesFromTechTreeId",
-		args: [activeTechTree?.id as bigint],
-		enabled: !isInvalidNumber(activeTechTree?.id),
+		args: [techTreeId],
 	});
 
 	useEffect(() => {
 		const event = events.find(
 			(event) =>
 				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
+				event.args.techTreeId === techTreeId,
 		);
 		if (event) {
 			refetch();
 		}
-	}, [events, activeTechTree?.id]);
+	}, [events, techTreeId]);
 
 	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
 		return [

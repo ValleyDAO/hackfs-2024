@@ -6,9 +6,5 @@ export interface InputLabelProps {
 }
 
 export function InputLabel({ label }: InputLabelProps) {
-	return (
-		<label className="font-medium text-gray-600 text-xs block mb-1.5">
-			{label}
-		</label>
-	);
+	return <label className=" text-gray-700 text-sm block mb-1.5">{label}</label>;
 }

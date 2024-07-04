@@ -1,8 +1,8 @@
 import { Button } from "@/components/button";
 import { Modal } from "@/components/modal";
 
-import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/DocumentViewer";
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { DocumentViewer } from "@/app/node/[id]/components/DocumentViewer";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { InputNumber } from "@/components/input/input-number";
 import { RichText } from "@/components/richText/RichText";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useWriteContract } from "wagmi";
+import { toWei } from "web3-utils";
 
 interface DepositFundsProps {
 	close(): void;
@@ -47,8 +48,8 @@ function DepositFunds({ close, onSuccess }: DepositFundsProps) {
 			abi: contributionAbi,
 			address: contributionContractAddress,
 			functionName: "addFunds",
-			args: [techTreeId as bigint, id as bigint],
-			value: toWei(`${value}`),
+			args: [techTreeId as bigint, id],
+			value: BigInt(toWei(value.toString())),
 		});
 	}
 

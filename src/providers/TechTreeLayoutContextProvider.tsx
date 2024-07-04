@@ -2,9 +2,7 @@
 
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { EdgeData, NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
-import { fetchWrapper } from "@/utils/query.utils";
+import { NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
 import React, {
 	ReactNode,
 	createContext,
@@ -40,8 +38,8 @@ export const useTechTreeContext = (): TechTreeContextProps => {
 
 export function TechTreeLayoutContextProvider({
 	children,
-}: { children: ReactNode }) {
-	const { activeTechTree } = useTechTree();
+	techTreeId,
+}: { children: ReactNode; techTreeId: bigint }) {
 	const { events } = useTxEvents();
 	const { nodes, hasUpdates } = useNodesAndEdges();
 	const [mode, setMode] = React.useState<TechTreeMode>(
@@ -57,24 +55,24 @@ export function TechTreeLayoutContextProvider({
 		const event = events.find(
 			(event) =>
 				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
+				event.args.techTreeId === techTreeId,
 		);
 		if (event) {
 			setActiveNode(undefined);
 			setMode("move");
 			setActiveEditType(undefined);
 		}
-	}, [events, activeTechTree?.id]);
+	}, [events, techTreeId]);
 
 	useEffect(() => {
-		if (!activeTechTree && activeNode) {
+		if (!techTreeId && activeNode) {
 			setActiveNode(undefined);
 			setMode("move");
 			setActiveEditType(undefined);
-		} else if (activeTechTree && nodes?.length === 0) {
+		} else if (techTreeId && nodes?.length === 0) {
 			setMode("edit");
 		}
-	}, [activeTechTree, activeNode]);
+	}, [techTreeId, activeNode]);
 
 	function handleSetMode(mode: TechTreeMode) {
 		if (mode === "edit") {

@@ -6,26 +6,17 @@ import { CaretDownOutlined } from "@/components/icons/CaretDownOutlined";
 import { getShortenedFormat } from "@/utils/string.utils";
 
 import { AccountModal } from "@/components/AccountModal";
+import { Networks } from "@/components/Networks";
 import { Button } from "@/components/button";
 import { useAuth } from "@/providers/AuthProvider";
-import { useWallets } from "@privy-io/react-auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import Select from "react-select";
-import { filecoinCalibration, hardhat } from "viem/chains";
-
-const options = [
-	{ value: `${filecoinCalibration.id}`, label: "Calibration" },
-	{ value: `eip155:31337`, label: "Devnet" },
-];
 
 export function Header() {
 	const { account, login } = useAuth();
-	const { wallets } = useWallets();
-	const wallet = wallets[0]; // Replace this with your desired wallet
-	const chainId = wallet?.chainId;
+
 	const [showAccountDetails, setShowAccountDetails] = React.useState(false);
 	return (
 		<>
@@ -38,16 +29,10 @@ export function Header() {
 						<FullLogo className="hover:!fill-blue-700" />
 					</Link>
 					<span className="text-xs text-gray-400">|</span>
-					<div className="text-sm">HackFS</div>
+					<div className="text-sm">Pioneer</div>
 				</div>
 				<div className="horizontal space-x-6">
-					<div>
-						<Select
-							options={options}
-							value={options?.find((a) => a.value === chainId)}
-							className="!text-xs z-20"
-						/>
-					</div>
+					<Networks />
 					{account ? (
 						<div
 							onClick={() => setShowAccountDetails(true)}

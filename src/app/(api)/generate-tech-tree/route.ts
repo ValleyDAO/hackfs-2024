@@ -26,7 +26,6 @@ export async function GET(req: NextRequest, params: { title: string }) {
 			},
 		],
 	});
-	console.log(JSON.stringify(message.content));
 	const data = message.content?.map((item) => JSON.parse((item as any)?.text));
 	return NextResponse.json({ data: data?.[0] });
 }

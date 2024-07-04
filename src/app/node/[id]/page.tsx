@@ -1,12 +1,12 @@
 "use client";
 
-import { RequestForFunding } from "@/app/app/[techTreeId]/node/[id]/components/RequestForFunding";
+import { RequestForFunding } from "@/app/node/[id]/components/RequestForFunding";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 
-import { Contributors } from "@/app/app/[techTreeId]/node/[id]/components/Contributors";
-import { DocumentViewer } from "@/app/app/[techTreeId]/node/[id]/components/DocumentViewer";
-import { WriteRfp } from "@/app/app/[techTreeId]/node/[id]/components/WriteRfp";
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { Contributors } from "@/app/node/[id]/components/Contributors";
+import { DocumentViewer } from "@/app/node/[id]/components/DocumentViewer";
+import { WriteRfp } from "@/app/node/[id]/components/WriteRfp";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 
 import { Button } from "@/components/button";
 import { EditOutlined } from "@/components/icons/EditOutlined";

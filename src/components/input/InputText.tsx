@@ -62,7 +62,7 @@ function InputText({
 			{label && <InputLabel label={label} />}
 			<div
 				className={clsx(
-					"leading-11 m-0 flex h-9 w-full rounded border border-gray-200 p-0 align-middle shadow-none transition-all duration-300",
+					"leading-11 m-0 flex h-11 w-full rounded border border-gray-200 p-0 align-middle shadow-none transition-all duration-300",
 					{
 						"ring-1": focus,
 						"hover:border-blue-300 hover:shadow-blue-300": !focus && isValid,
@@ -84,7 +84,7 @@ function InputText({
 					onBlur={onBlur}
 					tabIndex={tabIndex}
 					className={clsx(
-						"leading-11 h-full w-full rounded border-0 p-0 px-3 text-xs text-black outline-none transition-all duration-300 ease-in",
+						"leading-11 h-full w-full rounded border-0 p-0 px-3 text-sm text-black outline-none transition-all duration-300 ease-in",
 						{ "cursor-not-allowed": disabled },
 						className,
 					)}

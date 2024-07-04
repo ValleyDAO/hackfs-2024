@@ -1,6 +1,6 @@
 import { Navigation, NavigationItemProps } from "@/components/navigation";
 
-import { useResearchPage } from "@/app/app/[techTreeId]/node/[id]/providers/ResearchPageProvider";
+import { useResearchPage } from "@/app/node/[id]/providers/ResearchPageProvider";
 import { NodeStatus } from "@/typings";
 import { usePathname } from "next/navigation";
 import React from "react";

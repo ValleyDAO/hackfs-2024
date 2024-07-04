@@ -2,9 +2,7 @@
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
-import { useTxEvents } from "@/providers/ContractEventsProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { EdgeData, NodeData } from "@/typings";
+import { EdgeData, NodeData, TechTree } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import deepEqual from "deep-equal";
 import React, {
@@ -13,7 +11,6 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
-	useEffect,
 } from "react";
 import { useWriteContract } from "wagmi";
 
@@ -55,178 +52,13 @@ export const useNodesAndEdges = (): NodesAndEdgesProps => {
 	return context;
 };
 
-export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
-	const { activeTechTree } = useTechTree();
-	const { events } = useTxEvents();
-
-	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
-
-	/*const isLoadingOnChain = false;
-	const nodes: NodeData[] = [
-		{
-			id: "lfg3m2s",
-			title: "Biochemistry Fundamentals",
-			description:
-				"Basic understanding of chemical processes in living organisms",
-			type: "research",
-		},
-		{
-			id: "k9p7x1r",
-			title: "Microbial Fermentation",
-			description: "Study of microorganisms for fermentation processes",
-			type: "research",
-		},
-		{
-			id: "h2j6n8t",
-			title: "Biomass Feedstock Analysis",
-			description:
-				"Evaluation of various plant materials for biofuel production",
-			type: "research",
-		},
-		{
-			id: "w5f1c9q",
-			title: "Enzymatic Hydrolysis",
-			description: "Breakdown of complex carbohydrates into simple sugars",
-			type: "development",
-		},
-		{
-			id: "y7m3b6v",
-			title: "Algae Cultivation Techniques",
-			description: "Methods for growing algae for biofuel production",
-			type: "development",
-		},
-		{
-			id: "z4d8g1l",
-			title: "Cellulosic Ethanol Production",
-			description: "Converting cellulose-based biomass into ethanol",
-			type: "development",
-		},
-		{
-			id: "u6s2n9f",
-			title: "Biodiesel Synthesis",
-			description: "Production of biodiesel from vegetable oils or animal fats",
-			type: "development",
-		},
-		{
-			id: "a1x7p3e",
-			title: "Biogas Generation",
-			description: "Anaerobic digestion for biogas production",
-			type: "development",
-		},
-		{
-			id: "b9t5r7m",
-			title: "Biofuel Refining Processes",
-			description: "Techniques for purifying and upgrading biofuels",
-			type: "optimization",
-		},
-		{
-			id: "c3v8k2d",
-			title: "Biofuel Engine Compatibility",
-			description: "Adapting engines for efficient use of biofuels",
-			type: "optimization",
-		},
-		{
-			id: "e5j1h9g",
-			title: "Sustainable Feedstock Management",
-			description:
-				"Practices for environmentally responsible biomass production",
-			type: "optimization",
-		},
-		{
-			id: "f7q4w2n",
-			title: "Green Biofuels",
-			description: "Environmentally friendly biofuels from sustainable sources",
-			type: "end-goal",
-		},
-	];
-
-	const edges: EdgeData[] = [
-		{
-			id: "lfg3m2s-k9p7x1r",
-			source: "lfg3m2s",
-			target: "k9p7x1r",
-		},
-		{
-			id: "lfg3m2s-h2j6n8t",
-			source: "lfg3m2s",
-			target: "h2j6n8t",
-		},
-		{
-			id: "k9p7x1r-w5f1c9q",
-			source: "k9p7x1r",
-			target: "w5f1c9q",
-		},
-		{
-			id: "k9p7x1r-y7m3b6v",
-			source: "k9p7x1r",
-			target: "y7m3b6v",
-		},
-		{
-			id: "h2j6n8t-w5f1c9q",
-			source: "h2j6n8t",
-			target: "w5f1c9q",
-		},
-		{
-			id: "h2j6n8t-z4d8g1l",
-			source: "h2j6n8t",
-			target: "z4d8g1l",
-		},
-		{
-			id: "w5f1c9q-z4d8g1l",
-			source: "w5f1c9q",
-			target: "z4d8g1l",
-		},
-		{
-			id: "w5f1c9q-u6s2n9f",
-			source: "y7m3b6v",
-			target: "u6s2n9f",
-		},
-		{
-			id: "y7m3b6v-a1x7p3e",
-			source: "z4d8g1l",
-			target: "b9t5r7m",
-		},
-		{
-			id: "z4d8g1l-b9t5r7m",
-			source: "u6s2n9f",
-			target: "b9t5r7m",
-		},
-		{
-			id: "u6s2n9f-a1x7p3e",
-			source: "a1x7p3e",
-			target: "b9t5r7m",
-		},
-		{
-			id: "a1x7p3e-f7q4w2n",
-			source: "b9t5r7m",
-			target: "c3v8k2d",
-		},
-		{
-			id: "b9t5r7m-f7q4w2n",
-			source: "h2j6n8t",
-			target: "e5j1h9g",
-		},
-		{
-			id: "c3v8k2d-f7q4w2n",
-			source: "y7m3b6v",
-			target: "e5j1h9g",
-		},
-		{
-			id: "e5j1h9g-f7q4w2n",
-			source: "b9t5r7m",
-			target: "f7q4w2n",
-		},
-		{
-			id: "f7q4w2n-f7q4w2n",
-			source: "c3v8k2d",
-			target: "f7q4w2n",
-		},
-		{
-			id: "f7q4w2n-f7q4w2n",
-			source: "e5j1h9g",
-			target: "f7q4w2n",
-		},
-	];*/
+export function NodesAndEdgesProvider({
+	children,
+	techTree,
+}: { children: ReactNode; techTree: TechTree }) {
+	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree({
+		techTreeId: techTree.id,
+	});
 
 	const {
 		data: hash,
@@ -238,7 +70,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
 
-	useEffect(() => {
+	/*	useEffect(() => {
 		const event = events.find(
 			(event) =>
 				event.eventName === "TechTreeUpdated" &&
@@ -248,7 +80,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			setUpdatedNodes([]);
 			setUpdatedEdges([]);
 		}
-	}, [events, activeTechTree?.id]);
+	}, [events, activeTechTree?.id]);*/
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];
@@ -270,7 +102,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		]);
 	}
 
-	function updateFromGaladriel(newNodes: NodeData[], newEdges: EdgeData[]) {
+	function updateAll(newNodes: NodeData[], newEdges: EdgeData[]) {
 		const uniqueNodes = new Map(newNodes.map((node) => [node.id, node]));
 		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
 
@@ -298,16 +130,15 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-		if (!activeTechTree || isInvalidNumber(activeTechTree?.id)) return;
-
 		try {
 			writeContract({
 				abi: contributionAbi,
 				address: contributionContractAddress,
 				functionName: "updateTechTree",
 				args: [
-					activeTechTree.id,
+					techTree.id,
 					updatedNodes.map((node) => ({
+						id: node.id,
 						title: node.title || "",
 						nodeType: node.type?.toLowerCase(),
 					})),
@@ -327,7 +158,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
-			updateAll: updateFromGaladriel,
+			updateAll,
 			handleEdgeUpdate,
 			handleNodeUpdate,
 			hasUpdates:

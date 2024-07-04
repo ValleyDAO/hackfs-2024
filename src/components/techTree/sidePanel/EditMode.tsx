@@ -2,13 +2,10 @@
 
 import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
-import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { InputSelect } from "@/components/input/InputSelect";
 import InputText from "@/components/input/InputText";
-import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, NodeType, SelectOptionItem } from "@/typings";
 import { fetchWrapper } from "@/utils/query.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
@@ -16,7 +13,6 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
-	const { activeTechTree } = useTechTree();
 	const { handleNodeUpdate, nodes, updateAll } = useNodesAndEdges();
 	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
 		useTechTreeContext();
@@ -39,12 +35,8 @@ export function EditMode() {
 		setUpdate({});
 		if (update?.type === "end-goal") {
 			setIsHandlingSave(true);
-			setActiveNodeRaw?.({
-				id: activeNode?.id,
-				title: update.title,
-				type: update.type,
-			} as NodeData);
 			await create(update.title);
+			setActiveNode(undefined);
 			setIsHandlingSave(false);
 			setMode("move");
 		} else {
@@ -66,7 +58,7 @@ export function EditMode() {
 				type: node.type,
 			})),
 			response?.edges.map((edge, idx) => ({
-				id: edge.id,
+				id: `${idx}`,
 				source: edge.source,
 				target: edge.target,
 			})),
@@ -140,7 +132,7 @@ export function EditMode() {
 					{(activeNode?.type === "development" ||
 						activeNode?.type === "research") && (
 						<Link
-							href={`/app/${activeTechTree?.id}/node/${activeNode?.id}`}
+							href={`/app/node/${activeNode?.id}`}
 							className="mt-10 block w-full"
 						>
 							<Button className="!py-3" fullSize variant="black">
