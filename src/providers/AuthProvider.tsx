@@ -20,15 +20,19 @@ type Account = {
 export interface AuthContextProps {
 	account?: Account;
 	isAuthenticated: boolean;
+	hasBalance: boolean;
 	login: () => void;
 	logout: () => void;
+	showInstructionsForTestnetTokens: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
 	account: undefined,
 	isAuthenticated: false,
+	hasBalance: false,
 	login: () => {},
 	logout: () => {},
+	showInstructionsForTestnetTokens: () => {},
 });
 
 export const useAuth = (): AuthContextProps => {
@@ -65,6 +69,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 		() => ({
 			account: user?.id ? { address: user.id } : undefined,
 			isAuthenticated: authenticated,
+			hasBalance: balance !== "0",
+			showInstructionsForTestnetTokens: () =>
+				setShowInstructionsForTestnetTokens(true),
 			login,
 			logout,
 		}),
