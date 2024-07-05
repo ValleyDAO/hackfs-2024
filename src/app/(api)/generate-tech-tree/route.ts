@@ -7,6 +7,7 @@ const anthropic = new Anthropic({
 
 export async function GET(req: NextRequest, params: { title: string }) {
 	const title = req.nextUrl.searchParams.get("title") || "Omni Solar Panels";
+	const id = req.nextUrl.searchParams.get("id");
 
 	const message = await anthropic.messages.create({
 		model: "claude-3-5-sonnet-20240620",
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest, params: { title: string }) {
 				content: [
 					{
 						type: "text",
-						text: `End Goal  = '${title}'`,
+						text: `End Goal  = '${title}' & End Goal ID = '${id}'`,
 					},
 				],
 			},

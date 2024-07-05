@@ -6,7 +6,7 @@ import { CaretDownOutlined } from "@/components/icons/CaretDownOutlined";
 import { getShortenedFormat } from "@/utils/string.utils";
 
 import { AccountModal } from "@/components/AccountModal";
-import { Networks } from "@/components/Networks";
+import { AvailableBlockchains } from "@/components/AvailableBlockchains";
 import { Button } from "@/components/button";
 import { useAuth } from "@/providers/AuthProvider";
 import Link from "next/link";
@@ -28,11 +28,9 @@ export function Header() {
 					>
 						<FullLogo className="hover:!fill-blue-700" />
 					</Link>
-					<span className="text-xs text-gray-400">|</span>
-					<div className="text-sm">Pioneer</div>
 				</div>
 				<div className="horizontal space-x-6">
-					<Networks />
+					<AvailableBlockchains />
 					{account ? (
 						<div
 							onClick={() => setShowAccountDetails(true)}
@@ -45,7 +43,9 @@ export function Header() {
 							<CaretDownOutlined className="text-[9px]" />
 						</div>
 					) : (
-						<Button onClick={login}>Login</Button>
+						<Button className="px-4" variant="black" onClick={login}>
+							login
+						</Button>
 					)}
 				</div>
 			</header>

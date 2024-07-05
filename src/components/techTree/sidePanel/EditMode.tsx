@@ -13,9 +13,8 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
-	const { handleNodeUpdate, nodes, updateAll } = useNodesAndEdges();
-	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
-		useTechTreeContext();
+	const { handleNodeUpdate, nodes } = useNodesAndEdges();
+	const { activeNode, setActiveNode, setMode } = useTechTreeContext();
 	const [isHandlingSave, setIsHandlingSave] = React.useState(false);
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
@@ -35,7 +34,7 @@ export function EditMode() {
 		setUpdate({});
 		if (update?.type === "end-goal") {
 			setIsHandlingSave(true);
-			await create(update.title);
+			// await create(update.title);
 			setActiveNode(undefined);
 			setIsHandlingSave(false);
 			setMode("move");
@@ -44,34 +43,13 @@ export function EditMode() {
 		}
 	}
 
-	async function create(title?: string) {
-		const response = await fetchWrapper<{
-			nodes: NodeData[];
-			edges: EdgeData[];
-		}>("/generate-tech-tree?title=" + title);
-
-		updateAll(
-			response?.nodes.map((node) => ({
-				id: node.id,
-				title: node.title,
-				description: node.description,
-				type: node.type,
-			})),
-			response?.edges.map((edge, idx) => ({
-				id: `${idx}`,
-				source: edge.source,
-				target: edge.target,
-			})),
-		);
-	}
-
 	const hasEndGoalInNodes =
 		nodes?.length > 0 && nodes.some((node) => node.type === "end-goal");
 
 	return (
 		<div className="pr-2">
 			<div className="mb-6">
-				<div className="text-xs uppercase text-gray-500">Edit Mode</div>
+				<div className="text-xs uppercase text-gray-500">Creator Mode</div>
 				<div className="text-lg font-bold">{activeNode?.title}</div>
 				<div className="mt-4">
 					<div className="text-xs text-gray-500">Node Type</div>

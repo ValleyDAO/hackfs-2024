@@ -49,8 +49,6 @@ export function TechTreeLayout() {
 		}
 	}
 
-	console.log(layoutNodes, layoutEdges);
-
 	return (
 		<div
 			className={clsx(
@@ -87,7 +85,7 @@ export function TechTreeLayout() {
 					edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 					onNodeClick={(evt, { id }) => setActiveNode(id)}
 				/>
-				{account?.address && <TechTreeMenu />}
+				<TechTreeMenu />
 			</>
 			<Legend />
 		</div>

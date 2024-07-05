@@ -289,6 +289,11 @@ export const contributionAbi = [
 				name: "_title",
 				type: "string",
 			},
+			{
+				internalType: "string",
+				name: "_nodeId",
+				type: "string",
+			},
 		],
 		name: "addTechTree",
 		outputs: [],
@@ -796,6 +801,37 @@ export const contributionAbi = [
 				internalType: "struct Contribution.NodeLite[]",
 				name: "",
 				type: "tuple[]",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "techTreeId",
+				type: "uint256",
+			},
+		],
+		name: "getTechTree",
+		outputs: [
+			{
+				components: [
+					{
+						internalType: "string",
+						name: "title",
+						type: "string",
+					},
+					{
+						internalType: "uint256",
+						name: "id",
+						type: "uint256",
+					},
+				],
+				internalType: "struct Contribution.TechTree",
+				name: "",
+				type: "tuple",
 			},
 		],
 		stateMutability: "view",

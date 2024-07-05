@@ -72,13 +72,13 @@ export function EditTechTreeMenu() {
 				<div className="flex w-full items-center space-x-4">
 					<div
 						onClick={handleBackFromEditMode}
-						className="horizontal text-sm space-x-1.5 cursor-pointer group hover:text-blue-700 text-gray-500 border-r border-gray-200 pr-8"
+						className="horizontal text-sm space-x-1.5 cursor-pointer group hover:text-blue-700 text-gray-600 border-r border-gray-200 pr-8"
 					>
 						<ArrowLeftOutlined />
 						<div className="text-xs">
 							Leave{" "}
-							<span className="font-medium group-hover:text-blue-700 text-gray-600">
-								Edit Mode
+							<span className="font-medium group-hover:text-blue-700 text-gray-800">
+								Creator Mode
 							</span>{" "}
 							{hasUpdates && "& Reset Changes"}
 						</div>

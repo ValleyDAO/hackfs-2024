@@ -11,6 +11,7 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
+	useEffect,
 } from "react";
 import { useWriteContract } from "wagmi";
 
@@ -60,27 +61,9 @@ export function NodesAndEdgesProvider({
 		techTreeId: techTree.id,
 	});
 
-	const {
-		data: hash,
-		writeContract,
-		isSuccess,
-		isError,
-		isPending,
-	} = useWriteContract();
+	const { data: hash, writeContract, isPending } = useWriteContract();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
-
-	/*	useEffect(() => {
-		const event = events.find(
-			(event) =>
-				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
-		);
-		if (event) {
-			setUpdatedNodes([]);
-			setUpdatedEdges([]);
-		}
-	}, [events, activeTechTree?.id]);*/
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];
@@ -103,7 +86,11 @@ export function NodesAndEdgesProvider({
 	}
 
 	function updateAll(newNodes: NodeData[], newEdges: EdgeData[]) {
-		const uniqueNodes = new Map(newNodes.map((node) => [node.id, node]));
+		const uniqueNodes = new Map(
+			newNodes
+				.filter((item) => item.type !== "end-goal")
+				.map((node) => [node.id, node]),
+		);
 		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
 
 		updatedNodes.forEach((node) => uniqueNodes.set(node.id, node));

@@ -9,9 +9,17 @@ import React, {
 import clsx from "clsx";
 import Link from "next/link";
 
+export interface DropdownMenuItemProps {
+	label: string;
+	href?: string;
+	id: string;
+	onClick?: (event: MouseEvent<HTMLElement>) => void;
+	icon?: React.ReactNode;
+}
+
 interface MenuDropdownProps {
 	children: ReactNode;
-	menu: { label: string; href: string }[];
+	menu: DropdownMenuItemProps[];
 	visible?: boolean;
 }
 
@@ -33,6 +41,15 @@ function DropDown({ children, menu, visible = true }: MenuDropdownProps) {
 		}
 	}
 
+	function handleChildClick(
+		event: React.MouseEvent<HTMLElement>,
+		menuItem: DropdownMenuItemProps,
+	) {
+		event.stopPropagation();
+		menuItem.onClick && menuItem?.onClick?.(event);
+		setIsOpen(false);
+	}
+
 	function handleMouseDown(event: MouseEvent<HTMLDivElement>) {
 		if (event.type === "mousedown" && event.button !== 0) return;
 		setIsOpen(true);
@@ -44,21 +61,20 @@ function DropDown({ children, menu, visible = true }: MenuDropdownProps) {
 				className="overflow-y-auto right-0 absolute top-[100%] z-50 mt-1 list-none text-left bg-clip-padding bg-white rounded border outline-none shadow-sm"
 				aria-expanded="true"
 			>
-				{menu.map((menuItem, menuItemIdx) => (
-					<div
-						key={`menu-section-${menuItemIdx}`}
-						className="py-1.5 pl-5 clear-both !w-48 !m-1 text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
-					>
-						{menu.map((menuItem) => (
-							<Link
-								href={menuItem.href}
-								className="h-full text-sm block w-full hover:text-blue-700 text-gray-800 group"
-							>
-								{menuItem?.label}
-							</Link>
-						))}
-					</div>
-				))}
+				{menu.map((menuItem, menuItemIdx) => {
+					const Component = menuItem.href ? Link : "div";
+					return (
+						<Component
+							href={menuItem.href || ""}
+							onClick={(e) => handleChildClick(e, menuItem)}
+							key={`menu-section-${menuItem.id}`}
+							className="py-3 px-6 clear-both !min-w-58 text-sm flex items-center gap-x-2 text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
+						>
+							{menuItem?.icon && menuItem?.icon}
+							{menuItem?.label}
+						</Component>
+					);
+				})}
 			</div>
 		) : null;
 

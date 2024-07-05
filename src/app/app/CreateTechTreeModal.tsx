@@ -3,6 +3,7 @@ import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import InputText from "@/components/input/InputText";
 import { Modal } from "@/components/modal";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
+import { generateId } from "@/utils/nodes.utils";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -18,6 +19,7 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		isSuccess,
 		isError,
 		isPending,
+		error,
 	} = useWriteContract();
 
 	useWatchContractEvent({
@@ -47,7 +49,7 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 			address: contributionContractAddress,
 			abi: contributionAbi,
 			functionName: "addTechTree",
-			args: [title],
+			args: [title, generateId()],
 		});
 	}
 
