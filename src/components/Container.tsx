@@ -10,7 +10,6 @@ import { AvailableBlockchains } from "@/components/AvailableBlockchains";
 import { Button } from "@/components/button";
 import { useAuth } from "@/providers/AuthProvider";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -22,10 +21,7 @@ export function Header() {
 		<>
 			<header className="w-full px-4 h-16 z-20 flex items-center text-gray-800 justify-between">
 				<div className="flex items-center space-x-3">
-					<Link
-						href={account?.address ? "/app" : "/"}
-						className="w-[110px] font-semibold text-white"
-					>
+					<Link href="/" className="w-[110px] font-semibold text-white">
 						<FullLogo className="hover:!fill-blue-700" />
 					</Link>
 				</div>
@@ -43,8 +39,14 @@ export function Header() {
 							<CaretDownOutlined className="text-[9px]" />
 						</div>
 					) : (
-						<Button className="px-4" variant="black" onClick={login}>
-							login
+						<Button
+							ghost
+							size="small"
+							className="px-4 font-medium"
+							variant="black"
+							onClick={login}
+						>
+							Login
 						</Button>
 					)}
 				</div>
@@ -57,13 +59,6 @@ export function Header() {
 }
 
 export function Container({ children }: { children: React.ReactNode }) {
-	const router = useRouter();
-	const pathname = usePathname();
-
-	async function handleCreate() {
-		if (!pathname.startsWith("/app")) router.push("/app");
-	}
-
 	return (
 		<div className="w-full h-screen">
 			<Header />

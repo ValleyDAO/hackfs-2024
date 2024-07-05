@@ -22,7 +22,7 @@ function SummaryMode() {
 }
 
 export function TechTreeSidePanel() {
-	const { updateAll } = useNodesAndEdges();
+	const { updateAll, nodes } = useNodesAndEdges();
 	const { activeNode, setActiveNode, mode } = useTechTreeContext();
 	const [isEditing, setIsEditing] = React.useState(false);
 	const [isGenerating, setIsGenerating] = React.useState(false);
@@ -71,7 +71,15 @@ export function TechTreeSidePanel() {
 						<div className="flex justify-between mb-3">
 							<div className="mb-6">
 								<div className="text-lg font-bold">{activeNode?.title}</div>
-								<div className="text-sm">{activeNode?.description || "-"}</div>
+								<div className="text-sm">
+									{activeNode?.type ? (
+										<div className="mt-1">
+											<NodeTypeTag type={activeNode?.type} />
+										</div>
+									) : (
+										activeNode?.description || "-"
+									)}
+								</div>
 							</div>
 							<div
 								onClick={() => setActiveNode(undefined)}
@@ -80,18 +88,22 @@ export function TechTreeSidePanel() {
 								<CloseOutlined className="group-hover:text-red-700 text-base text-gray-500 transition-colors" />
 							</div>
 						</div>
-						<div className="text-sm">
-							{activeNode?.type && <NodeTypeTag type={activeNode?.type} />}
-						</div>
-						<div className="mt-6">
-							You are in {mode} mode. You can either add nodes and connections
-							manually or use the AI to generate them.
-						</div>
-						<div className="mt-6">
-							<Button loading={isGenerating} variant="primary" onClick={create}>
-								Generate Roadmap
-							</Button>
-						</div>
+
+						{nodes?.length === 1 && (
+							<div className="mt-6 space-y-5">
+								<div className="">
+									You are in {mode} mode. You can either add nodes and
+									connections manually or use the AI to generate them.
+								</div>
+								<Button
+									loading={isGenerating}
+									variant="primary"
+									onClick={create}
+								>
+									Generate roadmap
+								</Button>
+							</div>
+						)}
 					</div>
 				</motion.div>
 			</AnimatePresence>

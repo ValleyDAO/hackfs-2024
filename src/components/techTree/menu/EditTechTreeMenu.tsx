@@ -52,7 +52,6 @@ export function EditTechTreeMenu() {
 	const { setMode, activeEditType, setActiveEditType } = useTechTreeContext();
 
 	function handleBackFromEditMode() {
-		handlePublish("reset");
 		setMode("move");
 	}
 

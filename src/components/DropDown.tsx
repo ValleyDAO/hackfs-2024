@@ -68,7 +68,7 @@ function DropDown({ children, menu, visible = true }: MenuDropdownProps) {
 							href={menuItem.href || ""}
 							onClick={(e) => handleChildClick(e, menuItem)}
 							key={`menu-section-${menuItem.id}`}
-							className="py-3 px-6 clear-both !min-w-58 text-sm flex items-center gap-x-2 text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
+							className="py-3.5 px-6 clear-both !w-56 text-[0.80rem] flex items-center gap-x-2 text-gray-900 hover:text-blue-700 whitespace-nowrap cursor-pointer"
 						>
 							{menuItem?.icon && menuItem?.icon}
 							{menuItem?.label}

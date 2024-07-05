@@ -10,8 +10,8 @@ interface ProjectMenuProps {
 }
 
 export function ProjectMenu({ status }: ProjectMenuProps) {
-	const { id, techTreeId } = useResearchPage();
-	const basePath = `/app/${techTreeId}/node/${id}`;
+	const { id } = useResearchPage();
+	const basePath = `/node/${id}`;
 	let menu: NavigationItemProps[] = [];
 	const pathname = usePathname();
 
