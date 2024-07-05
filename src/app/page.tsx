@@ -11,15 +11,32 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 function CreateRoadmap({ onCreate }: { onCreate(): void }) {
-	const { isAuthenticated, login } = useAuth();
+	const {
+		isAuthenticated,
+		login,
+		showInstructionsForTestnetTokens,
+		hasBalance,
+	} = useAuth();
 	const [isAuthenticating, setIsAuthenticating] = React.useState(false);
 
 	useEffect(() => {
 		if (isAuthenticating && isAuthenticated) {
 			setIsAuthenticating(false);
-			onCreate();
+			if (hasBalance) {
+				onCreate();
+			} else {
+				showInstructionsForTestnetTokens();
+			}
 		}
-	}, [isAuthenticating, isAuthenticated]);
+	}, [isAuthenticating, isAuthenticated, hasBalance]);
+
+	function checkForBalanceAndExecute() {
+		if (isAuthenticated && hasBalance) {
+			onCreate();
+		} else {
+			showInstructionsForTestnetTokens();
+		}
+	}
 
 	function handleAuth() {
 		setIsAuthenticating(true);
@@ -28,7 +45,7 @@ function CreateRoadmap({ onCreate }: { onCreate(): void }) {
 
 	return (
 		<div
-			onClick={isAuthenticated ? onCreate : handleAuth}
+			onClick={isAuthenticated ? checkForBalanceAndExecute : handleAuth}
 			className={clsx(
 				"transition-all bg-green-50 flex flex-col items-center justify-center cursor-pointer text-green-900 hover:bg-green-100 border leading-none border-green-100 space-y-4 px-4 py-10 rounded-lg",
 			)}
