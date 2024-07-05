@@ -110,7 +110,7 @@ export function EditMode() {
 					{(activeNode?.type === "development" ||
 						activeNode?.type === "research") && (
 						<Link
-							href={`/app/node/${activeNode?.id}`}
+							href={`/node/${activeNode?.id}`}
 							className="mt-10 block w-full"
 						>
 							<Button className="!py-3" fullSize variant="black">

@@ -24,7 +24,7 @@ export default function Page() {
 			(event) => event.eventName === "ContributionAdded",
 		);
 		if (event) {
-			router.push(`/app/${techTreeId}/node/${id}`);
+			router.push(`/node/${id}`);
 		}
 	}, [events, id]);
 
@@ -39,12 +39,10 @@ export default function Page() {
 		});
 	}
 
-	console.log(editedResearch);
-
 	return (
 		<div className="w-full mt-2 space-y-2">
 			<div className="mt-4 flex justify-end space-x-2">
-				<Link href={`/app/${techTreeId}/nodes/${id}`}>
+				<Link href={`/node/${id}`}>
 					<Button disabled={isPending}>Cancel Changes</Button>
 				</Link>
 				<Button loading={isPending} variant="primary" onClick={handleUpdate}>

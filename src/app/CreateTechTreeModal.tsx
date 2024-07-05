@@ -1,4 +1,5 @@
 import { Button } from "@/components/button";
+import { ButtonWithAuthentication } from "@/components/button/ButtonWithAuthentication";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import InputText from "@/components/input/InputText";
 import { Modal } from "@/components/modal";
@@ -19,7 +20,6 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		isSuccess,
 		isError,
 		isPending,
-		error,
 	} = useWriteContract();
 
 	useWatchContractEvent({
@@ -30,7 +30,7 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 			logs.forEach((log) => {
 				if (log.transactionHash === hash) {
 					const args = (log as any).args as Record<string, any>;
-					router.push(`/app/${args.techTreeId}`);
+					router.push(`/roadmap/${args.techTreeId}`);
 				}
 			});
 		},
@@ -54,29 +54,34 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	}
 
 	return (
-		<Modal open close={handleBack}>
+		<Modal
+			wrapperWidth="max-w-2xl"
+			bodyClassName="px-2 py-3"
+			open
+			close={handleBack}
+		>
 			<div className="mb-6">
-				<h1 className="font-semibold text-base">Define an end-goal</h1>
+				<h1 className="font-bold text-lg">What would you like to achieve?</h1>
 				<p className="w-10/12 text-sm text-gray-700">
 					Clearly define the end-goal you want to achieve. This will help you
 					communicate your research to the community.
 				</p>
 			</div>
 			<InputText
-				label="End-goal"
 				placeholder="Dyson Sphere, Faster than light travel, etc."
 				value={title}
+				className="bg-gray-50"
 				onChange={setTitle}
 			/>
 			<div className="mt-4 w-full flex justify-end space-y-3">
-				<Button
+				<ButtonWithAuthentication
 					disabled={!title || title?.length < 2}
 					loading={isPending}
 					onClick={() => handleCreateTechTree(title)}
 					variant="primary"
 				>
 					Create
-				</Button>
+				</ButtonWithAuthentication>
 			</div>
 		</Modal>
 	);
