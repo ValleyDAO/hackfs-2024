@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "../styles/globals.scss";
 import { Container } from "@/components/Container";
 import Providers from "@/providers";
-import clsx from "clsx";
 import React from "react";
 
-const spaceGrotesk = Space_Grotesk({
+const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
 	display: "swap",
 });
 
 export const metadata: Metadata = {
-	title: "ValleyDAO | HackFS 2024",
+	title: "ValleyDAO",
 	description: "-",
 };
 
@@ -23,7 +22,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={clsx(spaceGrotesk.className)}>
+			<body className={plusJakartaSans.className}>
 				<Providers>
 					<Container>{children}</Container>
 				</Providers>

@@ -1,12 +1,10 @@
 import { EthAvatar } from "@/components/EthAvatar";
 import { LogoutOutlined } from "@/components/icons/LogoutOutlined";
 import { Modal } from "@/components/modal";
+import { useAuth } from "@/providers/AuthProvider";
 import { NodeData } from "@/typings";
-import { formatNumber } from "@/utils/number.utils";
 import { getShortenedFormat } from "@/utils/string.utils";
-import { useRouter } from "next/navigation";
 import React from "react";
-import { useActiveAccount } from "thirdweb/react";
 
 interface AccountModalProps {
 	close(): void;
@@ -21,27 +19,26 @@ const points: Point[] = [
 	{
 		value: 25,
 		node: {
-			id: BigInt(1),
+			id: "1",
 			title: "Develop Multi-Junction Solar Cells",
 			type: "development",
 		},
 	},
 	{
 		value: 5,
-		node: { id: BigInt(2), title: "optimizations in Gluten", type: "research" },
+		node: { id: "2", title: "optimizations in Gluten", type: "research" },
 	},
 	{
 		value: 10,
-		node: { id: BigInt(3), title: "CRISP prototypes", type: "development" },
+		node: { id: "3", title: "CRISP prototypes", type: "development" },
 	},
 ];
 
 export function AccountModal({ close }: AccountModalProps) {
-	const account = useActiveAccount();
-	const router = useRouter();
+	const { account, logout } = useAuth();
 
 	function handleLogout() {
-		router.push("/logout");
+		logout();
 		close();
 	}
 

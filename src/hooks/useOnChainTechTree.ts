@@ -1,12 +1,10 @@
 "use client";
 
-import { techTreeContract } from "@/lib/constants";
+import { useContributionContract } from "@/hooks/useContributionContract";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { EdgeData, NodeData, NodeType } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import { useEffect, useMemo } from "react";
-import { useReadContract } from "thirdweb/react";
 
 interface useOnChainTechTreeProps {
 	isLoadingOnChain: boolean;
@@ -14,41 +12,42 @@ interface useOnChainTechTreeProps {
 	edges: EdgeData[];
 }
 
-export function useOnChainTechTree(): useOnChainTechTreeProps {
-	const { activeTechTree } = useTechTree();
+interface useOnChainTechTreeArgs {
+	techTreeId: bigint;
+}
+
+export function useOnChainTechTree({
+	techTreeId,
+}: useOnChainTechTreeArgs): useOnChainTechTreeProps {
 	const { events } = useTxEvents();
-	const { data, isLoading, refetch } = useReadContract({
-		contract: techTreeContract,
-		method: "getNodesAndEdgesFromTechTreeId",
-		params: [activeTechTree?.id as bigint],
-		queryOptions: {
-			enabled: !isInvalidNumber(activeTechTree?.id),
-		},
+	const { data, isLoading, refetch } = useContributionContract<
+		[NodeData[], EdgeData[]]
+	>({
+		functionName: "getNodesAndEdgesFromTechTreeId",
+		args: [techTreeId],
 	});
 
 	useEffect(() => {
 		const event = events.find(
 			(event) =>
 				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
+				event.args.techTreeId === techTreeId,
 		);
 		if (event) {
 			refetch();
 		}
-	}, [events, activeTechTree?.id]);
+	}, [events, techTreeId]);
 
 	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
 		return [
-			data?.[0]
-				?.filter((item) => item.createdAt !== BigInt(0))
-				.map((node, idx) => ({
-					id: BigInt(idx),
-					title: node.title,
-					type: node.nodeType as NodeType,
-					origin: "on-chain",
-				})) || [],
+			data?.[0].map((node, idx) => ({
+				id: (node as any)?.id,
+				title: node.title,
+				type: (node as any).nodeType as NodeType,
+				origin: "on-chain",
+			})) || [],
 			data?.[1]?.map((edge, idx) => ({
-				id: `${idx}`,
+				id: (edge as any)?.id,
 				source: `${Number(edge.source)}`,
 				target: `${Number(edge.target)}`,
 				origin: "on-chain",

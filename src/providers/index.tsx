@@ -1,9 +1,14 @@
 "use client";
 
+import { chainOptions } from "@/lib/constants";
+import AuthProvider from "@/providers/AuthProvider";
 import { ContractEventsProvider } from "@/providers/ContractEventsProvider";
+import { PrivyProvider } from "@privy-io/react-auth";
+import { WagmiProvider, createConfig } from "@privy-io/wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ThirdwebProvider } from "thirdweb/react";
+import { filecoinCalibration, hardhat } from "viem/chains";
+import { http } from "wagmi";
 
 type ProviderType = {
 	children: React.ReactNode;
@@ -11,13 +16,36 @@ type ProviderType = {
 
 const queryClient = new QueryClient();
 
+export const config = createConfig({
+	chains: [filecoinCalibration, hardhat],
+
+	transports: {
+		[filecoinCalibration.id]: http(),
+		[hardhat.id]: http(),
+	},
+});
+
 const Providers = ({ children }: ProviderType) => {
 	return (
-		<QueryClientProvider client={queryClient}>
-			<ThirdwebProvider>
-				<ContractEventsProvider>{children}</ContractEventsProvider>
-			</ThirdwebProvider>
-		</QueryClientProvider>
+		<PrivyProvider
+			appId={process.env.NEXT_PUBLIC_PRIVY_KEY || ""}
+			config={{
+				// Create embedded wallets for users who don't have a wallet
+				embeddedWallets: {
+					createOnLogin: "users-without-wallets",
+				},
+				supportedChains: chainOptions,
+				defaultChain: hardhat,
+			}}
+		>
+			<QueryClientProvider client={queryClient}>
+				<WagmiProvider config={config}>
+					<AuthProvider>
+						<ContractEventsProvider>{children}</ContractEventsProvider>
+					</AuthProvider>
+				</WagmiProvider>
+			</QueryClientProvider>
+		</PrivyProvider>
 	);
 };
 

@@ -1,12 +1,8 @@
 "use client";
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
-import { useTransaction } from "@/hooks/useTransaction";
-import { techTreeContract } from "@/lib/constants";
-import { useTxEvents } from "@/providers/ContractEventsProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
+import { contributionAbi, contributionContractAddress } from "@/lib/constants";
 import { EdgeData, NodeData, TechTree } from "@/typings";
-import { areAllNodesConnected } from "@/utils/nodes.utils";
 import { isInvalidNumber } from "@/utils/number.utils";
 import deepEqual from "deep-equal";
 import React, {
@@ -17,8 +13,7 @@ import React, {
 	useState,
 	useEffect,
 } from "react";
-import toast from "react-hot-toast";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
+import { useWriteContract } from "wagmi";
 
 type PublishMode = "reset" | "publish";
 
@@ -26,10 +21,10 @@ type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
-	updateFromGaladriel(data: NodeData[], edges: EdgeData[]): void;
+	updateAll(data: NodeData[], edges: EdgeData[]): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
-	handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>): void;
+	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
 	handlePublish(mode: PublishMode): void;
 	isPublishing: boolean;
 	isLoading: boolean;
@@ -37,7 +32,7 @@ type NodesAndEdgesProps = {
 
 export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
 	handleEdgeUpdate: () => {},
-	updateFromGaladriel: () => {},
+	updateAll: () => {},
 	hasUpdates: false,
 	nodes: [],
 	edges: [],
@@ -58,27 +53,17 @@ export const useNodesAndEdges = (): NodesAndEdgesProps => {
 	return context;
 };
 
-export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
-	const { activeTechTree } = useTechTree();
-	const { events } = useTxEvents();
+export function NodesAndEdgesProvider({
+	children,
+	techTree,
+}: { children: ReactNode; techTree: TechTree }) {
+	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree({
+		techTreeId: techTree.id,
+	});
 
-	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree();
-
-	const { send, loading: hasTxInTransit, isSuccess } = useTransaction();
+	const { data: hash, writeContract, isPending } = useWriteContract();
 	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
 	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
-
-	useEffect(() => {
-		const event = events.find(
-			(event) =>
-				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
-		);
-		if (event) {
-			setUpdatedNodes([]);
-			setUpdatedEdges([]);
-		}
-	}, [events, activeTechTree?.id]);
 
 	const nodesWithUpdates = useMemo(() => {
 		return [...nodes, ...updatedNodes];
@@ -100,15 +85,22 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 		]);
 	}
 
-	function updateFromGaladriel(nodes: NodeData[], edges: EdgeData[]) {
-		setUpdatedNodes(nodes);
-		setUpdatedEdges(
-			edges?.filter((item) => item.source !== "-1" && item.target !== "-1") ||
-				[],
+	function updateAll(newNodes: NodeData[], newEdges: EdgeData[]) {
+		const uniqueNodes = new Map(
+			newNodes
+				.filter((item) => item.type !== "end-goal")
+				.map((node) => [node.id, node]),
 		);
+		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
+
+		updatedNodes.forEach((node) => uniqueNodes.set(node.id, node));
+		updatedEdges.forEach((edge) => uniqueEdges.set(edge.id, edge));
+
+		setUpdatedNodes(Array.from(uniqueNodes.values()));
+		setUpdatedEdges(Array.from(uniqueEdges.values()));
 	}
 
-	function handleNodeUpdate(nodeId: bigint, data: Partial<NodeData>) {
+	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
 		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
 
@@ -125,15 +117,15 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-		if (!activeTechTree || isInvalidNumber(activeTechTree?.id)) return;
-
 		try {
-			const transaction = prepareContractCall({
-				contract: techTreeContract,
-				method: "updateTechTree",
-				params: [
-					activeTechTree.id,
+			writeContract({
+				abi: contributionAbi,
+				address: contributionContractAddress,
+				functionName: "updateTechTree",
+				args: [
+					techTree.id,
 					updatedNodes.map((node) => ({
+						id: node.id,
 						title: node.title || "",
 						nodeType: node.type?.toLowerCase(),
 					})),
@@ -142,8 +134,7 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 						target: edge.target,
 					})),
 				],
-			}) as PreparedTransaction;
-			await send(transaction);
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -154,17 +145,17 @@ export function NodesAndEdgesProvider({ children }: { children: ReactNode }) {
 			nodes: nodesWithUpdates,
 			edges: edgesWithUpdates,
 			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
-			updateFromGaladriel,
+			updateAll,
 			handleEdgeUpdate,
 			handleNodeUpdate,
 			hasUpdates:
 				!deepEqual(nodes, nodesWithUpdates) ||
 				!deepEqual(edges, edgesWithUpdates),
 			handlePublish,
-			isPublishing: hasTxInTransit,
+			isPublishing: isPending,
 			isLoading: isLoadingOnChain,
 		}),
-		[nodesWithUpdates, edgesWithUpdates, hasTxInTransit, isLoadingOnChain],
+		[nodesWithUpdates, edgesWithUpdates, isPending, isLoadingOnChain],
 	);
 
 	return (

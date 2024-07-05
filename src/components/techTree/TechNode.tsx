@@ -12,7 +12,7 @@ export function TechNode({
 }: NodeProps<NodeData>) {
 	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
-	const isActive = activeNode?.id === BigInt(id);
+	const isActive = activeNode?.id === id;
 
 	return (
 		<>
@@ -26,7 +26,7 @@ export function TechNode({
 			/>
 			<div
 				className={clsx(
-					"px-10 py-4 relative !text-xs duration-300 transition-all border rounded",
+					"px-10 py-4 w-[350px] h-[75px] flex items-center relative !text-xs duration-300 transition-all border rounded",
 					{
 						"bg-green-50 border-green-600 text-green-800":
 							data.type === "end-goal",

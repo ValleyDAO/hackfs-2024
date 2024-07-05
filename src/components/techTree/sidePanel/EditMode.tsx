@@ -2,24 +2,20 @@
 
 import { NodeTypeTag } from "@/components/StatusTag";
 import { Button } from "@/components/button";
-import { CloseOutlined } from "@/components/icons/CloseOutlined";
 import { InputSelect } from "@/components/input/InputSelect";
 import InputText from "@/components/input/InputText";
-import { EnhanceWithGaladriel } from "@/components/techTree/sidePanel/EnhanceWithGaladriel";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
-import { NodeData, NodeType, SelectOptionItem } from "@/typings";
+import { EdgeData, NodeData, NodeType, SelectOptionItem } from "@/typings";
+import { fetchWrapper } from "@/utils/query.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
-import { capitalize } from "@walletconnect/utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
-	const { activeTechTree } = useTechTree();
 	const { handleNodeUpdate, nodes } = useNodesAndEdges();
-	const { activeNode, setActiveNode, setActiveNodeRaw, setMode } =
-		useTechTreeContext();
+	const { activeNode, setActiveNode, setMode } = useTechTreeContext();
+	const [isHandlingSave, setIsHandlingSave] = React.useState(false);
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
 		type: activeNode?.type,
@@ -33,16 +29,15 @@ export function EditMode() {
 	}, [activeNode]);
 
 	async function handleSave() {
-		const id = BigInt(`${activeNode?.id}`);
-		handleNodeUpdate(activeNode?.id as bigint, update);
+		if (!activeNode?.id) return;
+		handleNodeUpdate(activeNode?.id, update);
 		setUpdate({});
 		if (update?.type === "end-goal") {
+			setIsHandlingSave(true);
+			// await create(update.title);
+			setActiveNode(undefined);
+			setIsHandlingSave(false);
 			setMode("move");
-			setActiveNodeRaw?.({
-				id,
-				title: update.title,
-				type: update.type,
-			} as NodeData);
 		} else {
 			setActiveNode(undefined);
 		}
@@ -54,7 +49,7 @@ export function EditMode() {
 	return (
 		<div className="pr-2">
 			<div className="mb-6">
-				<div className="text-xs uppercase text-gray-500">Edit Mode</div>
+				<div className="text-xs uppercase text-gray-500">Creator Mode</div>
 				<div className="text-lg font-bold">{activeNode?.title}</div>
 				<div className="mt-4">
 					<div className="text-xs text-gray-500">Node Type</div>
@@ -77,7 +72,7 @@ export function EditMode() {
 						label="Type"
 						options={parseTypeToSearchFieldItems(hasEndGoalInNodes)}
 						value={{
-							label: capitalize((update.type || "")?.toLowerCase()) || "-",
+							label: (update.type || "")?.toLowerCase() || "-",
 							value: update.type || "-",
 						}}
 						onChange={(item: SelectOptionItem) =>
@@ -93,6 +88,7 @@ export function EditMode() {
 							disabled={
 								!update?.title || update?.title?.length < 2 || !update.type
 							}
+							loading={isHandlingSave}
 							fullSize
 							onClick={handleSave}
 							variant="primary"
@@ -114,7 +110,7 @@ export function EditMode() {
 					{(activeNode?.type === "development" ||
 						activeNode?.type === "research") && (
 						<Link
-							href={`/app/${activeTechTree?.id}/node/${activeNode?.id}`}
+							href={`/app/node/${activeNode?.id}`}
 							className="mt-10 block w-full"
 						>
 							<Button className="!py-3" fullSize variant="black">

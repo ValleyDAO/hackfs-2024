@@ -2,7 +2,6 @@
 
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
-import { useTechTree } from "@/providers/TechTreeParentProvider";
 import { NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
 import React, {
 	ReactNode,
@@ -15,7 +14,7 @@ import React, {
 type TechTreeContextProps = {
 	mode: TechTreeMode;
 	setMode: (mode: TechTreeMode) => void;
-	setActiveNode: (nodeId?: bigint) => void;
+	setActiveNode: (nodeId?: string) => void;
 	setActiveNodeRaw?: (node: NodeData) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
@@ -39,13 +38,11 @@ export const useTechTreeContext = (): TechTreeContextProps => {
 
 export function TechTreeLayoutContextProvider({
 	children,
-}: { children: ReactNode }) {
-	const { activeTechTree } = useTechTree();
+	techTreeId,
+}: { children: ReactNode; techTreeId: bigint }) {
 	const { events } = useTxEvents();
 	const { nodes, hasUpdates } = useNodesAndEdges();
-	const [mode, setMode] = React.useState<TechTreeMode>(
-		hasUpdates || nodes?.length === 0 ? "edit" : "move",
-	);
+	const [mode, setMode] = React.useState<TechTreeMode>("move");
 	const [activeEditType, setActiveEditType] = React.useState<
 		TechTreeAddType | undefined
 	>();
@@ -56,24 +53,22 @@ export function TechTreeLayoutContextProvider({
 		const event = events.find(
 			(event) =>
 				event.eventName === "TechTreeUpdated" &&
-				event.args.techTreeId === activeTechTree?.id,
+				event.args.techTreeId === techTreeId,
 		);
 		if (event) {
 			setActiveNode(undefined);
 			setMode("move");
 			setActiveEditType(undefined);
 		}
-	}, [events, activeTechTree?.id]);
+	}, [events, techTreeId]);
 
 	useEffect(() => {
-		if (!activeTechTree && activeNode) {
-			setActiveNode(undefined);
-			setMode("move");
-			setActiveEditType(undefined);
-		} else if (activeTechTree && nodes?.length === 0) {
+		if (nodes?.length === 1 && nodes[0]?.type === "end-goal") {
+			console.log("setting active node");
 			setMode("edit");
+			setActiveNode(nodes[0]);
 		}
-	}, [activeTechTree, activeNode]);
+	}, [nodes]);
 
 	function handleSetMode(mode: TechTreeMode) {
 		if (mode === "edit") {
@@ -82,7 +77,7 @@ export function TechTreeLayoutContextProvider({
 		setMode(mode);
 	}
 
-	function handleSetActiveNode(nodeId?: bigint) {
+	function handleSetActiveNode(nodeId?: string) {
 		const node = nodes.find((n) => n.id === nodeId);
 		setActiveNode(node);
 	}

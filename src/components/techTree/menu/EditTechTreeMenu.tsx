@@ -5,6 +5,7 @@ import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, TechTreeAddType } from "@/typings";
+import { generateId } from "@/utils/nodes.utils";
 import clsx from "clsx";
 import React from "react";
 
@@ -57,7 +58,7 @@ export function EditTechTreeMenu() {
 
 	function handleAddNewNode() {
 		const newNode: NodeData = {
-			id: BigInt((nodes || []).length),
+			id: generateId(),
 			title: undefined,
 			type: nodes?.length === 0 ? "end-goal" : "development",
 		};
@@ -71,13 +72,13 @@ export function EditTechTreeMenu() {
 				<div className="flex w-full items-center space-x-4">
 					<div
 						onClick={handleBackFromEditMode}
-						className="horizontal text-sm space-x-1.5 cursor-pointer group hover:text-blue-700 text-gray-500 border-r border-gray-200 pr-8"
+						className="horizontal text-sm space-x-1.5 cursor-pointer group hover:text-blue-700 text-gray-600 border-r border-gray-200 pr-8"
 					>
 						<ArrowLeftOutlined />
 						<div className="text-xs">
 							Leave{" "}
-							<span className="font-medium group-hover:text-blue-700 text-gray-600">
-								Edit Mode
+							<span className="font-medium group-hover:text-blue-700 text-gray-800">
+								Creator Mode
 							</span>{" "}
 							{hasUpdates && "& Reset Changes"}
 						</div>

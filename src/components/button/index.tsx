@@ -21,7 +21,7 @@ export function Button({
 	className,
 	ghost = false,
 	icon: Icon,
-	size = "small",
+	size = "medium",
 	variant,
 	loading = false,
 	disabled = false,
@@ -47,8 +47,8 @@ export function Button({
 					"bg-black border-gray-900": variant === "black",
 					"group-hover:brightness-110 group-focus:brightness-90 bg-red-600 border-red-600":
 						variant === "danger",
-					"py-2 px-2.5 space-x-2 text-xs": size === "small",
-					"py-2.5 px-4 space-x-2 text-sm": size === "medium",
+					"py-1 px-1.5 space-x-2 text-xs": size === "small",
+					"py-1 px-2.5 space-x-2 text-sm": size === "medium",
 					"py-3 px-4 space-x-2 text-base": size === "large",
 					"disabled:cursor-not-allowed disabled:opacity-50": disabled,
 					"w-full": fullSize,
@@ -68,8 +68,10 @@ export function Button({
 							variant === "secondary" && ghost,
 						"text-secondary-500 group-hover:text-secondary":
 							variant === "default",
-						"text-white": variant === "black" || variant === "danger",
-						"text-black": variant === "secondary",
+						"text-white":
+							variant === "danger" || (variant === "black" && !ghost),
+						"text-black":
+							variant === "secondary" || (variant === "black" && ghost),
 					},
 				)}
 			>
