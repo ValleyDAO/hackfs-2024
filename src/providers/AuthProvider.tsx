@@ -60,10 +60,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 	const balance = data?.value ? formatEther(data?.value) : "0";
 
 	useEffect(() => {
-		if (ready && !isLoadingBalance && balance === "0") {
+		if (ready && authenticated && !isLoadingBalance && balance === "0") {
 			setShowInstructionsForTestnetTokens(true);
 		}
-	}, [isLoadingBalance, balance, ready]);
+	}, [isLoadingBalance, authenticated, balance, ready]);
 
 	const value = useMemo(
 		() => ({
