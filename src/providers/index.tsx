@@ -35,7 +35,7 @@ const Providers = ({ children }: ProviderType) => {
 					createOnLogin: "users-without-wallets",
 				},
 				supportedChains: chainOptions,
-				defaultChain: hardhat,
+				defaultChain: process.env.IS_LOCAL ? hardhat : filecoinCalibration,
 			}}
 		>
 			<QueryClientProvider client={queryClient}>
