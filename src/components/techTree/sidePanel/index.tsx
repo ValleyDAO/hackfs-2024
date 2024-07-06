@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/button";
-import { CloseOutlined } from "@/components/icons/CloseOutlined";
-import { NodeOutlined } from "@/components/icons/NodeOutlined";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData } from "@/typings";
@@ -44,20 +42,6 @@ function UltimateObjectivePanel() {
 
 	return (
 		<div className="w-full relative">
-			{nodes?.length === 1 && (
-				<div className="space-y-5 flex flex-col items-start">
-					<div className="flex flex-col h-full pt-24 w-10/12 mx-auto items-center">
-						<NodeOutlined className="text-gray-300 text-5xl" />
-						<span className="text-gray-400 text-[13px] mb-6 font-medium text-center">
-							Seems that you don't have any nodes & edges. Start connecting with
-							other researchers{" "}
-						</span>
-						<Button loading={isGenerating} variant="primary" onClick={create}>
-							Generate
-						</Button>
-					</div>
-				</div>
-			)}
 			<div className="py-10 bg-gray-50 rounded" />
 			{/*{nodes?.length > 1 && (
 				<div className="mt-6 space-y-5 flex flex-col items-start">
@@ -84,12 +68,33 @@ function UltimateObjectivePanel() {
 			)}*/}
 
 			<div className="mt-10">
-				<div className="text-sm font-medium mb-4">Research & Developments</div>
-				{nodes
-					?.filter((item) => item.type !== "ultimate-objective")
-					?.map((node) => (
-						<NodeItem node={node} />
-					))}
+				<div className="text-sm font-medium mb-2 pb-2 border-b border-gray-100">
+					Research & Developments
+				</div>
+				{nodes?.length <= 1 ? (
+					<div className="space-y-5 flex flex-col items-start">
+						<div className="flex flex-col w-full">
+							<span className="text-gray-600 text-[13px] w-11/12 mb-3">
+								Seems that you don't have any nodes & edges. Start connecting
+								with other researchers{" "}
+							</span>
+							<div>
+								<Button
+									loading={isGenerating}
+									variant="primary"
+									className="!text-xs"
+									onClick={create}
+								>
+									Generate
+								</Button>
+							</div>
+						</div>
+					</div>
+				) : (
+					nodes
+						?.filter((item) => item.type !== "ultimate-objective")
+						?.map((node) => <NodeItem node={node} />)
+				)}
 			</div>
 		</div>
 	);
@@ -120,7 +125,7 @@ function NodeItem({ node }: { node: NodeData }) {
 }
 
 export function TechTreeSidePanel() {
-	const [expanded, setExpanded] = React.useState(false);
+	const [expanded, setExpanded] = React.useState(true);
 	const { nodes } = useNodesAndEdges();
 	const { activeNode, setActiveNode } = useTechTreeContext();
 	const objective = nodes?.find((node) => node.type === "ultimate-objective");
@@ -134,38 +139,37 @@ export function TechTreeSidePanel() {
 		<>
 			<AnimatePresence>
 				<motion.div
-					variants={{
-						hidden: { x: "100%" },
-						visible: { x: 0, transition: { duration: 0.15 } },
-						exit: { x: "100%", transition: { duration: 0.5 } },
-					}}
 					className={clsx(
-						"overflow-y-scroll rounded bg-white drop-shadow-sm !w-[450px] ml-2 p-6 border-gray-200",
-						{
-							"bottom-0 h-full": activeNode,
-						},
+						"overflow-y-scroll absolute right-0 space-y-6 self-start transition-all rounded bg-white drop-shadow-sm !w-[450px] ml-2 px-5 border-gray-200",
+						expanded ? "py-5" : "py-5",
 					)}
-					initial="hidden"
-					animate="visible"
-					exit="exit"
+					initial={{ height: "auto" }}
+					animate={{ height: expanded ? "100%" : "auto" }}
+					transition={{ duration: 0.1 }}
 				>
-					<div className="flex items-start justify-between mb-6">
+					<div className="horizontal items-center justify-between">
 						<div>
-							<div className="text-[11px] font-medium text-gray-400">
-								ULTIMATE OBJECTIVE
-							</div>
-							<div className="text-xl font-bold">
+							<div className="text-[10px] text-gray-500">ROADMAP</div>
+							<div className="text-base font-bold">
 								{(activeNode || objective)?.title}
 							</div>
 						</div>
-						<div
-							onClick={() => handleClear()}
-							className="group transition-colors cursor-pointer bg-gray-50 hover:bg-red-50 rounded"
-						>
-							<CloseOutlined className="group-hover:text-red-700 text-base text-gray-500 transition-colors" />
+						<div className="horizontal space-x-3">
+							<div
+								className="text-xs px-3 py-1 bg-gray-100 hover:bg-indigo-100 transition-colors cursor-pointer hover:text-indigo-950 rounded-full text-gray-500 font-medium"
+								onClick={() => setExpanded(!expanded)}
+							>
+								{expanded ? "Collapse" : "Expand"}
+							</div>
+							{/*<div
+								onClick={() => handleClear()}
+								className="group transition-colors cursor-pointer bg-gray-50 hover:bg-red-50 rounded"
+							>
+								<CloseOutlined className="group-hover:text-red-700 text-base text-gray-500 transition-colors" />
+							</div>*/}
 						</div>
 					</div>
-					{!activeNode ? <UltimateObjectivePanel /> : <div />}
+					{!activeNode && expanded ? <UltimateObjectivePanel /> : <></>}
 				</motion.div>
 			</AnimatePresence>
 		</>

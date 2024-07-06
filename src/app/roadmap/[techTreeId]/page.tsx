@@ -30,7 +30,6 @@ export default function TechTreeDetailsPage({ params }: { params: Params }) {
 		<NodesAndEdgesProvider techTree={techTree}>
 			<TechTreeLayoutContextProvider techTreeId={techTree?.id}>
 				<TechTreeLayout />
-				<TechTreeSidePanel />
 			</TechTreeLayoutContextProvider>
 		</NodesAndEdgesProvider>
 	);

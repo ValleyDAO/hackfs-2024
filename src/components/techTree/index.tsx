@@ -1,7 +1,11 @@
 "use client";
 
 import React, { MouseEvent, useEffect } from "react";
-import ReactFlow, { ConnectionLineType, ConnectionMode } from "reactflow";
+import ReactFlow, {
+	ConnectionLineType,
+	ConnectionMode,
+	Controls,
+} from "reactflow";
 
 import "reactflow/dist/style.css";
 import { TechNode } from "@/components/techTree/TechNode";
@@ -9,6 +13,7 @@ import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { Legend } from "@/components/techTree/Legend";
+import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
@@ -83,8 +88,11 @@ export function TechTreeLayout() {
 					onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 					edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 					onNodeClick={(evt, { id }) => setActiveNode(id)}
-				/>
+				>
+					<Controls />
+				</ReactFlow>
 				<TechTreeMenu />
+				<TechTreeSidePanel />
 			</>
 			<Legend />
 		</div>
