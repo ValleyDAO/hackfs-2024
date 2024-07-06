@@ -1085,7 +1085,7 @@ export const contributionAbi = [
 		type: "function",
 	},
 ];
-export const contributionContractAddress = !!process.env.IS_LOCAL
+export const contributionContractAddress = !!process.env.NEXT_PUBLIC_IS_LOCAL
 	? "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 	: "0x6f822E4398364718772062b01A7B1215Db47943d";
 

@@ -32,7 +32,7 @@ export function EditMode() {
 		if (!activeNode?.id) return;
 		handleNodeUpdate(activeNode?.id, update);
 		setUpdate({});
-		if (update?.type === "end-goal") {
+		if (update?.type === "ultimate-objective") {
 			setIsHandlingSave(true);
 			// await create(update.title);
 			setActiveNode(undefined);
@@ -44,7 +44,8 @@ export function EditMode() {
 	}
 
 	const hasEndGoalInNodes =
-		nodes?.length > 0 && nodes.some((node) => node.type === "end-goal");
+		nodes?.length > 0 &&
+		nodes.some((node) => node.type === "ultimate-objective");
 
 	return (
 		<div className="pr-2">
@@ -107,8 +108,7 @@ export function EditMode() {
 						This node is already on-chain and currently cannot be edited. Join
 						our Discord and ask us to amplify this feature!
 					</div>
-					{(activeNode?.type === "development" ||
-						activeNode?.type === "research") && (
+					{activeNode?.type === "ultimate-objective" && (
 						<Link
 							href={`/node/${activeNode?.id}`}
 							className="mt-10 block w-full"

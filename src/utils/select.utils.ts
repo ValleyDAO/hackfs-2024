@@ -11,5 +11,5 @@ export function parseTypeToSearchFieldItems(
 	if (!hasEndGoalInNodes) {
 		return values;
 	}
-	return values.filter((item) => item.value !== "end-goal");
+	return values.filter((item) => item.value !== "ultimate-objective");
 }

@@ -88,7 +88,7 @@ export function NodesAndEdgesProvider({
 	function updateAll(newNodes: NodeData[], newEdges: EdgeData[]) {
 		const uniqueNodes = new Map(
 			newNodes
-				.filter((item) => item.type !== "end-goal")
+				.filter((item) => item.type !== "ultimate-objective")
 				.map((node) => [node.id, node]),
 		);
 		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
@@ -127,7 +127,7 @@ export function NodesAndEdgesProvider({
 					updatedNodes.map((node) => ({
 						id: node.id,
 						title: node.title || "",
-						nodeType: node.type?.toLowerCase(),
+						nodeType: node.type,
 					})),
 					updatedEdges.map((edge) => ({
 						source: edge.source,

@@ -15,10 +15,13 @@ export function Legend() {
 		<div className="transition-all flex flex-col absolute left-2 bottom-2 text-xs">
 			<div className="flex items-center space-x-5">
 				<div className="font-medium text-black">Type of nodes</div>
-				<LegendItem color="bg-blue-600" label="research" />
-				<LegendItem color="bg-yellow-600" label="development" />
-				<LegendItem color="bg-red-600" label="optimization" />
-				<LegendItem color="bg-green-600" label="end-goal" />
+				<LegendItem color="bg-blue-600" label="fundamental-research" />
+				<LegendItem color="bg-yellow-600" label="applied-research" />
+				<LegendItem color="bg-red-600" label="translational-research" />
+				<LegendItem color="bg-purple-600" label="technology-development" />
+				<LegendItem color="bg-indigo-600" label="demonstration-validation" />
+				<LegendItem color="bg-pink-600" label="implementation-deployment" />
+				<LegendItem color="bg-gray-600" label="continuous-improvement" />
 			</div>
 		</div>
 	);

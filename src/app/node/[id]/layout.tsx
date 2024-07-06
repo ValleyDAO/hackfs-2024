@@ -10,7 +10,7 @@ function TopBar() {
 	return (
 		<div className="flex mb-2">
 			<Link
-				href="/app"
+				href="/"
 				className="horizontal text-xs space-x-1.5 cursor-pointer hover:text-blue-700 text-gray-500"
 			>
 				<ArrowLeftOutlined />

@@ -80,7 +80,7 @@ export default function Home() {
 	return (
 		<>
 			<div className="transition-all flex flex-col bg-white items-center rounded w-full">
-				<div className=" h-full shadow-sm rounded px-6 mt-20 space-y-10 layout">
+				<div className="h-full rounded px-6 mt-20 space-y-10 layout">
 					<div className="space-y-2">
 						<h1 className=" font-black text-3xl leading-[40px]">
 							Simplified method to achieve
@@ -97,22 +97,21 @@ export default function Home() {
 					<div>
 						{isLoading ? (
 							<LoadingOutlined />
-						) : techTrees && techTrees?.length > 0 ? (
+						) : (
 							<div className="grid grid-cols-4 gap-2">
 								<CreateRoadmap onCreate={() => setIntentToCreate(true)} />
-								{techTrees.map((techTree, idx) => (
+								{techTrees?.map((techTree, idx) => (
 									<TechTreeItem key={`node-${idx}`} techTree={techTree} />
 								))}
 							</div>
-						) : (
-							<div className="flex flex-col h-full pt-48 space-y-4 w-10/12 mx-auto items-center">
-								<TechTreeOutlined className="text-gray-300 text-4xl" />
-								<span className="text-gray-400 text-xs text-center">
+						)}
+						{/*<div className="flex flex-col h-full pt-48 space-y-4 w-10/12 mx-auto items-center">
+							<TechTreeOutlined className="text-gray-300 text-4xl"/>
+							<span className="text-gray-400 text-xs text-center">
 									Seems that you don't have any technology trees yet. Let's get
 									started by creating one.
 								</span>
-							</div>
-						)}
+						</div>*/}
 					</div>
 				</div>
 			</div>

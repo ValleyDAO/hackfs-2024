@@ -59,7 +59,7 @@ export function ResearchPageProvider({
 						Navigate back to the app to view all available research/development
 						projects.
 					</p>
-					<Link href="/app">
+					<Link href="/">
 						<Button variant="primary">Go Back</Button>
 					</Link>
 				</div>

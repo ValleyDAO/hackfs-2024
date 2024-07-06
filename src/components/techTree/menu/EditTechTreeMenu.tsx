@@ -59,7 +59,7 @@ export function EditTechTreeMenu() {
 		const newNode: NodeData = {
 			id: generateId(),
 			title: undefined,
-			type: nodes?.length === 0 ? "end-goal" : "development",
+			type: "fundamental-research",
 		};
 		setActiveEditType("node");
 		addNewNode(newNode);
@@ -78,8 +78,7 @@ export function EditTechTreeMenu() {
 							Leave{" "}
 							<span className="font-medium group-hover:text-blue-700 text-gray-800">
 								Creator Mode
-							</span>{" "}
-							{hasUpdates && "& Reset Changes"}
+							</span>
 						</div>
 					</div>
 					<div className="flex items-center space-x-8">
@@ -113,6 +112,7 @@ export function EditTechTreeMenu() {
 					loading={isPublishing}
 					onClick={() => handlePublish("publish")}
 					disabled={!hasUpdates}
+					className="py-3 px-4"
 					variant="black"
 				>
 					Publish

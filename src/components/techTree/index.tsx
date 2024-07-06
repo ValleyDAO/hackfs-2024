@@ -19,7 +19,6 @@ import clsx from "clsx";
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
-	const { account } = useAuth();
 	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
 		useNodesAndEdges();
 	const { mode, setActiveNode, activeEditType, setActiveEditType } =
@@ -43,7 +42,7 @@ export function TechTreeLayout() {
 			const newNode: NodeData = {
 				id: generateId(),
 				title: "Placeholder",
-				type: "end-goal",
+				type: "ultimate-objective",
 			};
 			addNewNode(newNode);
 		}

@@ -41,7 +41,7 @@ export default function Page() {
 								icon: <EditOutlined />,
 								label: "Contribute",
 								onClick: () => {
-									router.push(`/app/${techTreeId}/node/${id}/contribute`);
+									router.push(`/node/${id}/contribute`);
 								},
 							},
 						]}
@@ -64,7 +64,7 @@ export default function Page() {
 								</div>
 								<div className="mt-4">
 									{account?.address ? (
-										<Link href={`/app/${techTreeId}/node/${id}/contribute`}>
+										<Link href={`/node/${id}/contribute`}>
 											<Button variant="primary">Contribute</Button>
 										</Link>
 									) : (

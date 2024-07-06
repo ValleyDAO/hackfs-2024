@@ -1,12 +1,9 @@
-import { Button } from "@/components/button";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData } from "@/typings";
 import { fetchWrapper } from "@/utils/query.utils";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const MAX_ITERATIONS = 10;
 
 interface RelatedNodesAndEdges {
 	parents?: NodeData[];
@@ -15,7 +12,9 @@ interface RelatedNodesAndEdges {
 	children?: NodeData[];
 }
 
-export function Enhance() {
+const MAX_ITERATIONS = 20;
+
+export function useEnhance() {
 	const { updateAll, nodes, edges } = useNodesAndEdges();
 	const { activeNode } = useTechTreeContext();
 	const [isEnhancing, setIsEnhancing] = useState(true);
@@ -97,9 +96,10 @@ export function Enhance() {
 	const enhanceNextInQueue = useCallback(async () => {
 		if (enhancementQueue.length === 0 || iterationCount >= MAX_ITERATIONS) {
 			setIsEnhancing(false);
-			toast.success(
-				`Tree enhancement completed after ${iterationCount} operations.`,
-			);
+			if (iterationCount !== 0)
+				toast.success(
+					`Tree enhancement completed after ${iterationCount} operations.`,
+				);
 			return;
 		}
 
@@ -112,9 +112,10 @@ export function Enhance() {
 			updateAll(updatedTree.nodes, updatedTree.edges);
 			setIterationCount((prev) => prev + 1);
 
+			const nodeIds = nodes.map((n) => n.id);
 			// Add new nodes to the queue
 			const newNodeIds = enhancedSubtree.nodes
-				.filter((n) => !nodes.some((on) => on.id === n.id))
+				.filter((n) => !nodeIds.includes(n.id))
 				.map((n) => n.id);
 
 			setEnhancementQueue((prev) => [...prev.slice(1), ...newNodeIds]);
@@ -145,30 +146,12 @@ export function Enhance() {
 		}
 	}, [isEnhancing, enhanceNextInQueue, enhancementQueue]);
 
-	const startEnhancement = useCallback(async () => {
-		if (!activeNode) {
-			toast.error("No active node selected");
-			return;
-		}
-
+	const start = useCallback(async () => {
 		setIsEnhancing(true);
 		setIterationCount(0);
 
-		setEnhancementQueue([activeNode.id]);
-	}, [activeNode]);
+		setEnhancementQueue([nodes?.[0].id]);
+	}, [nodes]);
 
-	return (
-		<div className="mt-10">
-			<div className="mt-4 flex flex-col space-y-2">
-				<Button
-					variant="black"
-					loading={isEnhancing}
-					onClick={startEnhancement}
-					disabled={isEnhancing}
-				>
-					{isEnhancing ? `Enhancing (${iterationCount})...` : "Enhance"}
-				</Button>
-			</div>
-		</div>
-	);
+	return { start };
 }

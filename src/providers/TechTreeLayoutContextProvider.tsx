@@ -63,8 +63,7 @@ export function TechTreeLayoutContextProvider({
 	}, [events, techTreeId]);
 
 	useEffect(() => {
-		if (nodes?.length === 1 && nodes[0]?.type === "end-goal") {
-			console.log("setting active node");
+		if (nodes?.length === 1 && nodes[0]?.type === "ultimate-objective") {
 			setMode("edit");
 			setActiveNode(nodes[0]);
 		}

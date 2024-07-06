@@ -33,7 +33,7 @@ export function Header() {
 							className="h-full rounded cursor-pointer transition-colors pl-2 pr-4 py-1.5 hover:bg-blue-50 flex items-center space-x-2"
 						>
 							<EthAvatar address={account.address} />
-							<div className=" text-xs">
+							<div className="font-medium text-xs">
 								{getShortenedFormat(account.address)}
 							</div>
 							<CaretDownOutlined className="text-[9px]" />

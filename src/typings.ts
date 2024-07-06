@@ -10,13 +10,54 @@ export interface FundingState {
 export type NodeStatus = "finished" | "in-progress" | "rfp" | "idle";
 export type NodeOrigin = "on-chain" | "off-chain";
 
-export type NodeType = "optimization" | "development" | "research" | "end-goal";
+/*
+ *
+ * Research and Development Categories:
+ * 1. Fundamental Research (TRL 1-2)
+ * 2. Applied Research (TRL 2-4)
+ * 3. Translational Research (TRL 3-5)
+ * 4. Technology Development (TRL 4-7)
+ * 5. Demonstration and Validation (TRL 6-8)
+ * 6. Implementation and Deployment (TRL 8-9)
+ * 7. Continuous Improvement
+ * 8. Ultimate Objective: The final goal ('{{TITLE}}')
+ *
+ * */
+
+export type NodeType =
+	| "fundamental-research"
+	| "applied-research"
+	| "translational-research"
+	| "technology-development"
+	| "demonstration-validation"
+	| "implementation-deployment"
+	| "continuous-improvement"
+	| "ultimate-objective";
+
 export const NodeTypeValues: NodeType[] = [
-	"optimization",
-	"development",
-	"research",
-	"end-goal",
+	"fundamental-research",
+	"applied-research",
+	"translational-research",
+	"technology-development",
+	"demonstration-validation",
+	"implementation-deployment",
+	"continuous-improvement",
+	"ultimate-objective",
 ];
+
+/*state: enum(conceptual, emerging, established)
+  maturity: enum(nascent, developing, mature)
+  impact_potential: enum(low, medium, high)
+  resource_intensity: enum(low, medium, high)
+  interdisciplinary_level: enum(low, medium, high)
+  time_horizon: enum(short-term, medium-term, long-term)
+*/
+
+export type NodeState = "conceptual" | "emerging" | "established";
+export type NodeMaturity = "nascent" | "developing" | "mature";
+export type NodeImpactPotential = "low" | "medium" | "high";
+export type NodeResourceIntensity = "low" | "medium" | "high";
+export type NodeInterdisciplinaryLevel = "low" | "medium" | "high";
 
 export interface ResearchContribution {
 	contributor: string;
@@ -57,6 +98,12 @@ export interface NodeData {
 	treasury?: ResearchTreasury;
 	isFinished?: boolean;
 	techTreeId?: bigint;
+	state?: NodeState;
+	maturity?: NodeMaturity;
+	impactPotential?: NodeImpactPotential;
+	resourceIntensity?: NodeResourceIntensity;
+	interdisciplinaryLevel?: NodeInterdisciplinaryLevel;
+	trl?: number;
 }
 
 export interface EdgeData {

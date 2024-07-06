@@ -1,5 +1,6 @@
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, NodeType } from "@/typings";
+import { getNodeTypeColor } from "@/utils/nodes.utils";
 import clsx from "clsx";
 import { Handle, NodeProps, Position } from "reactflow";
 
@@ -27,16 +28,7 @@ export function TechNode({
 			<div
 				className={clsx(
 					"px-10 py-4 w-[350px] h-[75px] flex items-center relative !text-xs duration-300 transition-all border rounded",
-					{
-						"bg-green-50 border-green-600 text-green-800":
-							data.type === "end-goal",
-						"bg-blue-50 border-blue-600 text-blue-800":
-							data.type === "research",
-						"bg-yellow-50 border-yellow-600 text-yellow-800":
-							data.type === "development",
-						"bg-red-50 border-red-600 text-red-800":
-							data.type === "optimization",
-					},
+					getNodeTypeColor(data.type),
 					hasActiveNodeInMoveMode
 						? {
 								"border-gray-600 bg-white text-black": isActive,

@@ -48,7 +48,7 @@ export function Button({
 					"group-hover:brightness-110 group-focus:brightness-90 bg-red-600 border-red-600":
 						variant === "danger",
 					"py-1 px-1.5 space-x-2 text-xs": size === "small",
-					"py-1.5 px-2.5 space-x-2 text-sm": size === "medium",
+					"py-2.5 px-2.5 space-x-2 text-sm": size === "medium",
 					"py-3 px-4 space-x-2 text-base": size === "large",
 					"disabled:cursor-not-allowed disabled:opacity-50": disabled,
 					"w-full": fullSize,
@@ -58,7 +58,7 @@ export function Button({
 		>
 			<div
 				className={clsx(
-					"flex h-full w-full items-center justify-center transition",
+					"flex h-full w-full items-center gap-x-2 leading-none justify-center transition",
 					{
 						"text-white group-hover:brightness-110 group-focus:brightness-90":
 							variant === "primary" && !ghost,
@@ -75,23 +75,20 @@ export function Button({
 					},
 				)}
 			>
-				{loading ? (
-					<LoadingOutlined />
-				) : (
-					<>
-						{Icon && (
+				<>
+					{Icon ||
+						(loading && (
 							<span
 								className={clsx({
 									"w-3 h-3": size === "small",
 									"w-4 h-4": size === "medium" || size === "large",
 								})}
 							>
-								{Icon}
+								{loading ? <LoadingOutlined /> : Icon}
 							</span>
-						)}
-						{children}
-					</>
-				)}
+						))}
+					{children}
+				</>
 			</div>
 		</button>
 	);

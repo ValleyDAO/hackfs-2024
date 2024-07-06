@@ -11,22 +11,26 @@ export async function GET(req: NextRequest, params: { title: string }) {
 
 	const message = await anthropic.messages.create({
 		model: "claude-3-5-sonnet-20240620",
-		max_tokens: 2048,
+		max_tokens: 4048,
 		temperature: 0,
 		system:
-			"You're a science advisor that is an expert in creating technology trees. Your mission is to create a tech tree with '{{TITLE}}' as your end-goal. It is important that we are able to reach '{{TITLE}}' as the end-goal where all beginning nodes should start with basic sciences and lead towards the end-goal. Keep the nodes a bit more high-level whenever specific nodes are too far-fetched.\nKeep high-level sciences such as (Quantum Mechanics, Synthetic Biology, etc.) to an absolute minimum as these are not actionable among our 4 node types.\n\nAdditionally, include an array of edges that connect the nodes, with each connection having a source and a target to represent the dependencies. \n\nAll nodes and connections should clearly contribute to the end-goal, with no loose research or development nodes. The final node should represent the end-goal itself.\n\n=== OBJECT PROPERTIES ===\nNode: id, title, description, and type (research, development, optimization, end-goal).\nEdge: source (relevant nodeId) and target (relevant nodeId)\n\nThis function allows you to generate an id for our nodes & edges:\n() => Math.random().toString(36).substring(2, 9)\n\n=== RESPONSE FORMAT ===-\nONLY PROVIDE THE JSON AND DON'T MENTION ANY CONTEXT TEXT",
+			"As a scientific advisor specializing in research roadmaps, your task is to construct a comprehensive research trajectory culminating in '{{TITLE}}'. This trajectory should span the entire spectrum of research and development, from fundamental principles to practical implementation, while accounting for existing knowledge, emerging concepts, and novel areas of inquiry.\n\nConstruct a network of interconnected research nodes, with each connection representing relationships between different stages or aspects of research. Ensure all nodes and connections contribute meaningfully to the ultimate objective, eliminating extraneous elements.\n\nResearch and Development Categories:\n1. Fundamental Research (TRL 1-2)\n2. Applied Research (TRL 2-4)\n3. Translational Research (TRL 3-5)\n4. Technology Development (TRL 4-7)\n5. Demonstration and Validation (TRL 6-8)\n6. Implementation and Deployment (TRL 8-9)\n7. Continuous Improvement\n8. Ultimate Objective: The final goal ('{{TITLE}}')\n\n=== OBJECT PROPERTIES ===\nNode: \n  id: string\n  title: string\n  description: string\n  type: enum(fundamental-research, applied-research, translational-research, technology-development, demonstration-validation, implementation-deployment, continuous-improvement, ultimate-objective)\n  trl: number (1-9)\n  state: enum(conceptual, emerging, established)\n  maturity: enum(nascent, developing, mature)\n  impact_potential: enum(low, medium, high)\n  resource_intensity: enum(low, medium, high)\n  interdisciplinary_level: enum(low, medium, high)\n  time_horizon: enum(short-term, medium-term, long-term)\n\nEdge: \n  source: string (nodeId)\n  target: string (nodeId)\n  relationship_type: enum(prerequisite, supportive, collaborative, iterative)\n  strength: enum(weak, moderate, strong)\n\n=== HELPER FUNCTION ===\nFor generating unique identifiers, utilize:\n() => Math.random().toString(36).substring(2, 9)\n\nGuidelines:\n1. Ensure each node is appropriately categorized and its properties accurately reflect its nature and role in the research trajectory.\n2. Align Technology Readiness Levels (TRLs) with the appropriate research stages.\n3. Consider the state, maturity, potential impact, resource requirements, interdisciplinary nature, and time horizon for each research activity.\n4. Create meaningful connections between nodes, specifying the type and strength of each relationship.\n5. Maintain an appropriate level of abstraction, avoiding overly granular or speculative concepts.\n6. Include a balanced mix of established knowledge, emerging concepts, and areas requiring novel research.\n7. Ensure the entire trajectory logically progresses towards the ultimate objective.\n\n=== RESPONSE FORMAT ===\nPROVIDE ONLY THE JSON OUTPUT WITHOUT ADDITIONAL CONTEXT",
 		messages: [
 			{
 				role: "user",
 				content: [
 					{
 						type: "text",
-						text: `End Goal  = '${title}' & End Goal ID = '${id}'`,
+						text: `Ultimate Objective  = '${title}' & Ultimate Objective ID = '${id}'`,
 					},
 				],
 			},
 		],
 	});
-	const data = message.content?.map((item) => JSON.parse((item as any)?.text));
-	return NextResponse.json({ data: data?.[0] });
+	try {
+		const data = message.content?.map((item) =>
+			JSON.parse((item as any)?.text),
+		);
+		return NextResponse.json({ data: data?.[0] });
+	} catch (error) {}
 }

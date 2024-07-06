@@ -1,6 +1,7 @@
 import {
 	EdgeData,
 	NodeData,
+	NodeType,
 	TechTreeLayoutEdge,
 	TechTreeLayoutNode,
 } from "@/typings";
@@ -117,4 +118,66 @@ export function areAllNodesConnected(
 
 	// Check if all nodes were visited
 	return nodes.length === visited.size;
+}
+
+export function getNodeTypeBgColor(
+	type: NodeType,
+	theme: "light" | "dark",
+): string {
+	const colors: Record<NodeType, any> = {
+		"ultimate-objective": {
+			light: "bg-green-50",
+			dark: "bg-green-800",
+		},
+		"fundamental-research": {
+			light: "bg-blue-50",
+			dark: "bg-blue-800",
+		},
+		"technology-development": {
+			light: "bg-yellow-50",
+			dark: "bg-yellow-800",
+		},
+		"continuous-improvement": {
+			light: "bg-red-50",
+			dark: "bg-red-800",
+		},
+		"translational-research": {
+			light: "bg-indigo-50",
+			dark: "bg-indigo-800",
+		},
+		"implementation-deployment": {
+			light: "bg-pink-50",
+			dark: "bg-pink-800",
+		},
+		"demonstration-validation": {
+			light: "bg-gray-50",
+			dark: "bg-gray-800",
+		},
+		"applied-research": {
+			light: "bg-purple-50",
+			dark: "bg-purple-800",
+		},
+	};
+	return colors[type][theme];
+}
+
+export function getNodeTypeColor(type: NodeType): string {
+	switch (type) {
+		case "ultimate-objective":
+			return "bg-green-50 border-green-600 text-green-800";
+		case "fundamental-research":
+			return "bg-blue-50 border-blue-600 text-blue-800";
+		case "technology-development":
+			return "bg-yellow-50 border-yellow-600 text-yellow-800";
+		case "continuous-improvement":
+			return "bg-red-50 border-red-600 text-red-800";
+		case "translational-research":
+			return "bg-indigo-50 border-indigo-600 text-indigo-800";
+		case "implementation-deployment":
+			return "bg-pink-50 border-pink-600 text-pink-800";
+		case "demonstration-validation":
+			return "bg-gray-50 border-gray-600 text-gray-800";
+		default:
+			return "bg-gray-50 border-gray-600 text-gray-800";
+	}
 }

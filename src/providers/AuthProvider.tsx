@@ -1,7 +1,6 @@
 "use client";
 
 import { Modal } from "@/components/modal";
-import { formatNumber } from "@/utils/number.utils";
 import { usePrivy } from "@privy-io/react-auth";
 import React, {
 	ReactNode,
@@ -55,6 +54,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 	const { authenticated, user, login, ready, logout } = usePrivy();
 	const { data, isLoading: isLoadingBalance } = useBalance({
 		address: (user?.wallet?.address as `0x${string}`) || "0x0",
+		query: {
+			enabled: authenticated,
+		},
 	});
 
 	const balance = data?.value ? formatEther(data?.value) : "0";
@@ -67,7 +69,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
 	const value = useMemo(
 		() => ({
-			account: user?.id ? { address: user.id } : undefined,
+			account: user?.wallet?.address
+				? { address: user.wallet.address }
+				: undefined,
 			isAuthenticated: authenticated,
 			hasBalance: balance !== "0",
 			showInstructionsForTestnetTokens: () =>

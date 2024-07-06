@@ -1,6 +1,4 @@
-import { Button } from "@/components/button";
 import { ButtonWithAuthentication } from "@/components/button/ButtonWithAuthentication";
-import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import InputText from "@/components/input/InputText";
 import { Modal } from "@/components/modal";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
