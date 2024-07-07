@@ -7,21 +7,7 @@ interface StatusTagProps {
 }
 
 export function NodeTypeTag({ type }: { type: NodeType }) {
-	return (
-		<Tag
-			color={
-				type === "optimization"
-					? "red"
-					: type === "development"
-						? "yellow"
-						: type === "research"
-							? "blue"
-							: "green"
-			}
-		>
-			{type?.replace(/-/g, " ")?.toUpperCase()}
-		</Tag>
-	);
+	return <Tag color={"gray"}>{type?.replace(/-/g, " ")?.toUpperCase()}</Tag>;
 }
 
 export function StatusTag({ status }: StatusTagProps) {

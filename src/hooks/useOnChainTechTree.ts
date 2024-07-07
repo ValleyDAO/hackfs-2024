@@ -47,7 +47,7 @@ export function useOnChainTechTree({
 				origin: "on-chain",
 			})) || [],
 			data?.[1]?.map((edge, idx) => ({
-				id: idx,
+				id: `${idx}`,
 				source: edge.source,
 				target: edge.target,
 				origin: "on-chain",

@@ -38,9 +38,19 @@ export function transformEdgeDataToLayoutEdge(
 export function getLayoutElements(
 	nodes: NodeData[] = [],
 	edges: EdgeData[] = [],
+	activeNode?: NodeData,
 ): { nodes: TechTreeLayoutNode[]; edges: TechTreeLayoutEdge[] } {
 	const initialNodes = nodes.map(transformTechTreeDataToNode);
-	const initialEdges = edges.map(transformEdgeDataToLayoutEdge);
+	const initialEdges = edges.map((edge) => {
+		const isEdgeActive =
+			edge.source === activeNode?.id || edge.target === activeNode?.id;
+		return {
+			...edge,
+			type: edgeType,
+			animated: !isEdgeActive,
+			style: isEdgeActive ? { stroke: "#000" } : {},
+		};
+	});
 
 	const dagreGraph = new dagre.graphlib.Graph();
 	dagreGraph.setDefaultEdgeLabel(() => ({}));

@@ -12,9 +12,13 @@ interface RelatedNodesAndEdges {
 	children?: NodeData[];
 }
 
+interface UseEnhanceArgs {
+	iterations?: number;
+}
+
 const MAX_ITERATIONS = 20;
 
-export function useEnhance() {
+export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 	const { updateAll, nodes, edges } = useNodesAndEdges();
 	const { activeNode } = useTechTreeContext();
 	const [isEnhancing, setIsEnhancing] = useState(true);
@@ -94,7 +98,7 @@ export function useEnhance() {
 	);
 
 	const enhanceNextInQueue = useCallback(async () => {
-		if (enhancementQueue.length === 0 || iterationCount >= MAX_ITERATIONS) {
+		if (enhancementQueue.length === 0 || iterationCount >= iterations) {
 			setIsEnhancing(false);
 			if (iterationCount !== 0)
 				toast.success(

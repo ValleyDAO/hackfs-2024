@@ -1,9 +1,11 @@
 import { EthAvatar } from "@/components/EthAvatar";
+import { FilecoinFilled } from "@/components/icons/FilecoinFilled";
 import { LogoutOutlined } from "@/components/icons/LogoutOutlined";
 import { Modal } from "@/components/modal";
 import { useAuth } from "@/providers/AuthProvider";
 import { NodeData } from "@/typings";
 import { getShortenedFormat } from "@/utils/string.utils";
+import { formatNumber } from "libphonenumber-js";
 import React from "react";
 
 interface AccountModalProps {
@@ -15,34 +17,15 @@ interface Point {
 	node: NodeData;
 }
 
-const points: Point[] = [
-	{
-		value: 25,
-		node: {
-			id: "1",
-			title: "Develop Multi-Junction Solar Cells",
-			type: "development",
-		},
-	},
-	{
-		value: 5,
-		node: { id: "2", title: "optimizations in Gluten", type: "research" },
-	},
-	{
-		value: 10,
-		node: { id: "3", title: "CRISP prototypes", type: "development" },
-	},
-];
-
 export function AccountModal({ close }: AccountModalProps) {
-	const { account, logout } = useAuth();
+	const { account, balance, logout } = useAuth();
 
 	function handleLogout() {
 		logout();
 		close();
 	}
 
-	const totalPoints = points.reduce((acc, point) => acc + point.value, 0);
+	// const totalPoints = points.reduce((acc, point) => acc + point.value, 0);
 
 	return (
 		<>
@@ -64,7 +47,16 @@ export function AccountModal({ close }: AccountModalProps) {
 							</div>
 						</div>
 					</div>
-					<div className="border-b border-gray-100 pb-2.5 mb-2.5">
+					<div className="horizontal justify-between py-2 bg-gray-50 px-4 rounded">
+						<div className="horizontal space-x-3">
+							<FilecoinFilled />
+							<div className="text-sm text-gray-900 font-medium">Filecoin</div>
+						</div>
+						<div className="text-sm text-gray-900">
+							<span className="font-medium">{balance}</span> FIL
+						</div>
+					</div>
+					{/*<div className="border-b border-gray-100 pb-2.5 mb-2.5">
 						<div className="text-sm font-bold">Total: {totalPoints} Points</div>
 					</div>
 					<div className="space-y-1">
@@ -83,7 +75,7 @@ export function AccountModal({ close }: AccountModalProps) {
 								</div>
 							</div>
 						))}
-					</div>
+					</div>*/}
 				</Modal>
 			)}
 		</>

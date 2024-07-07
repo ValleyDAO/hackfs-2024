@@ -119,7 +119,9 @@ export type TechTreeLayoutNode = Node<Omit<NodeData, "id">> & {
 };
 
 export type TechTreeLayoutEdge = EdgeData & {
-	type?: typeof edgeType;
+	type?: string;
+	animate?: boolean;
+	style?: React.CSSProperties;
 };
 
 export interface Contributor {

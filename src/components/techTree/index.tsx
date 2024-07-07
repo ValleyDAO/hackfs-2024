@@ -5,6 +5,7 @@ import ReactFlow, {
 	ConnectionLineType,
 	ConnectionMode,
 	Controls,
+	Edge,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -17,7 +18,7 @@ import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { NodeData } from "@/typings";
+import { EdgeData, NodeData } from "@/typings";
 import { generateId, getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
 
@@ -26,12 +27,13 @@ const nodeTypes = { "tech-tree": TechNode };
 export function TechTreeLayout() {
 	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
 		useNodesAndEdges();
-	const { mode, setActiveNode, activeEditType, setActiveEditType } =
+	const { mode, setActiveNode, activeNode, activeEditType, setActiveEditType } =
 		useTechTreeContext();
 
 	const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
 		nodes,
 		edges,
+		activeNode,
 	);
 
 	useEffect(() => {
@@ -72,8 +74,8 @@ export function TechTreeLayout() {
 					connectionLineType={ConnectionLineType.SmoothStep}
 					fitView
 					defaultEdgeOptions={{
-						animated: true,
 						type: "smoothstep",
+						animated: true,
 					}}
 					connectionMode={ConnectionMode.Loose}
 					maxZoom={1.2}

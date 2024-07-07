@@ -20,6 +20,7 @@ export interface AuthContextProps {
 	account?: Account;
 	isAuthenticated: boolean;
 	hasBalance: boolean;
+	balance: string;
 	login: () => void;
 	logout: () => void;
 	showInstructionsForTestnetTokens: () => void;
@@ -29,6 +30,7 @@ export const AuthContext = createContext<AuthContextProps>({
 	account: undefined,
 	isAuthenticated: false,
 	hasBalance: false,
+	balance: "0",
 	login: () => {},
 	logout: () => {},
 	showInstructionsForTestnetTokens: () => {},
@@ -78,8 +80,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 				setShowInstructionsForTestnetTokens(true),
 			login,
 			logout,
+			balance,
 		}),
-		[user, ready, login, logout, authenticated],
+		[user, ready, login, logout, balance, authenticated],
 	);
 
 	// Go to faucet.calibnet.chainsafe-fil.io and click Send Funds.

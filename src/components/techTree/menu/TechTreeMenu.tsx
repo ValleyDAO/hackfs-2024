@@ -15,7 +15,7 @@ function ModeSelectionItem({
 }: { icon: React.ReactNode; mode: TechTreeMode; label: string }) {
 	const { mode: activeMode, setMode } = useTechTreeContext();
 	const isActive = activeMode === mode;
-	const { start } = useEnhance();
+	const { start } = useEnhance({});
 
 	function handleClick(newMode: TechTreeMode) {
 		if (newMode !== "enhance") {

@@ -66,7 +66,7 @@ export function useOnChainNode(
 		return {
 			title: "Cellulosic Ethanol Production",
 			id: "2342",
-			type: "development",
+			type: "technology-development",
 			isFinished: true,
 			techTreeId: BigInt(1),
 			status: "finished",
