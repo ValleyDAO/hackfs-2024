@@ -32,7 +32,7 @@ export function TechNode({
 					hasActiveNodeInMoveMode
 						? {
 								"border-gray-600 bg-white text-black": isActive,
-								"opacity-50 hover:opacity-100": !isActive,
+								"opacity-30 hover:opacity-100": !isActive,
 							}
 						: "border-gray-200 bg-white",
 				)}

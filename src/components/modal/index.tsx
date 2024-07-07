@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 type ModalProps = {
 	children: ReactNode;
 	close?(): void;
+	showClose?: boolean;
 	bodyClassName?: string;
 	wrapperWidth?:
 		| "max-w-lg"
@@ -21,6 +22,7 @@ type ModalProps = {
 export function Modal({
 	children,
 	close,
+	showClose = true,
 	open,
 	position = "bottom",
 	wrapperWidth = "max-w-lg",
@@ -59,14 +61,16 @@ export function Modal({
 							wrapperWidth,
 						)}
 					>
-						<div className="flex w-full items-center justify-end">
-							<div className="hover:bg-gray-100 rounded px-1 group">
-								<CloseOutlined
-									className="text-base cursor-pointer group-hover:text-black transition-colors text-gray-400"
-									onClick={() => close?.()}
-								/>
+						{showClose && (
+							<div className="flex w-full items-center justify-end">
+								<div className="hover:bg-gray-100 rounded px-1 group">
+									<CloseOutlined
+										className="text-base cursor-pointer group-hover:text-black transition-colors text-gray-400"
+										onClick={() => close?.()}
+									/>
+								</div>
 							</div>
-						</div>
+						)}
 						<div className={clsx("h-full w-full", bodyClassName)}>
 							{children}
 						</div>

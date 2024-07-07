@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
+import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData } from "@/typings";
@@ -149,7 +150,17 @@ export function TechTreeSidePanel() {
 				>
 					<div className="horizontal items-center justify-between">
 						<div>
-							<div className="text-[10px] text-gray-500">ROADMAP</div>
+							{!activeNode ? (
+								<div className="text-[10px] text-gray-500">ROADMAP</div>
+							) : (
+								<div
+									onClick={() => setActiveNode(undefined)}
+									className="horizontal text-gray-500 hover:text-gray-950 cursor-pointer space-x-1"
+								>
+									<ArrowLeftOutlined className="text-xs" />
+									<span className="text-xs">Back</span>
+								</div>
+							)}
 							<div className="text-base font-bold">
 								{(activeNode || objective)?.title}
 							</div>

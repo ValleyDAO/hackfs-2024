@@ -73,10 +73,6 @@ export function TechTreeLayout() {
 					edges={layoutEdges}
 					connectionLineType={ConnectionLineType.SmoothStep}
 					fitView
-					defaultEdgeOptions={{
-						type: "smoothstep",
-						animated: true,
-					}}
 					connectionMode={ConnectionMode.Loose}
 					maxZoom={1.2}
 					nodeTypes={nodeTypes}
