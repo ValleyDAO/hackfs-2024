@@ -1,19 +1,35 @@
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { NodeData, NodeType } from "@/typings";
-import { getNodeTypeColor } from "@/utils/nodes.utils";
+import { getNodeTypeColor, nodeHeight, nodeWidth } from "@/utils/nodes.utils";
 import clsx from "clsx";
-import { Handle, NodeProps, Position } from "reactflow";
+import { useEffect } from "react";
+import { Handle, NodeProps, Position, useReactFlow } from "reactflow";
 
 export function TechNode({
 	data,
 	isConnectable,
 	targetPosition = Position.Top,
 	sourcePosition = Position.Bottom,
+	xPos,
+	yPos,
 	id,
 }: NodeProps<NodeData>) {
 	const { mode, activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
 	const isActive = activeNode?.id === id;
+
+	const { setCenter } = useReactFlow();
+
+	console.log(xPos, yPos);
+
+	useEffect(() => {
+		if (activeNode?.id === id) {
+			setCenter(xPos + nodeWidth / 2 + 250, yPos + nodeHeight / 2, {
+				zoom: 0.75,
+				duration: 800,
+			});
+		}
+	}, [activeNode]);
 
 	return (
 		<>
@@ -32,7 +48,8 @@ export function TechNode({
 					hasActiveNodeInMoveMode
 						? {
 								"border-gray-600 bg-white text-black": isActive,
-								"opacity-30 hover:opacity-100": !isActive,
+								"!bg-gray-50 !border-gray-200 !text-gray-300 hover:opacity-100":
+									!isActive,
 							}
 						: "border-gray-200 bg-white",
 				)}

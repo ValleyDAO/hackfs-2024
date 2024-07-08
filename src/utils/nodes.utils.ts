@@ -12,7 +12,7 @@ export const defaultPosition = { x: 0, y: 0 };
 export const edgeType = "smoothstep";
 
 export const nodeWidth = 350;
-const nodeHeight = 75;
+export const nodeHeight = 75;
 
 export function transformTechTreeDataToNode({
 	id,
@@ -34,6 +34,9 @@ export function transformEdgeDataToLayoutEdge(
 		type: edgeType,
 	};
 }
+
+// A sort function for an edges map that sorts based on which level down the tree of the furthest target value
+// TODO
 
 export function getLayoutElements(
 	nodes: NodeData[] = [],

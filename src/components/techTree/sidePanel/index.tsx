@@ -127,6 +127,18 @@ function NodeItem({ node }: { node: NodeData }) {
 	);
 }
 
+function ActiveNode() {
+	return (
+		<>
+			<ModeSelectionItem
+				label="enhance"
+				mode="enhance"
+				icon={<EnhanceOutlined />}
+			/>
+		</>
+	);
+}
+
 export function TechTreeSidePanel() {
 	const [expanded, setExpanded] = React.useState(true);
 	const { nodes, hasUpdates, handlePublish, isPublishing } = useNodesAndEdges();
@@ -192,12 +204,11 @@ export function TechTreeSidePanel() {
 							Publish
 						</Button>
 					)}
-					<ModeSelectionItem
-						label="enhance"
-						mode="enhance"
-						icon={<EnhanceOutlined />}
-					/>
-					{!activeNode && expanded ? <UltimateObjectivePanel /> : <></>}
+					{!activeNode && expanded ? (
+						<UltimateObjectivePanel />
+					) : (
+						<ActiveNode />
+					)}
 				</motion.div>
 			</AnimatePresence>
 		</>
