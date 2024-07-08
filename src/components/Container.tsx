@@ -62,7 +62,7 @@ export function Container({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="w-full h-screen">
 			<Header />
-			<Toaster containerClassName="text-sm" position="top-center" />
+			<Toaster containerClassName="!text-xs" position="top-center" />
 			<div className="h-[calc(100%-4rem)] w-full p-4 pt-0">
 				<div className="p-2 h-full flex items-stretch rounded-lg bg-gray-100">
 					{children}

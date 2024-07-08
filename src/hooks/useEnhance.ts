@@ -21,7 +21,7 @@ interface UseEnhanceArgs {
 	iterations?: number;
 }
 
-const MAX_ITERATIONS = 20;
+const MAX_ITERATIONS = 5;
 
 export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 	const { updateAll, nodes, edges } = useNodesAndEdges();
@@ -137,12 +137,15 @@ export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 		}
 	}, [isEnhancing, enhanceNextInQueue, enhancementQueue]);
 
-	const start = useCallback(async () => {
+	async function start() {
 		setIsEnhancing(true);
-		setIterationCount(0);
+		setIterationCount(1);
 
-		setEnhancementQueue([nodes?.[0].id]);
-	}, [nodes]);
+		// find first node thats is not ultimate pbjective
+		const node = nodes.find((n) => n.type !== "ultimate-objective");
+		if (!node) return;
+		setEnhancementQueue([node?.id]);
+	}
 
 	return { start };
 }

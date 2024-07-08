@@ -18,6 +18,7 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		isSuccess,
 		isError,
 		isPending,
+		error,
 	} = useWriteContract();
 
 	useWatchContractEvent({
@@ -33,6 +34,8 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 			});
 		},
 	});
+
+	console.log(error);
 
 	useEffect(() => {
 		if (isSuccess) {

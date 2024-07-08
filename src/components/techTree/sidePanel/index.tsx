@@ -154,60 +154,70 @@ export function TechTreeSidePanel() {
 			<AnimatePresence>
 				<motion.div
 					className={clsx(
-						"overflow-y-scroll absolute right-0 space-y-6 self-start transition-all rounded bg-white drop-shadow-sm !w-[450px] ml-2 px-5 border-gray-200",
-						expanded ? "py-5" : "py-5",
+						"overflow-y-scroll absolute pt-5 right-0 space-y-6 self-start transition-all rounded bg-white drop-shadow-sm !w-[450px] ml-2 px-5 border-gray-200",
 					)}
 					initial={{ height: "auto" }}
 					animate={{ height: expanded ? "100%" : "auto" }}
 					transition={{ duration: 0.1 }}
 				>
-					<div className="horizontal items-center justify-between">
-						<div>
-							{!activeNode ? (
-								<div className="text-[10px] text-gray-500">ROADMAP</div>
-							) : (
-								<div
-									onClick={() => setActiveNode(undefined)}
-									className="horizontal text-gray-500 hover:text-gray-950 cursor-pointer space-x-1"
-								>
-									<ArrowLeftOutlined className="text-xs" />
-									<span className="text-xs">Back</span>
-								</div>
-							)}
-							<div className="text-base font-bold">
-								{(activeNode || objective)?.title}
-							</div>
-						</div>
-						<div className="horizontal space-x-3">
+					<div>
+						{!activeNode ? (
+							<div className="text-[10px] text-gray-500">ROADMAP</div>
+						) : (
 							<div
-								className="text-xs px-3 py-1 bg-gray-100 hover:bg-indigo-100 transition-colors cursor-pointer hover:text-indigo-950 rounded-full text-gray-500 font-medium"
-								onClick={() => setExpanded(!expanded)}
+								onClick={() => setActiveNode(undefined)}
+								className="horizontal text-gray-500 hover:text-gray-950 cursor-pointer space-x-1"
 							>
-								{expanded ? "Collapse" : "Expand"}
+								<ArrowLeftOutlined className="text-xs" />
+								<span className="text-xs">Back</span>
 							</div>
-							{/*<div
+						)}
+						<div className="horizontal items-start justify-between">
+							<div>
+								<div className="text-base font-bold">
+									{(activeNode || objective)?.title}
+								</div>
+							</div>
+							<div className="horizontal space-x-3">
+								<div
+									className="text-xs px-3 py-1 bg-gray-100 hover:bg-indigo-100 transition-colors cursor-pointer hover:text-indigo-950 rounded-full text-gray-500 font-medium"
+									onClick={() => setExpanded(!expanded)}
+								>
+									{expanded ? "Collapse" : "Expand"}
+								</div>
+								{/*<div
 								onClick={() => handleClear()}
 								className="group transition-colors cursor-pointer bg-gray-50 hover:bg-red-50 rounded"
 							>
 								<CloseOutlined className="group-hover:text-red-700 text-base text-gray-500 transition-colors" />
 							</div>*/}
+							</div>
 						</div>
 					</div>
-					{hasUpdates && (
-						<Button
-							loading={isPublishing}
-							onClick={() => handlePublish("publish")}
-							disabled={!hasUpdates}
-							className="py-3 px-4"
-							variant="black"
-						>
-							Publish
-						</Button>
-					)}
 					{!activeNode && expanded ? (
 						<UltimateObjectivePanel />
 					) : (
 						<ActiveNode />
+					)}
+					{hasUpdates && (
+						<div className="sticky bg-white space-y-6 bottom-0 py-6 z-20 inset-x-6">
+							<div className="border-t border-gray-100 pt-4">
+								<div className="text-xs text-gray-500 w-9/12">
+									You have unsaved changes. Please save your changes before you
+									leave
+								</div>
+							</div>
+							<Button
+								fullSize
+								loading={isPublishing}
+								onClick={() => handlePublish("publish")}
+								disabled={!hasUpdates}
+								className="py-2"
+								variant="black"
+							>
+								Publish
+							</Button>
+						</div>
 					)}
 				</motion.div>
 			</AnimatePresence>

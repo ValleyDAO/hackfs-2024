@@ -9,24 +9,21 @@ import ReactFlow, {
 } from "reactflow";
 
 import "reactflow/dist/style.css";
-import { TechNode } from "@/components/techTree/TechNode";
-import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
-
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { Legend } from "@/components/techTree/Legend";
+import { TechNode } from "@/components/techTree/TechNode";
 import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { EdgeData, NodeData } from "@/typings";
-import { generateId, getLayoutElements } from "@/utils/nodes.utils";
+
+import { getLayoutElements } from "@/utils/nodes.utils";
 import clsx from "clsx";
 
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
-	const { nodes, edges, handleEdgeUpdate, addNewNode, isLoading } =
-		useNodesAndEdges();
-	const { mode, setActiveNode, activeNode, activeEditType, setActiveEditType } =
+	const { nodes, edges, handleEdgeUpdate, isLoading } = useNodesAndEdges();
+	const { mode, setActiveNode, activeNode, activeEditType } =
 		useTechTreeContext();
 
 	const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
@@ -34,25 +31,6 @@ export function TechTreeLayout() {
 		edges,
 		activeNode,
 	);
-
-	useEffect(() => {
-		if (nodes && mode === "edit" && activeEditType === "node") {
-			setActiveEditType(undefined);
-			setActiveNode(nodes?.[nodes.length - 1]?.id);
-		}
-	}, [nodes]);
-
-	function onPossibleNodeAdd(ev: MouseEvent<HTMLDivElement>) {
-		if (mode === "edit" && activeEditType === "node") {
-			ev.preventDefault();
-			const newNode: NodeData = {
-				id: generateId(),
-				title: "Placeholder",
-				type: "ultimate-objective",
-			};
-			addNewNode(newNode);
-		}
-	}
 
 	return (
 		<div
@@ -81,7 +59,6 @@ export function TechTreeLayout() {
 					draggable={mode === "move"}
 					autoPanOnNodeDrag={mode === "move"}
 					onSelectionEnd={() => setActiveNode(undefined)}
-					onClick={onPossibleNodeAdd}
 					onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 					edgesUpdatable={mode === "edit" && activeEditType === "edge"}
 					onNodeClick={(evt, { id }) => setActiveNode(id)}

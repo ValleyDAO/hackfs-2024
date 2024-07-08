@@ -20,8 +20,6 @@ export function TechNode({
 
 	const { setCenter } = useReactFlow();
 
-	console.log(xPos, yPos);
-
 	useEffect(() => {
 		if (activeNode?.id === id) {
 			setCenter(xPos + nodeWidth / 2 + 250, yPos + nodeHeight / 2, {
