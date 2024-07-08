@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/button";
 import { ArrowLeftOutlined } from "@/components/icons/ArrowLeftOutlined";
+import { EnhanceOutlined } from "@/components/icons/EnhanceOutlined";
+import { ModeSelectionItem } from "@/components/techTree/menu/TechTreeMenu";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData } from "@/typings";
@@ -127,9 +129,8 @@ function NodeItem({ node }: { node: NodeData }) {
 
 export function TechTreeSidePanel() {
 	const [expanded, setExpanded] = React.useState(true);
-	const { nodes } = useNodesAndEdges();
-	const { activeNode, setActiveNode } = useTechTreeContext();
-	const objective = nodes?.find((node) => node.type === "ultimate-objective");
+	const { nodes, hasUpdates, handlePublish, isPublishing } = useNodesAndEdges();
+	const { activeNode, setActiveNode, objective } = useTechTreeContext();
 
 	function handleClear() {
 		setActiveNode(undefined);
@@ -180,6 +181,22 @@ export function TechTreeSidePanel() {
 							</div>*/}
 						</div>
 					</div>
+					{hasUpdates && (
+						<Button
+							loading={isPublishing}
+							onClick={() => handlePublish("publish")}
+							disabled={!hasUpdates}
+							className="py-3 px-4"
+							variant="black"
+						>
+							Publish
+						</Button>
+					)}
+					<ModeSelectionItem
+						label="enhance"
+						mode="enhance"
+						icon={<EnhanceOutlined />}
+					/>
 					{!activeNode && expanded ? <UltimateObjectivePanel /> : <></>}
 				</motion.div>
 			</AnimatePresence>

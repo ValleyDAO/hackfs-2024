@@ -15,7 +15,6 @@ import { TechTreeMenu } from "@/components/techTree/menu/TechTreeMenu";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { Legend } from "@/components/techTree/Legend";
 import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
-import { useAuth } from "@/providers/AuthProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData } from "@/typings";
@@ -89,7 +88,6 @@ export function TechTreeLayout() {
 				>
 					<Controls />
 				</ReactFlow>
-				<TechTreeMenu />
 				<TechTreeSidePanel />
 			</>
 			<Legend />

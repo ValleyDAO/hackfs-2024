@@ -8,7 +8,7 @@ import { TechTreeMode } from "@/typings";
 import clsx from "clsx";
 import React from "react";
 
-function ModeSelectionItem({
+export function ModeSelectionItem({
 	icon,
 	mode,
 	label,
@@ -71,7 +71,7 @@ export function TechTreeMenu() {
 	return (
 		<div
 			className={clsx("transition-all flex flex-col absolute left-0", {
-				"left-0 right-0 mx-auto w-full items-stretch text-center":
+				"left-0 right-50 mx-auto w-full items-stretch text-center":
 					mode === "edit",
 				"left-0 items-start": mode === "move",
 			})}
