@@ -18,6 +18,7 @@ type TechTreeContextProps = {
 	setActiveNodeRaw?: (node: NodeData) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
+	objective?: NodeData;
 	setActiveEditType: (type?: TechTreeAddType) => void;
 };
 
@@ -62,20 +63,6 @@ export function TechTreeLayoutContextProvider({
 		}
 	}, [events, techTreeId]);
 
-	useEffect(() => {
-		if (nodes?.length === 1 && nodes[0]?.type === "ultimate-objective") {
-			setMode("edit");
-			setActiveNode(nodes[0]);
-		}
-	}, [nodes]);
-
-	function handleSetMode(mode: TechTreeMode) {
-		if (mode === "edit") {
-			setActiveNode(undefined);
-		}
-		setMode(mode);
-	}
-
 	function handleSetActiveNode(nodeId?: string) {
 		const node = nodes.find((n) => n.id === nodeId);
 		setActiveNode(node);
@@ -84,11 +71,12 @@ export function TechTreeLayoutContextProvider({
 	const value = useMemo(
 		() => ({
 			mode,
-			setMode: handleSetMode,
+			setMode,
 			setActiveNode: handleSetActiveNode,
 			activeNode,
 			activeEditType,
 			setActiveEditType,
+			objective: nodes.find((node) => node.type === "ultimate-objective"),
 			setActiveNodeRaw: setActiveNode,
 		}),
 		[mode, activeNode, activeEditType, nodes],

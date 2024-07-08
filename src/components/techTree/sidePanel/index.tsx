@@ -13,7 +13,7 @@ import React from "react";
 
 function UltimateObjectivePanel() {
 	const { updateAll, nodes } = useNodesAndEdges();
-	const { activeNode, setActiveNode, setMode } = useTechTreeContext();
+	const { setActiveNode, setMode, objective } = useTechTreeContext();
 	const [isGenerating, setIsGenerating] = React.useState(false);
 
 	async function create() {
@@ -21,7 +21,7 @@ function UltimateObjectivePanel() {
 		const response = await fetchWrapper<{
 			nodes: NodeData[];
 			edges: EdgeData[];
-		}>(`/generate-tech-tree?title=${activeNode?.title}&id=${activeNode?.id}`);
+		}>(`/generate-tech-tree?title=${objective?.title}&id=${objective?.id}`);
 
 		updateAll(
 			response?.nodes.map((node) => ({

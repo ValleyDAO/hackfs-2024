@@ -1,6 +1,5 @@
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
-import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
-import { EdgeData, NodeData } from "@/typings";
+import { EdgeData, NodeData, TechTreeData } from "@/typings";
 import { fetchWrapper } from "@/utils/query.utils";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -12,6 +11,12 @@ interface RelatedNodesAndEdges {
 	children?: NodeData[];
 }
 
+interface EnhancementResponse {
+	nodes: NodeData[];
+	edges: EdgeData[];
+	expanded: boolean;
+}
+
 interface UseEnhanceArgs {
 	iterations?: number;
 }
@@ -20,7 +25,6 @@ const MAX_ITERATIONS = 20;
 
 export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 	const { updateAll, nodes, edges } = useNodesAndEdges();
-	const { activeNode } = useTechTreeContext();
 	const [isEnhancing, setIsEnhancing] = useState(true);
 	const [iterationCount, setIterationCount] = useState(0);
 	const [enhancementQueue, setEnhancementQueue] = useState<string[]>([]);
@@ -49,33 +53,10 @@ export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 		[edges, nodes],
 	);
 
-	const enhanceSubtree = useCallback(
-		async (
-			subtree: RelatedNodesAndEdges,
-		): Promise<{
-			nodes: NodeData[];
-			edges: EdgeData[];
-			expanded: boolean;
-		}> => {
-			return fetchWrapper<{
-				nodes: NodeData[];
-				edges: EdgeData[];
-				expanded: boolean;
-			}>("/enhance-subtree", {
-				method: "POST",
-				body: JSON.stringify(subtree),
-			});
-		},
-		[],
-	);
-
 	const mergeEnhancedData = useCallback(
-		(
-			original: { nodes: NodeData[]; edges: EdgeData[] },
-			enhanced: { nodes: NodeData[]; edges: EdgeData[] },
-		): { nodes: NodeData[]; edges: EdgeData[] } => {
-			const mergedNodes = [...original.nodes];
-			const mergedEdges = [...original.edges];
+		(enhanced: TechTreeData): TechTreeData => {
+			const mergedNodes = [...nodes];
+			const mergedEdges = [...edges];
 
 			enhanced.nodes.forEach((enhancedNode) => {
 				const index = mergedNodes.findIndex((n) => n.id === enhancedNode.id);
@@ -86,9 +67,10 @@ export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 				}
 			});
 
-			enhanced.edges.forEach((enhancedEdge) => {
+			const edgeCount = edges.length;
+			enhanced.edges.forEach((enhancedEdge, idx) => {
 				if (!mergedEdges.some((e) => e.id === enhancedEdge.id)) {
-					mergedEdges.push(enhancedEdge);
+					mergedEdges.push({ ...enhancedEdge, id: `${edgeCount + idx}` });
 				}
 			});
 
@@ -109,10 +91,16 @@ export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 
 		const nodeId = enhancementQueue[0];
 		const subtree = getRelatedNodesAndEdges(nodeId);
-		const enhancedSubtree = await enhanceSubtree(subtree);
+		const enhancedSubtree = await fetchWrapper<EnhancementResponse>(
+			"/enhance-subtree",
+			{
+				method: "POST",
+				body: JSON.stringify(subtree),
+			},
+		);
 
 		if (enhancedSubtree.expanded) {
-			const updatedTree = mergeEnhancedData({ nodes, edges }, enhancedSubtree);
+			const updatedTree = mergeEnhancedData(enhancedSubtree);
 			updateAll(updatedTree.nodes, updatedTree.edges);
 			setIterationCount((prev) => prev + 1);
 
@@ -137,7 +125,6 @@ export function useEnhance({ iterations = MAX_ITERATIONS }: UseEnhanceArgs) {
 		enhancementQueue,
 		iterationCount,
 		getRelatedNodesAndEdges,
-		enhanceSubtree,
 		mergeEnhancedData,
 		nodes,
 		edges,

@@ -113,6 +113,11 @@ export interface EdgeData {
 	origin?: NodeOrigin;
 }
 
+export interface TechTreeData {
+	nodes: NodeData[];
+	edges: EdgeData[];
+}
+
 export type TechTreeLayoutNode = Node<Omit<NodeData, "id">> & {
 	targetPosition?: Position;
 	sourcePosition?: Position;
