@@ -15,7 +15,7 @@ import React from "react";
 
 function UltimateObjectivePanel() {
 	const { updateAll, nodes } = useNodesAndEdges();
-	const { setActiveNode, setMode, objective } = useTechTreeContext();
+	const { setActiveNode, objective } = useTechTreeContext();
 	const [isGenerating, setIsGenerating] = React.useState(false);
 
 	async function create() {
@@ -41,7 +41,6 @@ function UltimateObjectivePanel() {
 				})) || [],
 		});
 		setIsGenerating(false);
-		setMode("move");
 		setActiveNode(undefined);
 	}
 

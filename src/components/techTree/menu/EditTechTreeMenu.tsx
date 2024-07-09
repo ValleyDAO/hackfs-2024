@@ -49,11 +49,7 @@ function AddObjectInEditModeItem({
 export function EditTechTreeMenu() {
 	const { hasUpdates, handlePublish, isPublishing, nodes, addNewNode } =
 		useNodesAndEdges();
-	const { setMode, activeEditType, setActiveEditType } = useTechTreeContext();
-
-	function handleBackFromEditMode() {
-		setMode("move");
-	}
+	const { activeEditType, setActiveEditType } = useTechTreeContext();
 
 	function handleAddNewNode() {
 		const newNode: NodeData = {
@@ -70,7 +66,7 @@ export function EditTechTreeMenu() {
 			<div>
 				<div className="flex w-full items-center space-x-4">
 					<div
-						onClick={handleBackFromEditMode}
+						onClick={() => ""}
 						className="horizontal text-sm space-x-1.5 cursor-pointer group hover:text-blue-700 text-gray-600 border-r border-gray-200 pr-8"
 					>
 						<ArrowLeftOutlined />

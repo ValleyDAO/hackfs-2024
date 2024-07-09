@@ -7,14 +7,13 @@ import InputText from "@/components/input/InputText";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
 import { useTechTreeContext } from "@/providers/TechTreeLayoutContextProvider";
 import { EdgeData, NodeData, NodeType, SelectOptionItem } from "@/typings";
-import { fetchWrapper } from "@/utils/query.utils";
 import { parseTypeToSearchFieldItems } from "@/utils/select.utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
 	const { handleNodeUpdate, nodes } = useNodesAndEdges();
-	const { activeNode, setActiveNode, setMode } = useTechTreeContext();
+	const { activeNode, setActiveNode } = useTechTreeContext();
 	const [isHandlingSave, setIsHandlingSave] = React.useState(false);
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
 		title: activeNode?.title,
@@ -37,7 +36,6 @@ export function EditMode() {
 			// await create(update.title);
 			setActiveNode(undefined);
 			setIsHandlingSave(false);
-			setMode("move");
 		} else {
 			setActiveNode(undefined);
 		}
