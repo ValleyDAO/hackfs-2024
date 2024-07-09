@@ -2,7 +2,7 @@
 
 import { useTxEvents } from "@/providers/ContractEventsProvider";
 import { useNodesAndEdges } from "@/providers/NodesAndEdgesProvider";
-import { NodeData, TechTreeAddType, TechTreeMode } from "@/typings";
+import { NodeData, TechTreeAddType } from "@/typings";
 import React, {
 	ReactNode,
 	createContext,
@@ -12,10 +12,7 @@ import React, {
 } from "react";
 
 type TechTreeContextProps = {
-	mode: TechTreeMode;
-	setMode: (mode: TechTreeMode) => void;
 	setActiveNode: (nodeId?: string) => void;
-	setActiveNodeRaw?: (node: NodeData) => void;
 	activeNode?: NodeData;
 	activeEditType?: TechTreeAddType;
 	objective?: NodeData;
@@ -23,8 +20,6 @@ type TechTreeContextProps = {
 };
 
 export const TechTreeContext = createContext<TechTreeContextProps>({
-	mode: "move",
-	setMode: () => {},
 	setActiveNode: () => {},
 	setActiveEditType: () => {},
 });
@@ -43,7 +38,6 @@ export function TechTreeLayoutContextProvider({
 }: { children: ReactNode; techTreeId: bigint }) {
 	const { events } = useTxEvents();
 	const { nodes, hasUpdates } = useNodesAndEdges();
-	const [mode, setMode] = React.useState<TechTreeMode>("move");
 	const [activeEditType, setActiveEditType] = React.useState<
 		TechTreeAddType | undefined
 	>();
@@ -58,28 +52,24 @@ export function TechTreeLayoutContextProvider({
 		);
 		if (event) {
 			setActiveNode(undefined);
-			setMode("move");
 			setActiveEditType(undefined);
 		}
 	}, [events, techTreeId]);
 
 	function handleSetActiveNode(nodeId?: string) {
 		const node = nodes.find((n) => n.id === nodeId);
-		setActiveNode(node);
+		setActiveNode(node?.type !== "ultimate-objective" ? node : undefined);
 	}
 
 	const value = useMemo(
 		() => ({
-			mode,
-			setMode,
 			setActiveNode: handleSetActiveNode,
 			activeNode,
 			activeEditType,
 			setActiveEditType,
 			objective: nodes.find((node) => node.type === "ultimate-objective"),
-			setActiveNodeRaw: setActiveNode,
 		}),
-		[mode, activeNode, activeEditType, nodes],
+		[activeNode, activeEditType, nodes],
 	);
 
 	return (

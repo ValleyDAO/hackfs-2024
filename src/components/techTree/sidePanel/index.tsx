@@ -25,19 +25,21 @@ function UltimateObjectivePanel() {
 			edges: EdgeData[];
 		}>(`/generate-tech-tree?title=${objective?.title}&id=${objective?.id}`);
 
-		updateAll(
-			response?.nodes.map((node) => ({
-				id: node.id,
-				title: node.title,
-				description: node.description,
-				type: node.type,
-			})),
-			response?.edges.map((edge, idx) => ({
-				id: `${idx}`,
-				source: edge.source,
-				target: edge.target,
-			})),
-		);
+		updateAll({
+			nodes:
+				response?.nodes?.map((node) => ({
+					id: node.id,
+					title: node.title,
+					description: node.description,
+					type: node.type,
+				})) || [],
+			edges:
+				response?.edges?.map((edge, idx) => ({
+					id: `${idx}`,
+					source: edge.source,
+					target: edge.target,
+				})) || [],
+		});
 		setIsGenerating(false);
 		setMode("move");
 		setActiveNode(undefined);
@@ -129,19 +131,15 @@ function NodeItem({ node }: { node: NodeData }) {
 
 function ActiveNode() {
 	return (
-		<>
-			<ModeSelectionItem
-				label="enhance"
-				mode="enhance"
-				icon={<EnhanceOutlined />}
-			/>
-		</>
+		<div className="h-full">
+			<ModeSelectionItem label="Move" />
+		</div>
 	);
 }
 
 export function TechTreeSidePanel() {
 	const [expanded, setExpanded] = React.useState(true);
-	const { nodes, hasUpdates, handlePublish, isPublishing } = useNodesAndEdges();
+	const { hasUpdates, handlePublish, isPublishing } = useNodesAndEdges();
 	const { activeNode, setActiveNode, objective } = useTechTreeContext();
 
 	function handleClear() {
@@ -154,30 +152,26 @@ export function TechTreeSidePanel() {
 			<AnimatePresence>
 				<motion.div
 					className={clsx(
-						"overflow-y-scroll absolute pt-5 right-0 space-y-6 self-start transition-all rounded bg-white drop-shadow-sm !w-[450px] ml-2 px-5 border-gray-200",
+						"overflow-y-scroll bottom-0 absolute pt-5 right-0 space-y-6 self-start transition-all rounded bg-white drop-shadow-sm !w-[450px] ml-2 px-5 border-gray-200",
+						!expanded && "pb-5",
 					)}
 					initial={{ height: "auto" }}
 					animate={{ height: expanded ? "100%" : "auto" }}
 					transition={{ duration: 0.1 }}
 				>
 					<div>
-						{!activeNode ? (
-							<div className="text-[10px] text-gray-500">ROADMAP</div>
-						) : (
-							<div
-								onClick={() => setActiveNode(undefined)}
-								className="horizontal text-gray-500 hover:text-gray-950 cursor-pointer space-x-1"
-							>
-								<ArrowLeftOutlined className="text-xs" />
-								<span className="text-xs">Back</span>
-							</div>
-						)}
 						<div className="horizontal items-start justify-between">
-							<div>
-								<div className="text-base font-bold">
-									{(activeNode || objective)?.title}
+							{!activeNode ? (
+								<div className="text-[10px] text-gray-500">ROADMAP</div>
+							) : (
+								<div
+									onClick={() => setActiveNode(undefined)}
+									className="horizontal text-gray-500 hover:text-gray-950 cursor-pointer space-x-1"
+								>
+									<ArrowLeftOutlined className="text-xs" />
+									<span className="text-xs">Back</span>
 								</div>
-							</div>
+							)}
 							<div className="horizontal space-x-3">
 								<div
 									className="text-xs px-3 py-1 bg-gray-100 hover:bg-indigo-100 transition-colors cursor-pointer hover:text-indigo-950 rounded-full text-gray-500 font-medium"
@@ -193,13 +187,16 @@ export function TechTreeSidePanel() {
 							</div>*/}
 							</div>
 						</div>
+						<div className="text-base font-bold">
+							{(activeNode || objective)?.title}
+						</div>
 					</div>
 					{!activeNode && expanded ? (
 						<UltimateObjectivePanel />
 					) : (
-						<ActiveNode />
+						expanded && <ActiveNode />
 					)}
-					{hasUpdates && (
+					{hasUpdates && expanded && (
 						<div className="sticky bg-white space-y-6 bottom-0 py-6 z-20 inset-x-6">
 							<div className="border-t border-gray-100 pt-4">
 								<div className="text-xs text-gray-500 w-9/12">

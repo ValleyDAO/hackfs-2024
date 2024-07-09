@@ -2,7 +2,7 @@
 
 import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
-import { EdgeData, NodeData, TechTree } from "@/typings";
+import { EdgeData, NodeData, TechTree, TechTreeData } from "@/typings";
 import { isInvalidNumber } from "@/utils/number.utils";
 import deepEqual from "deep-equal";
 import React, {
@@ -21,7 +21,7 @@ type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
 	addNewNode(data: NodeData): void;
-	updateAll(data: NodeData[], edges: EdgeData[]): void;
+	updateAll(roadmap: TechTreeData, removeNodeIds?: string[]): void;
 	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
 	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
@@ -57,50 +57,60 @@ export function NodesAndEdgesProvider({
 	children,
 	techTree,
 }: { children: ReactNode; techTree: TechTree }) {
-	const { nodes, edges, isLoadingOnChain } = useOnChainTechTree({
+	const { onChainRoadmap, isLoadingOnChain } = useOnChainTechTree({
 		techTreeId: techTree.id,
 	});
 
-	const { data: hash, writeContract, isPending } = useWriteContract();
-	const [updatedNodes, setUpdatedNodes] = useState<NodeData[]>([]);
-	const [updatedEdges, setUpdatedEdges] = useState<EdgeData[]>([]);
+	const { writeContract, isPending } = useWriteContract();
+	const [roadmap, setRoadmap] = useState<TechTreeData>({
+		edges: [],
+		nodes: [],
+	});
 
-	const nodesWithUpdates = useMemo(() => {
-		return [...nodes, ...updatedNodes];
-	}, [nodes, updatedNodes]);
+	useEffect(() => {
+		setRoadmap(onChainRoadmap);
+	}, [onChainRoadmap]);
 
-	const edgesWithUpdates = useMemo(() => {
-		return [...edges, ...updatedEdges];
-	}, [edges, updatedEdges]);
-
-	function handleEdgeUpdate(source: string | null, target: string | null) {
+	/*	function handleEdgeUpdate(source: string | null, target: string | null) {
 		if (!source || !target) return;
 		setUpdatedEdges([
 			...updatedEdges,
 			{
-				id: `${edgesWithUpdates?.length || 0}`,
+				id: `${roadmap?.edges?.length || 0}`,
 				source,
 				target,
 			},
 		]);
-	}
+	}*/
 
-	function updateAll(newNodes: NodeData[], newEdges: EdgeData[]) {
+	function updateAll(
+		{ nodes, edges }: TechTreeData,
+		removeNodeIds: string[] = [],
+	) {
+		const nodesWithoutRemoved = nodes.filter(
+			(node) => !removeNodeIds.includes(node.id),
+		);
 		const uniqueNodes = new Map(
-			newNodes
+			nodesWithoutRemoved
 				.filter((item) => item.type !== "ultimate-objective")
 				.map((node) => [node.id, node]),
 		);
-		const uniqueEdges = new Map(newEdges.map((edge) => [edge.id, edge]));
 
-		updatedNodes.forEach((node) => uniqueNodes.set(node.id, node));
-		updatedEdges.forEach((edge) => uniqueEdges.set(edge.id, edge));
+		const uniqueEdges = new Map(edges.map((edge) => [edge.id, edge]));
 
-		setUpdatedNodes(Array.from(uniqueNodes.values()));
-		setUpdatedEdges(Array.from(uniqueEdges.values()));
+		const roadmapNodes = roadmap?.nodes?.filter(
+			(node) => !removeNodeIds.includes(node.id),
+		);
+		roadmapNodes?.forEach((node) => uniqueNodes.set(node.id, node));
+		roadmap?.edges?.forEach((edge) => uniqueEdges.set(edge.id, edge));
+
+		setRoadmap({
+			nodes: Array.from(uniqueNodes.values()),
+			edges: Array.from(uniqueEdges.values()),
+		});
 	}
 
-	function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
+	/*function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
 		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
 		if (!updatedNode) return;
 
@@ -108,15 +118,9 @@ export function NodesAndEdgesProvider({
 			node.id === nodeId ? { ...node, ...data } : node,
 		);
 		setUpdatedNodes(updatedNodesCopy);
-	}
+	}*/
 
-	async function handlePublish(mode: PublishMode) {
-		if (mode === "reset") {
-			setUpdatedNodes([]);
-			setUpdatedEdges([]);
-			return;
-		}
-
+	async function handlePublish() {
 		try {
 			writeContract({
 				abi: contributionAbi,
@@ -124,12 +128,12 @@ export function NodesAndEdgesProvider({
 				functionName: "updateTechTree",
 				args: [
 					techTree.id,
-					updatedNodes.map((node) => ({
+					roadmap?.nodes.map((node) => ({
 						id: node.id,
 						title: node.title || "",
 						nodeType: node.type,
 					})),
-					updatedEdges.map((edge) => ({
+					roadmap?.edges.map((edge) => ({
 						source: edge.source,
 						target: edge.target,
 					})),
@@ -142,20 +146,19 @@ export function NodesAndEdgesProvider({
 
 	const value = useMemo<NodesAndEdgesProps>(
 		() => ({
-			nodes: nodesWithUpdates,
-			edges: edgesWithUpdates,
-			addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
+			nodes: roadmap?.nodes || [],
+			edges: roadmap?.edges || [],
+			addNewNode: (node) => "",
+			//addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
 			updateAll,
-			handleEdgeUpdate,
-			handleNodeUpdate,
-			hasUpdates:
-				!deepEqual(nodes, nodesWithUpdates) ||
-				!deepEqual(edges, edgesWithUpdates),
+			handleEdgeUpdate: () => "",
+			handleNodeUpdate: () => "",
+			hasUpdates: !deepEqual(roadmap, onChainRoadmap),
 			handlePublish,
 			isPublishing: isPending,
 			isLoading: isLoadingOnChain,
 		}),
-		[nodesWithUpdates, edgesWithUpdates, isPending, isLoadingOnChain],
+		[roadmap, isPending, isLoadingOnChain],
 	);
 
 	return (

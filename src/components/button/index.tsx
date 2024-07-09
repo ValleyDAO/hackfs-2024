@@ -47,7 +47,7 @@ export function Button({
 					"bg-black border-gray-900": variant === "black",
 					"group-hover:brightness-110 group-focus:brightness-90 bg-red-600 border-red-600":
 						variant === "danger",
-					"py-1.5 px-2 space-x-2 text-xs": size === "small",
+					"py-2 px-2 space-x-2 text-xs": size === "small",
 					"py-2.5 px-2.5 space-x-2 text-sm": size === "medium",
 					"py-3 px-4 space-x-2 text-base": size === "large",
 					"disabled:cursor-not-allowed disabled:opacity-50": disabled,

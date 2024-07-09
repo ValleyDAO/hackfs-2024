@@ -2,14 +2,12 @@
 
 import { useContributionContract } from "@/hooks/useContributionContract";
 import { useTxEvents } from "@/providers/ContractEventsProvider";
-import { EdgeData, NodeData, NodeType } from "@/typings";
-import { isInvalidNumber } from "@/utils/number.utils";
+import { EdgeData, NodeData, NodeType, TechTreeData } from "@/typings";
 import { useEffect, useMemo } from "react";
 
 interface useOnChainTechTreeProps {
 	isLoadingOnChain: boolean;
-	nodes: NodeData[];
-	edges: EdgeData[];
+	onChainRoadmap: TechTreeData;
 }
 
 interface useOnChainTechTreeArgs {
@@ -38,7 +36,7 @@ export function useOnChainTechTree({
 		}
 	}, [events, techTreeId]);
 
-	const [nodes, edges] = useMemo<[NodeData[], EdgeData[]]>(() => {
+	const treeAsArray = useMemo<[NodeData[], EdgeData[]]>(() => {
 		return [
 			data?.[0].map((node, idx) => ({
 				id: (node as any)?.id,
@@ -57,10 +55,9 @@ export function useOnChainTechTree({
 
 	return useMemo(
 		() => ({
-			nodes,
-			edges,
+			onChainRoadmap: { nodes: treeAsArray?.[0], edges: treeAsArray?.[1] },
 			isLoadingOnChain: isLoading,
 		}),
-		[nodes, edges, isLoading],
+		[treeAsArray, isLoading],
 	);
 }

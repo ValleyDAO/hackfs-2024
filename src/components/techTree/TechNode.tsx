@@ -14,7 +14,7 @@ export function TechNode({
 	yPos,
 	id,
 }: NodeProps<NodeData>) {
-	const { mode, activeNode, activeEditType } = useTechTreeContext();
+	const { activeNode, activeEditType } = useTechTreeContext();
 	const hasActiveNodeInMoveMode = activeNode;
 	const isActive = activeNode?.id === id;
 
@@ -33,9 +33,6 @@ export function TechNode({
 		<>
 			<Handle
 				type="target"
-				className={clsx(
-					(mode !== "edit" || activeEditType !== "edge") && "!bg-transparent",
-				)}
 				position={targetPosition}
 				isConnectable={isConnectable}
 			/>
@@ -60,11 +57,8 @@ export function TechNode({
 			</div>
 			<Handle
 				type="source"
-				className={clsx(
-					(mode !== "edit" || activeEditType !== "edge") && "!bg-transparent",
-				)}
 				position={sourcePosition}
-				isConnectable={mode === "edit" && activeEditType === "edge"}
+				isConnectable={activeEditType === "edge"}
 			/>
 		</>
 	);

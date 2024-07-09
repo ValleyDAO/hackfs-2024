@@ -23,8 +23,7 @@ const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
 	const { nodes, edges, handleEdgeUpdate, isLoading } = useNodesAndEdges();
-	const { mode, setActiveNode, activeNode, activeEditType } =
-		useTechTreeContext();
+	const { setActiveNode, activeNode, activeEditType } = useTechTreeContext();
 
 	const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
 		nodes,
@@ -33,12 +32,7 @@ export function TechTreeLayout() {
 	);
 
 	return (
-		<div
-			className={clsx(
-				mode === "edit" && "tech-tree-edit",
-				"flex-1 relative h-full bg-grid flex",
-			)}
-		>
+		<div className="flex-1 relative h-full bg-grid flex">
 			<>
 				{isLoading && (
 					<div className="absolute inset-0 z-10 horizontal justify-center">
@@ -53,14 +47,14 @@ export function TechTreeLayout() {
 					connectionMode={ConnectionMode.Loose}
 					maxZoom={1.2}
 					nodeTypes={nodeTypes}
-					nodesDraggable={mode === "move"}
+					nodesDraggable
 					zoomOnPinch
 					zoomOnScroll
-					draggable={mode === "move"}
-					autoPanOnNodeDrag={mode === "move"}
+					draggable
+					autoPanOnNodeDrag
 					onSelectionEnd={() => setActiveNode(undefined)}
 					onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
-					edgesUpdatable={mode === "edit" && activeEditType === "edge"}
+					edgesUpdatable={activeEditType === "edge"}
 					onNodeClick={(evt, { id }) => setActiveNode(id)}
 				>
 					<Controls />

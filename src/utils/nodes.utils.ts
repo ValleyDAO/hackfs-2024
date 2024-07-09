@@ -86,15 +86,18 @@ export function getLayoutElements(
 		return node;
 	});
 
-	const uniqueNodes = new Map(initialNodes.map((node) => [node.id, node]));
-	const uniqueEdges = new Map(initialEdges.map((edge) => [edge.id, edge]));
+	const nodeMap = new Map(initialNodes.map((node) => [node.id, node]));
+	const edgeMap = new Map(initialEdges.map((edge) => [edge.id, edge]));
 
-	initialNodes.forEach((node) => uniqueNodes.set(node.id, node));
-	initialEdges.forEach((edge) => uniqueEdges.set(edge.id, edge));
+	initialNodes.forEach((node) => nodeMap.set(node.id, node));
+	initialEdges.forEach((edge) => edgeMap.set(edge.id, edge));
 
+	const uniqueNodes = Array.from(nodeMap.values());
+	const uniqueEdges = Array.from(edgeMap.values());
+	const sortedEdges = orderEdgesByTheDepthOfTheirTarget(nodes, uniqueEdges);
 	return {
-		nodes: Array.from(uniqueNodes.values()),
-		edges: Array.from(uniqueEdges.values()),
+		nodes: uniqueNodes,
+		edges: sortedEdges,
 	};
 }
 
@@ -171,7 +174,52 @@ export function getNodeTypeBgColor(
 			dark: "bg-purple-800",
 		},
 	};
-	return colors[type][theme];
+	return colors?.[type]?.[theme];
+}
+
+function createMapOfNodeIdAndAssociatedDeptWithinTree(
+	nodes: NodeData[],
+	edges: EdgeData[],
+): Map<string, number> {
+	const map = new Map<string, number>();
+	const visited = new Set<string>();
+	const adjList: { [key: string]: string[] } = {};
+
+	// Initialize adjacency list
+	nodes.forEach((node) => {
+		adjList[`${node.id}`] = [];
+	});
+
+	edges.forEach((edge) => {
+		if (!adjList[edge.source]) adjList[edge.source] = [];
+		adjList[edge.source].push(edge.target);
+		if (!adjList[edge.target]) adjList[edge.target] = [];
+		adjList[edge.target].push(edge.source); // Assuming undirected graph for bidirectional connection
+	});
+
+	const dfs = (nodeId: string, depth: number) => {
+		visited.add(nodeId);
+		map.set(nodeId, depth);
+		adjList[nodeId].forEach((neighbor) => {
+			if (!visited.has(neighbor)) {
+				dfs(neighbor, depth + 1);
+			}
+		});
+	};
+
+	if (nodes[0]) dfs(`${nodes[0]?.id}`, 0);
+
+	return map;
+}
+
+function orderEdgesByTheDepthOfTheirTarget(
+	nodes: NodeData[],
+	edges: TechTreeLayoutEdge[],
+): TechTreeLayoutEdge[] {
+	const map = createMapOfNodeIdAndAssociatedDeptWithinTree(nodes, edges);
+	return edges.sort(
+		(a, b) => (map.get(a.target) || 0) - (map.get(b.target) || 0),
+	);
 }
 
 export function getNodeTypeColor(type: NodeType): string {
