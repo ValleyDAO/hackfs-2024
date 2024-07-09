@@ -1,6 +1,7 @@
 import { EdgeData, NodeData } from "@/typings";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 
 const anthropic = new Anthropic({
 	apiKey: process.env["ANTHROPIC_API_KEY"], // This is the default and can be omitted
