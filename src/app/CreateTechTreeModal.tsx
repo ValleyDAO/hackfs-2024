@@ -11,6 +11,7 @@ import { useWatchContractEvent, useWriteContract } from "wagmi";
 export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	const router = useRouter();
 	const [title, setTitle] = React.useState("");
+	const [loading, setLoading] = React.useState(false);
 
 	const {
 		data: hash,
@@ -18,7 +19,6 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		isSuccess,
 		isError,
 		isPending,
-		error,
 	} = useWriteContract();
 
 	useWatchContractEvent({
@@ -28,6 +28,8 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		onLogs(logs) {
 			logs.forEach((log) => {
 				if (log.transactionHash === hash) {
+					toast.success("Tech tree created successfully");
+					setLoading(false);
 					const args = (log as any).args as Record<string, any>;
 					router.push(`/roadmap/${args.techTreeId}`);
 				}
@@ -35,17 +37,14 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		},
 	});
 
-	console.log(error);
-
 	useEffect(() => {
-		if (isSuccess) {
-			toast.success("Tech tree created successfully");
-		} else if (isError) {
+		if (isError) {
 			toast.error("Failed to create tech tree");
 		}
-	}, [isSuccess, isError]);
+	}, [isError]);
 
 	async function handleCreateTechTree(title: string) {
+		setLoading(true);
 		writeContract({
 			address: contributionContractAddress,
 			abi: contributionAbi,
@@ -77,7 +76,7 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 			<div className="mt-4 w-full flex justify-end space-y-3">
 				<ButtonWithAuthentication
 					disabled={!title || title?.length < 2}
-					loading={isPending}
+					loading={loading}
 					onClick={() => handleCreateTechTree(title)}
 					variant="primary"
 				>

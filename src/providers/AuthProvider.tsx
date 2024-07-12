@@ -2,6 +2,7 @@
 
 import { Modal } from "@/components/modal";
 import { usePrivy } from "@privy-io/react-auth";
+import { getBalance } from "@wagmi/core";
 import React, {
 	ReactNode,
 	createContext,
@@ -54,20 +55,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 		setShowInstructionsForTestnetTokens,
 	] = React.useState(false);
 	const { authenticated, user, login, ready, logout } = usePrivy();
-	const { data, isLoading: isLoadingBalance } = useBalance({
-		address: (user?.wallet?.address as `0x${string}`) || "0x0",
+	const {
+		data,
+		isLoading: isLoadingBalance,
+		error,
+	} = useBalance({
+		address: user?.wallet?.address as `0x${string}`,
 		query: {
-			enabled: authenticated,
+			enabled: authenticated && ready,
 		},
 	});
 
 	const balance = data?.value ? formatEther(data?.value) : "0";
-
-	useEffect(() => {
-		if (ready && authenticated && !isLoadingBalance && balance === "0") {
-			setShowInstructionsForTestnetTokens(true);
-		}
-	}, [isLoadingBalance, authenticated, balance, ready]);
 
 	const value = useMemo(
 		() => ({
