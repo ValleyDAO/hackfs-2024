@@ -71,3 +71,12 @@ type TreasuryAdded @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type TechTree @entity {
+  id: ID!
+  title: String
+  techTreeId: BigInt!
+  lastUpdatedBlockNumber: BigInt!
+  lastUpdatedBlockTimestamp: BigInt!
+  lastUpdatedTransactionHash: Bytes!
+}
