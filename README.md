@@ -1,6 +1,7 @@
-# HackFS-2024: Decentralized Technology Tree
+# Simplified method to achieve futuristic technologies
 
-Decentralized scientific collaboration that enables updatable maps of technological progress allowing user to contribute, fund, and earn rewards based on their participation, driving the collaborative growth and tackling futuristic technologies with precision
+Roadmaps enable a clear, structured pathway for tackling complex scientific and technological challenges, making it easier for researchers, developers, and innovators to navigate and contribute to the advancement of any scientific end-goal.
+
 ## Getting Started
 
 ### Prerequisites
@@ -19,16 +20,20 @@ yarn install
 Set up environment variables:
 
 ```bash
-Copy code
-cd packages/app
 cp .env.example .env
 ```
 
-### Thirdweb Setup
-An API key is required to use web3 authentication and other services. You can get an API key by signing up at [Thirdweb](https://thirdweb.io/).
+### Local The Graph Setup
 
-### Web3 Configuration
-All configuration can be found in `/src/lib/constants.ts`
+```bash
+cd subgraph
+npm i
+docker-compose up -d
+graph codegen
+graph build
+graph create --node http://localhost:8020/ architect
+graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 architect
+```
 
 ### Contracts
 All contracts can be found in `/src/lib/contracts`
@@ -47,7 +52,3 @@ Together, these contracts form a robust framework for a decentralized, collabora
 This system not only facilitates technological documentation and innovation but also aligns contributor incentives with the platform's growth and success, ensuring sustained engagement and development.
 
 
-## Tech Specific READMEs
-
-### GALADRIEL AI
-You can find the deploying and interaction with out galadriel contract here`./playground/galadriel/README.md`

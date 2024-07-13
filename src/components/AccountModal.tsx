@@ -19,6 +19,7 @@ export function AccountModal({ close }: AccountModalProps) {
 	const { account, balance, logout } = useAuth();
 
 	function handleLogout() {
+		console.log("hello?");
 		logout();
 		close();
 	}
@@ -42,8 +43,11 @@ export function AccountModal({ close }: AccountModalProps) {
 					<ArrowLeftOutlined className="text-xs" />
 					<span className="text-xs">Back</span>
 				</div>
-				<div className="horizontal space-x-2 text-gray-500 cursor-pointer">
-					<div onClick={handleLogout} className=" ">
+				<div
+					onClick={handleLogout}
+					className="horizontal space-x-2 text-gray-500 cursor-pointer"
+				>
+					<div className=" ">
 						<LogoutOutlined className="text-lg" />
 					</div>
 					<span className="text-sm">Logout</span>

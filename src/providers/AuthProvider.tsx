@@ -68,26 +68,23 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
 	const balance = data?.value ? formatEther(data?.value) : "0";
 
-	const value = useMemo(
-		() => ({
-			account: user?.wallet?.address
-				? { address: user.wallet.address }
-				: undefined,
-			isAuthenticated: authenticated,
-			hasBalance: balance !== "0",
-			showInstructionsForTestnetTokens: () =>
-				setShowInstructionsForTestnetTokens(true),
-			login,
-			logout,
-			balance,
-		}),
-		[user, ready, login, logout, balance, authenticated],
-	);
-
 	// Go to faucet.calibnet.chainsafe-fil.io and click Send Funds.
 	// Paste your address into the address field and click Send funds:
 	return (
-		<AuthContext.Provider value={value}>
+		<AuthContext.Provider
+			value={{
+				account: user?.wallet?.address
+					? { address: user.wallet.address }
+					: undefined,
+				isAuthenticated: authenticated,
+				hasBalance: balance !== "0",
+				showInstructionsForTestnetTokens: () =>
+					setShowInstructionsForTestnetTokens(true),
+				login,
+				logout,
+				balance,
+			}}
+		>
 			{children}
 			{showInstructionsForTestnetTokens && (
 				<Modal

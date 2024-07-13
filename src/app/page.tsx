@@ -4,8 +4,10 @@ import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { PlusOutlined } from "@/components/icons/PlusOutlined";
 import { TechTreeOutlined } from "@/components/icons/TechTreeOutlined";
 import { useContributionContract } from "@/hooks/useContributionContract";
+import { GET_ROADMAPS } from "@/lib/graphql/queries";
 import { useAuth } from "@/providers/AuthProvider";
 import { TechTree } from "@/typings";
+import { useQuery } from "@apollo/client";
 import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -73,9 +75,9 @@ function TechTreeItem({ techTree }: { techTree: TechTree }) {
 
 export default function Home() {
 	const [intentToCreate, setIntentToCreate] = React.useState(false);
-	const { data: techTrees, isLoading } = useContributionContract<TechTree[]>({
-		functionName: "getTechTrees",
-	});
+	const { loading, error, data } = useQuery<{ techTrees: TechTree[] }>(
+		GET_ROADMAPS,
+	);
 
 	return (
 		<>
@@ -95,12 +97,12 @@ export default function Home() {
 						</p>
 					</div>
 					<div>
-						{isLoading ? (
+						{loading ? (
 							<LoadingOutlined />
 						) : (
 							<div className="grid grid-cols-4 gap-2">
 								<CreateRoadmap onCreate={() => setIntentToCreate(true)} />
-								{techTrees?.map((techTree, idx) => (
+								{data?.techTrees?.map((techTree, idx) => (
 									<TechTreeItem key={`node-${idx}`} techTree={techTree} />
 								))}
 							</div>

@@ -19,7 +19,10 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		isSuccess,
 		isError,
 		isPending,
+		error,
 	} = useWriteContract();
+
+	console.log(error);
 
 	useWatchContractEvent({
 		address: contributionContractAddress,

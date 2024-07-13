@@ -1,8 +1,10 @@
 "use client";
 
 import { chainOptions } from "@/lib/constants";
+import { apolloClient } from "@/lib/graphql/client";
 import AuthProvider from "@/providers/AuthProvider";
 import { ContractEventsProvider } from "@/providers/ContractEventsProvider";
+import { ApolloProvider } from "@apollo/client";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -27,25 +29,27 @@ export const config = createConfig({
 
 const Providers = ({ children }: ProviderType) => {
 	return (
-		<PrivyProvider
-			appId={process.env.NEXT_PUBLIC_PRIVY_KEY || ""}
-			config={{
-				// Create embedded wallets for users who don't have a wallet
-				embeddedWallets: {
-					createOnLogin: "users-without-wallets",
-				},
-				supportedChains: chainOptions,
-				defaultChain: process.env.IS_LOCAL ? hardhat : filecoinCalibration,
-			}}
-		>
-			<QueryClientProvider client={queryClient}>
-				<WagmiProvider config={config}>
-					<AuthProvider>
-						<ContractEventsProvider>{children}</ContractEventsProvider>
-					</AuthProvider>
-				</WagmiProvider>
-			</QueryClientProvider>
-		</PrivyProvider>
+		<ApolloProvider client={apolloClient}>
+			<PrivyProvider
+				appId={process.env.NEXT_PUBLIC_PRIVY_KEY || ""}
+				config={{
+					// Create embedded wallets for users who don't have a wallet
+					embeddedWallets: {
+						createOnLogin: "users-without-wallets",
+					},
+					supportedChains: chainOptions,
+					defaultChain: process.env.IS_LOCAL ? hardhat : filecoinCalibration,
+				}}
+			>
+				<QueryClientProvider client={queryClient}>
+					<WagmiProvider config={config}>
+						<AuthProvider>
+							<ContractEventsProvider>{children}</ContractEventsProvider>
+						</AuthProvider>
+					</WagmiProvider>
+				</QueryClientProvider>
+			</PrivyProvider>
+		</ApolloProvider>
 	);
 };
 
