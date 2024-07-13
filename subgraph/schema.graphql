@@ -1,0 +1,73 @@
+type ContributionAdded @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  nodeId: String! # string
+  ipfsHash: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type EdgeAdded @entity(immutable: true) {
+  id: Bytes!
+  techTreeId: BigInt! # uint256
+  source: String! # string
+  target: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NodeAdded @entity(immutable: true) {
+  id: Bytes!
+  nodeId: String! # string
+  techTreeId: BigInt! # uint256
+  title: String! # string
+  nodeType: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NodeFinished @entity(immutable: true) {
+  id: Bytes!
+  nodeId: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RfpAdded @entity(immutable: true) {
+  id: Bytes!
+  nodeId: String! # string
+  _ipfsHash: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TechTreeAdded @entity(immutable: true) {
+  id: Bytes!
+  techTreeId: BigInt! # uint256
+  title: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TechTreeUpdated @entity(immutable: true) {
+  id: Bytes!
+  techTreeId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TreasuryAdded @entity(immutable: true) {
+  id: Bytes!
+  nodeId: String! # string
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
