@@ -30,7 +30,7 @@ dataSources:
       eventHandlers:
         - event: ContributionAdded(indexed address,string,string)
           handler: handleContributionAdded
-        - event: EdgeAdded(uint256,string,string)
+        - event: EdgeAdded(uint256,uint256,string,string)
           handler: handleEdgeAdded
         - event: NodeAdded(string,uint256,string,string)
           handler: handleNodeAdded

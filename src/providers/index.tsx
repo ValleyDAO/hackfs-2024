@@ -37,6 +37,7 @@ const Providers = ({ children }: ProviderType) => {
 					embeddedWallets: {
 						createOnLogin: "users-without-wallets",
 					},
+					loginMethods: ["wallet", "email"],
 					supportedChains: chainOptions,
 					defaultChain: process.env.IS_LOCAL ? hardhat : filecoinCalibration,
 				}}

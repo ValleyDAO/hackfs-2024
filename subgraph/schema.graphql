@@ -79,4 +79,26 @@ type TechTree @entity {
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
   lastUpdatedTransactionHash: Bytes!
+  nodes: [Node!]! @derivedFrom(field: "techTree")
+  edges: [Edge!]! @derivedFrom(field: "techTree")
+}
+
+type Node @entity {
+  id: ID!
+  title: String!
+  nodeType: String!
+  techTree: TechTree!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Edge @entity {
+  id: ID!
+  source: String!
+  target: String!
+  techTree: TechTree!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
 }

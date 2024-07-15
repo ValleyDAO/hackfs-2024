@@ -8,3 +8,22 @@ export const GET_ROADMAPS = gql`
     }
   }
 `;
+
+export const GET_ROADMAP = gql`
+  query GetTechTree($id: ID!) {
+    techTree(id: $id) {
+      techTreeId
+      title
+      nodes {
+        id
+        title
+        nodeType
+      }
+      edges {
+          id
+        source
+        target
+      }
+    }
+  }
+`;

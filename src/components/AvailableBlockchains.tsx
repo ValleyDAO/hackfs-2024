@@ -31,6 +31,12 @@ export function AvailableBlockchains() {
 		}
 	}
 
+	if (!!process.env.NEXT_PUBLIC_IS_LOCAL) {
+		return (
+			<></>
+		)
+	}
+
 	return (
 		<DropDown menu={options}>
 			<div className="flex items-center cursor-pointer rounded-full leading-none space-x-2">

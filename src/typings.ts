@@ -77,10 +77,17 @@ export interface ResearchTreasury {
 	fundedAt: Date;
 }
 
-export interface TechTree {
+export type BaseTechTree = {
 	title: string;
 	id: bigint;
-}
+	techTreeId: bigint;
+};
+
+export type OnChainNodeData = {
+	id: string;
+	nodeType: string;
+	title: string;
+};
 
 export interface NodeData {
 	id: string;
@@ -113,10 +120,25 @@ export interface EdgeData {
 	origin?: NodeOrigin;
 }
 
+export interface OnChainEdgeData {
+	id: string;
+	edgeId: string;
+	source: string;
+	target: string;
+}
+
 export interface TechTreeData {
 	nodes: NodeData[];
 	edges: EdgeData[];
 }
+
+export interface OnChainTechTreeData {
+	nodes: OnChainNodeData[];
+	edges: OnChainEdgeData[];
+}
+
+export type OnChainTechTree = BaseTechTree & OnChainTechTreeData;
+export type TechTree = BaseTechTree & TechTreeData;
 
 export type TechTreeLayoutNode = Node<Omit<NodeData, "id">> & {
 	targetPosition?: Position;

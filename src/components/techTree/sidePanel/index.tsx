@@ -97,7 +97,7 @@ function UltimateObjectivePanel() {
 				) : (
 					nodes
 						?.filter((item) => item.type !== "ultimate-objective")
-						?.map((node) => <NodeItem node={node} />)
+						?.map((node) => <NodeItem key={node.id} node={node} />)
 				)}
 			</div>
 		</div>

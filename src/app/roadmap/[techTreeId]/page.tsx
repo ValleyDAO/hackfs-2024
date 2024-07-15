@@ -1,34 +1,36 @@
 "use client";
 
 import { TechTreeLayout } from "@/components/techTree";
-import { TechTreeSidePanel } from "@/components/techTree/sidePanel";
 import { NodesAndEdgesProvider } from "@/providers/NodesAndEdgesProvider";
 import { TechTreeLayoutContextProvider } from "@/providers/TechTreeLayoutContextProvider";
 
-import { useContributionContract } from "@/hooks/useContributionContract";
-import { TechTree } from "@/typings";
+import { GET_ROADMAP } from "@/lib/graphql/queries";
+import { OnChainTechTree } from "@/typings";
+import { useQuery } from "@apollo/client";
 import React from "react";
+import {parseOnChainEdgeToEdgeData, parseOnChainNodeToNodeData} from "@/utils/parser.utils";
 
 interface Params {
 	techTreeId: string;
 }
 
 export default function TechTreeDetailsPage({ params }: { params: Params }) {
-	const { data: techTrees, isLoading } = useContributionContract<TechTree[]>({
-		functionName: "getTechTrees",
-	});
-
-	if (isLoading) return <div>Loading...</div>;
-
-	const techTree = techTrees?.find(
-		(tree) => tree.id === BigInt(params.techTreeId),
+	const { data } = useQuery<{ techTree: OnChainTechTree }>(
+		GET_ROADMAP,
+		{
+			variables: { id: params.techTreeId },
+			ssr: true,
+		},
 	);
 
-	if (!techTree) return <div>Not found</div>;
+	if (!data?.techTree?.techTreeId) return <div>Not found</div>;
+
+	const nodes = data?.techTree.nodes?.map(parseOnChainNodeToNodeData);
+	const edges = data?.techTree.edges?.map(parseOnChainEdgeToEdgeData);
 
 	return (
-		<NodesAndEdgesProvider techTree={techTree}>
-			<TechTreeLayoutContextProvider techTreeId={techTree?.id}>
+		<NodesAndEdgesProvider techTreeId={data.techTree.techTreeId} nodes={nodes} edges={edges}>
+			<TechTreeLayoutContextProvider techTreeId={data?.techTree?.id}>
 				<TechTreeLayout />
 			</TechTreeLayoutContextProvider>
 		</NodesAndEdgesProvider>

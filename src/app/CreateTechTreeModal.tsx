@@ -7,27 +7,21 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useWatchContractEvent, useWriteContract } from "wagmi";
+import {useOnEnterPress} from "@/hooks/useOnEnterPress";
 
 export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 	const router = useRouter();
+	const onEnterPress = useOnEnterPress(handleCreateTechTree);
 	const [title, setTitle] = React.useState("");
 	const [loading, setLoading] = React.useState(false);
 
-	const {
-		data: hash,
-		writeContract,
-		isSuccess,
-		isError,
-		isPending,
-		error,
-	} = useWriteContract();
-
-	console.log(error);
+	const { data: hash, writeContract, isError, error, failureReason } = useWriteContract();
 
 	useWatchContractEvent({
 		address: contributionContractAddress,
 		abi: contributionAbi,
 		eventName: "TechTreeAdded",
+
 		onLogs(logs) {
 			logs.forEach((log) => {
 				if (log.transactionHash === hash) {
@@ -46,11 +40,12 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 		}
 	}, [isError]);
 
-	async function handleCreateTechTree(title: string) {
+	async function handleCreateTechTree() {
 		setLoading(true);
 		writeContract({
 			address: contributionContractAddress,
 			abi: contributionAbi,
+			gas: BigInt(1000000),
 			functionName: "addTechTree",
 			args: [title, generateId()],
 		});
@@ -76,11 +71,12 @@ export function CreateTechTree({ handleBack }: { handleBack: () => void }) {
 				className="bg-gray-50"
 				onChange={setTitle}
 			/>
-			<div className="mt-4 w-full flex justify-end space-y-3">
+			<div
+				onKeyDown={onEnterPress} className="mt-4 w-full flex justify-end space-y-3">
 				<ButtonWithAuthentication
 					disabled={!title || title?.length < 2}
 					loading={loading}
-					onClick={() => handleCreateTechTree(title)}
+					onClick={handleCreateTechTree}
 					variant="primary"
 				>
 					Create

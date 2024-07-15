@@ -3,10 +3,9 @@ import { CreateTechTree } from "@/app/CreateTechTreeModal";
 import { LoadingOutlined } from "@/components/icons/LoadingOutlined";
 import { PlusOutlined } from "@/components/icons/PlusOutlined";
 import { TechTreeOutlined } from "@/components/icons/TechTreeOutlined";
-import { useContributionContract } from "@/hooks/useContributionContract";
 import { GET_ROADMAPS } from "@/lib/graphql/queries";
 import { useAuth } from "@/providers/AuthProvider";
-import { TechTree } from "@/typings";
+import { OnChainTechTree, TechTree } from "@/typings";
 import { useQuery } from "@apollo/client";
 import clsx from "clsx";
 import Link from "next/link";
@@ -58,11 +57,11 @@ function CreateRoadmap({ onCreate }: { onCreate(): void }) {
 	);
 }
 
-function TechTreeItem({ techTree }: { techTree: TechTree }) {
+function TechTreeItem({ techTree }: { techTree: OnChainTechTree }) {
 	return (
 		<Link
-			key={techTree.id}
-			href={`/roadmap/${techTree.id}`}
+			key={techTree.techTreeId}
+			href={`/roadmap/${techTree.techTreeId}`}
 			className={clsx(
 				"transition-all bg-indigo-50/25 flex flex-col items-center justify-center cursor-pointer text-indigo-900 hover:bg-indigo-100 border leading-none border-indigo-100 space-y-4 px-4 py-10 rounded-lg",
 			)}
@@ -75,8 +74,10 @@ function TechTreeItem({ techTree }: { techTree: TechTree }) {
 
 export default function Home() {
 	const [intentToCreate, setIntentToCreate] = React.useState(false);
-	const { loading, error, data } = useQuery<{ techTrees: TechTree[] }>(
-		GET_ROADMAPS,
+	const { data } = useQuery<{ techTrees: OnChainTechTree[] }>(
+		GET_ROADMAPS, {
+			ssr:true
+		}
 	);
 
 	return (
@@ -97,16 +98,12 @@ export default function Home() {
 						</p>
 					</div>
 					<div>
-						{loading ? (
-							<LoadingOutlined />
-						) : (
-							<div className="grid grid-cols-4 gap-2">
-								<CreateRoadmap onCreate={() => setIntentToCreate(true)} />
-								{data?.techTrees?.map((techTree, idx) => (
-									<TechTreeItem key={`node-${idx}`} techTree={techTree} />
-								))}
-							</div>
-						)}
+						<div className="grid grid-cols-4 gap-2">
+							<CreateRoadmap onCreate={() => setIntentToCreate(true)} />
+							{data?.techTrees?.map((techTree, idx) => (
+								<TechTreeItem key={`node-${idx}`} techTree={techTree} />
+							))}
+						</div>
 						{/*<div className="flex flex-col h-full pt-48 space-y-4 w-10/12 mx-auto items-center">
 							<TechTreeOutlined className="text-gray-300 text-4xl"/>
 							<span className="text-gray-400 text-xs text-center">

@@ -1,9 +1,11 @@
 "use client";
 
-import { useOnChainTechTree } from "@/hooks/useOnChainTechTree";
 import { contributionAbi, contributionContractAddress } from "@/lib/constants";
-import { EdgeData, NodeData, TechTree, TechTreeData } from "@/typings";
-import { isInvalidNumber } from "@/utils/number.utils";
+import {
+	EdgeData,
+	NodeData,
+	TechTreeData,
+} from "@/typings";
 import deepEqual from "deep-equal";
 import React, {
 	ReactNode,
@@ -11,33 +13,28 @@ import React, {
 	useContext,
 	useMemo,
 	useState,
-	useEffect,
 } from "react";
-import { useWriteContract } from "wagmi";
+import {useWatchContractEvent, useWriteContract} from "wagmi";
+import toast from "react-hot-toast";
+import {useRouter} from "next/navigation";
 
 type PublishMode = "reset" | "publish";
 
 type NodesAndEdgesProps = {
 	nodes: NodeData[];
 	edges: EdgeData[];
-	addNewNode(data: NodeData): void;
 	updateAll(roadmap: TechTreeData, removeNodeIds?: string[]): void;
-	handleEdgeUpdate: (source: string | null, target: string | null) => void;
 	hasUpdates: boolean;
-	handleNodeUpdate(nodeId: string, data: Partial<NodeData>): void;
 	handlePublish(mode: PublishMode): void;
 	isPublishing: boolean;
 	isLoading: boolean;
 };
 
 export const NodesAndEdgesContext = createContext<NodesAndEdgesProps>({
-	handleEdgeUpdate: () => {},
 	updateAll: () => {},
 	hasUpdates: false,
 	nodes: [],
 	edges: [],
-	addNewNode: () => {},
-	handleNodeUpdate: () => {},
 	handlePublish: () => {},
 	isPublishing: false,
 	isLoading: false,
@@ -53,35 +50,43 @@ export const useNodesAndEdges = (): NodesAndEdgesProps => {
 	return context;
 };
 
+interface NodesAndEdgesProviderProps {
+	children: ReactNode;
+	techTreeId: bigint;
+	nodes?: NodeData[];
+	edges?: EdgeData[];
+}
+
 export function NodesAndEdgesProvider({
 	children,
-	techTree,
-}: { children: ReactNode; techTree: TechTree }) {
-	const { onChainRoadmap, isLoadingOnChain } = useOnChainTechTree({
-		techTreeId: techTree.id,
-	});
+	techTreeId,
+	nodes = [],
+	edges = []
+}: NodesAndEdgesProviderProps) {
 
-	const { writeContract, isPending } = useWriteContract();
+	const router = useRouter();
+	const [isPublishing, setIsPublishing] = useState(false);
+	const { writeContract, data: hash } = useWriteContract();
 	const [roadmap, setRoadmap] = useState<TechTreeData>({
-		edges: [],
-		nodes: [],
+		edges,
+		nodes,
 	});
 
-	useEffect(() => {
-		setRoadmap(onChainRoadmap);
-	}, [onChainRoadmap]);
+	useWatchContractEvent({
+		address: contributionContractAddress,
+		abi: contributionAbi,
+		eventName: "TechTreeUpdated",
 
-	/*	function handleEdgeUpdate(source: string | null, target: string | null) {
-		if (!source || !target) return;
-		setUpdatedEdges([
-			...updatedEdges,
-			{
-				id: `${roadmap?.edges?.length || 0}`,
-				source,
-				target,
-			},
-		]);
-	}*/
+		onLogs(logs) {
+			logs.forEach((log) => {
+				if (log.transactionHash === hash) {
+					toast.success("Roadmap has been published successfully");
+					setIsPublishing(false);
+					router.refresh();
+				}
+			});
+		},
+	});
 
 	function updateAll(
 		{ nodes, edges }: TechTreeData,
@@ -110,24 +115,15 @@ export function NodesAndEdgesProvider({
 		});
 	}
 
-	/*function handleNodeUpdate(nodeId: string, data: Partial<NodeData>) {
-		const updatedNode = updatedNodes.find((node) => node.id === nodeId);
-		if (!updatedNode) return;
-
-		const updatedNodesCopy = updatedNodes.map((node) =>
-			node.id === nodeId ? { ...node, ...data } : node,
-		);
-		setUpdatedNodes(updatedNodesCopy);
-	}*/
-
 	async function handlePublish() {
 		try {
+			setIsPublishing(true);
 			writeContract({
 				abi: contributionAbi,
 				address: contributionContractAddress,
 				functionName: "updateTechTree",
 				args: [
-					techTree.id,
+					techTreeId,
 					roadmap?.nodes.map((node) => ({
 						id: node.id,
 						title: node.title || "",
@@ -146,19 +142,15 @@ export function NodesAndEdgesProvider({
 
 	const value = useMemo<NodesAndEdgesProps>(
 		() => ({
-			nodes: roadmap?.nodes || [],
-			edges: roadmap?.edges || [],
-			addNewNode: (node) => "",
-			//addNewNode: (node) => setUpdatedNodes((prev) => [...(prev || []), node]),
+			nodes: roadmap?.nodes,
+			edges: roadmap?.edges,
 			updateAll,
-			handleEdgeUpdate: () => "",
-			handleNodeUpdate: () => "",
-			hasUpdates: !deepEqual(roadmap, onChainRoadmap),
+			hasUpdates: !deepEqual(nodes, roadmap?.nodes),
 			handlePublish,
-			isPublishing: isPending,
-			isLoading: isLoadingOnChain,
+			isPublishing,
+			isLoading: false,
 		}),
-		[roadmap, isPending, isLoadingOnChain],
+		[roadmap, isPublishing],
 	);
 
 	return (
