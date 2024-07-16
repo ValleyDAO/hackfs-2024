@@ -22,7 +22,7 @@ import clsx from "clsx";
 const nodeTypes = { "tech-tree": TechNode };
 
 export function TechTreeLayout() {
-	const { nodes, edges, handleEdgeUpdate, isLoading } = useNodesAndEdges();
+	const { nodes, edges, isLoading } = useNodesAndEdges();
 	const { setActiveNode, activeNode, activeEditType } = useTechTreeContext();
 
 	const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
@@ -53,7 +53,7 @@ export function TechTreeLayout() {
 					draggable
 					autoPanOnNodeDrag
 					onSelectionEnd={() => setActiveNode(undefined)}
-					onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
+					//onConnect={(params) => handleEdgeUpdate(params.source, params.target)}
 					edgesUpdatable={activeEditType === "edge"}
 					onNodeClick={(evt, { id }) => setActiveNode(id)}
 				>

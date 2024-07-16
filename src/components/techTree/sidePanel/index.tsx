@@ -12,6 +12,7 @@ import { fetchWrapper } from "@/utils/query.utils";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import {useEnhance} from "@/hooks/useEnhance";
 
 function UltimateObjectivePanel() {
 	const { updateAll, nodes } = useNodesAndEdges();
@@ -129,17 +130,30 @@ function NodeItem({ node }: { node: NodeData }) {
 }
 
 function ActiveNode() {
+	const { start, isEnhancing } = useEnhance({});
 	return (
-		<div className="h-full">
-			<ModeSelectionItem label="Move" />
+		<div className="space-y-2 h-full">
+			<div className="text-[13px] text-gray-600">
+				Nodes can be described as too complex to be perceived as an actionable
+				step in your roadmap. You can enhance your roadmap by adding more nodes
+				and edges to the graph.
+			</div>
+			<Button
+				onClick={start}
+				variant="primary"
+				loading={isEnhancing}
+				size="small"
+			>
+				Entangle complexity
+			</Button>
 		</div>
 	);
 }
 
 export function TechTreeSidePanel() {
 	const [expanded, setExpanded] = React.useState(true);
-	const { hasUpdates, handlePublish, isPublishing } = useNodesAndEdges();
-	const { activeNode, setActiveNode, objective } = useTechTreeContext();
+	const {hasUpdates, handlePublish, isPublishing} = useNodesAndEdges();
+	const {activeNode, setActiveNode, objective} = useTechTreeContext();
 
 	function handleClear() {
 		setActiveNode(undefined);

@@ -12,7 +12,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 export function EditMode() {
-	const { handleNodeUpdate, nodes } = useNodesAndEdges();
+	const { nodes } = useNodesAndEdges();
 	const { activeNode, setActiveNode } = useTechTreeContext();
 	const [isHandlingSave, setIsHandlingSave] = React.useState(false);
 	const [update, setUpdate] = React.useState<Partial<NodeData>>({
@@ -29,7 +29,7 @@ export function EditMode() {
 
 	async function handleSave() {
 		if (!activeNode?.id) return;
-		handleNodeUpdate(activeNode?.id, update);
+		// handleNodeUpdate(activeNode?.id, update);
 		setUpdate({});
 		if (update?.type === "ultimate-objective") {
 			setIsHandlingSave(true);

@@ -2,7 +2,7 @@ import { Button } from "@/components/button";
 import { useEnhance } from "@/hooks/useEnhance";
 import React from "react";
 
-export function ModeSelectionItem({ label }: { label: string }) {
+export function ModeSelectionItem() {
 	const { start, isEnhancing } = useEnhance({});
 
 	return (
